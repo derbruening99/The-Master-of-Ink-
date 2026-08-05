@@ -225,3 +225,29 @@ sofort.
   Studiofoto. Ein eigenes Porträt wäre besser — Dateien als
   `assets/img/team-sebastian-{420,670}.{jpg,webp}` ersetzen
 - Impressum und Datenschutzerklärung ergänzen — in Deutschland Pflicht
+
+## Performance
+
+Gemessen mit Chromium, Zahlen bis zum `load`-Ereignis:
+
+| | bis „load“ | nach Durchscrollen |
+| --- | --- | --- |
+| Desktop 1440 | 8 Anfragen · 237 KB | 24 Anfragen · 4,6 MB |
+| Mobil 390 | 10 Anfragen · 303 KB | 23 Anfragen · 0,6 MB |
+
+Zwei Dinge halten den Start klein:
+
+**Das Hero-Video wartet.** Es liegt im sichtbaren Bereich und würde sonst
+sofort mitladen — knapp 3 MB, die mit Schrift, CSS und Poster um die Leitung
+konkurrieren. Es startet erst nach dem `load`-Ereignis; sichtbar ist
+währenddessen das Poster, das ohnehin gebraucht wird. Vorher waren es
+3331 KB bis „load“, jetzt 237 KB.
+
+**Die eingebettete StudioLink-Maske wartet auch.** Sie ist eine eigene
+Anwendung; beim Seitenaufruf geladen kostet sie jeden Besucher Bandbreite,
+auch die, die nie bis zum Formular scrollen. Sie wird geholt, sobald der
+Termin-Abschnitt auf 700 px herankommt — früh genug, dass der Handschlag
+durch ist, bevor jemand ankommt.
+
+Auf Mobilgeräten, bei `prefers-reduced-motion` und bei aktivem Datensparen
+werden beide Videos gar nicht geladen; es bleibt beim Poster.

@@ -91,7 +91,12 @@
       else { loadSource(video); tryPlay(video); }
     });
   }
-  setupVideos();
+  /* Das Hero-Video liegt im sichtbaren Bereich und würde sofort mitladen —
+     mehrere Megabyte, die mit Schrift, CSS und Poster um die Leitung
+     konkurrieren. Das Poster steht ohnehin schon; der Film darf warten,
+     bis der Rest der Seite geladen ist. */
+  if (document.readyState === 'complete') setupVideos();
+  else window.addEventListener('load', setupVideos, { once: true });
   (mqVideo.addEventListener ? mqVideo.addEventListener('change', setupVideos) : mqVideo.addListener(setupVideos));
   (mqReduced.addEventListener ? mqReduced.addEventListener('change', setupVideos) : mqReduced.addListener(setupVideos));
 
@@ -356,10 +361,30 @@
     };
     window.addEventListener('message', onMessage);
 
-    if (frame) frame.src = formUrl;
     if (openLink) openLink.href = formUrl;
 
-    window.setTimeout(function () {
+    /* Die Maske ist eine eigene Anwendung — sie beim Seitenaufruf zu laden
+       kostet alle Besucher Bandbreite, auch die, die nie bis zum Formular
+       scrollen. Sie wird geholt, sobald der Abschnitt in Reichweite kommt;
+       der Handschlag läuft dann immer noch, bevor jemand ankommt. */
+    var starteEinbettung = function () {
+      if (!frame || frame.src) return;
+      frame.src = formUrl;
+      window.setTimeout(pruefeHandschlag, 6000);
+    };
+    var abschnitt = embed.closest('section') || embed;
+    if ('IntersectionObserver' in window) {
+      var ladeIO = new IntersectionObserver(function (entries) {
+        if (!entries.some(function (e) { return e.isIntersecting; })) return;
+        ladeIO.disconnect();
+        starteEinbettung();
+      }, { rootMargin: '700px 0px' });
+      ladeIO.observe(abschnitt);
+    } else {
+      starteEinbettung();
+    }
+
+    function pruefeHandschlag() {
       if (confirmed) return;
       window.removeEventListener('message', onMessage);
       if (frame) frame.removeAttribute('src');
@@ -367,7 +392,7 @@
         console.warn('[anfrage] StudioLink hat sich nicht als "' + wantedStudio +
           '" gemeldet — es bleibt beim Formular dieser Seite.');
       }
-    }, 6000);
+    }
   }
 
   /* ---------- Ablauf: Achse wächst beim Scrollen mit ----------
