@@ -166,19 +166,22 @@ window.MOI_CONFIG = {
     privacyPolicyVersion: "2026-07",
     leadLinkBase: "",
 
-    /* Adresse der StudioLink-Installation.
+    /* Offizielle StudioLink-Maske einbetten.
 
-       AKTUELL BEWUSST LEER. Ist sie gesetzt, wird StudioLinks offizielle
-       Maske (/anfrage) eingebettet — die kann heute aber nur Anfragen für
-       EIN Studio annehmen: `STUDIO_ID` ist in StudioLinks lib/supabase.ts
-       fest auf "golden-geometry" verdrahtet. Angemeldete Bereiche sind
-       längst mandantenfähig (lib/active-studio.tsx), die öffentlichen
-       Seiten wurden nur nicht mitgezogen.
+       SOBALD StudioLink mit dem Branch claude/public-pages-multi-studio
+       ausgerollt ist, hier eintragen:
 
-       Anfragen von dieser Website würden damit im falschen Posteingang
-       landen. Bis /anfrage das Studio aus der Adresse liest (z. B.
-       /anfrage?studio=the-master-of-ink), greift deshalb das Formular
-       unten — es schreibt auf `studioId` und damit ins richtige Studio. */
+         appUrl: "https://studiolink-app.com"
+
+       Die Website ruft dann auf:
+         /anfrage?studio=<studioId>&embed=1&bg=080808&accent=c7c7c7
+       — also die echte Maske mit Artist-Wahl, Bild-Upload und zweitem
+       Schritt, im Farbklima dieser Seite und mit Herkunftshinweis.
+
+       BIS DAHIN LEER LASSEN. Die derzeit ausgerollte Fassung ignoriert
+       `studio` noch und würde Anfragen unter „golden-geometry" ablegen —
+       also im Münchner Posteingang statt in Rheine. Solange greift das
+       Formular unten, das direkt auf `studioId` schreibt. */
     appUrl: ""
   },
 

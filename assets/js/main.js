@@ -321,7 +321,11 @@
   var embed = document.querySelector('.booking__embed');
   var studiolinkApp = (CONFIG.studiolink || {}).appUrl;
   if (embed && studiolinkApp) {
-    var formUrl = studiolinkApp.replace(/\/$/, '') + '/anfrage';
+    /* Studio, Einbettungsmodus und Farbklima mitgeben — sonst zeigt die
+       Maske ihren eigenen Kopf und legt unter dem Standard-Studio ab. */
+    var formUrl = studiolinkApp.replace(/\/$/, '') + '/anfrage'
+      + '?studio=' + encodeURIComponent((CONFIG.studiolink || {}).studioId || '')
+      + '&embed=1&bg=080808&accent=c7c7c7';
     var frame = embed.querySelector('.booking__frame');
     var openLink = embed.querySelector('.booking__embed-link');
     if (frame) frame.src = formUrl;

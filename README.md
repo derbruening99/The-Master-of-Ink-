@@ -136,27 +136,34 @@ kurz hell ausbricht.
 
 ## Anfrageformular — StudioLink
 
-Der Termin-Abschnitt zeigt **StudioLinks offizielle Anfrage-Maske**
-(`/anfrage`), eingebettet von der laufenden Installation. Das ist dieselbe
-Oberfläche wie in StudioLink selbst — Artist- und Standortwahl, Bild-Upload,
-zweistufiger Ablauf „Lead sichern, dann qualifizieren“. Sie bleibt
-automatisch aktuell: Änderungen in StudioLink erscheinen hier, ohne dass an
-dieser Website etwas nachgezogen werden muss.
+Der Termin-Abschnitt kann **StudioLinks offizielle Anfrage-Maske**
+einbetten — dieselbe Oberfläche wie in StudioLink selbst, mit Artist- und
+Standortwahl, Bild-Upload und dem zweistufigen Ablauf.
 
-Gesteuert wird das über einen einzigen Wert in `assets/js/gallery-data.js`:
+**Noch nicht aktiv.** Die ausgerollte StudioLink-Fassung kann öffentlich nur
+ein Studio bedienen (`STUDIO_ID` steckt als Konstante im Code) und würde
+Anfragen unter „golden-geometry“ ablegen — im Münchner Posteingang statt in
+Rheine. Der Umbau liegt im Branch `claude/public-pages-multi-studio` des
+StudioLink-Repos: die öffentlichen Seiten lesen das Studio dann aus der
+Adresse.
+
+Sobald der ausgerollt ist, genügt in `assets/js/gallery-data.js`:
 
 ```js
-window.MOI_CONFIG = {
-  studiolink: {
-    appUrl: "https://studiolink-app.com",   // ← Installation
-    …
-  }
-};
+appUrl: "https://studiolink-app.com"
 ```
 
-Ist `appUrl` gesetzt, wird die Maske eingebettet und das schlanke Formular
-darunter ausgeblendet. Unter der Einbettung steht ein Link, der die Maske in
-einem neuen Tab öffnet — falls ein Browser das Einbetten blockiert.
+Die Website ruft damit auf:
+
+```
+/anfrage?studio=the-master-of-ink&embed=1&bg=080808&accent=c7c7c7
+```
+
+`embed=1` blendet Kopf, Fuß und eigenen Hintergrund der Maske aus, `bg` und
+`accent` geben ihr das Farbklima dieser Seite. Die Maske trägt dabei den
+Hinweis „Anfrageformular von StudioLink“. Unter der Einbettung steht ein
+Link, der sie in einem neuen Tab öffnet, falls ein Browser das Einbetten
+blockiert.
 
 ### Rückfallebene
 
@@ -212,7 +219,8 @@ sofort.
 
 - Telefonnummer im Impressum ergänzen (§ 5 DDG) und die Umsatzsteuer-Angabe
   klären — beide sind in `impressum.html` als TODO markiert
-- StudioLinks `/anfrage` mandantenfähig machen, dann `appUrl` setzen
+- StudioLink-Branch `claude/public-pages-multi-studio` ausrollen, dann
+  `appUrl` setzen — danach zeigt die Seite die offizielle Maske
 - Porträt von Sebastian: derzeit ein enger Ausschnitt aus dem vorhandenen
   Studiofoto. Ein eigenes Porträt wäre besser — Dateien als
   `assets/img/team-sebastian-{420,670}.{jpg,webp}` ersetzen
