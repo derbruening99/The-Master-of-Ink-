@@ -232,18 +232,33 @@ Schwarzer Bildschirm mit dem Signet, bis die Seite steht — dann hebt er sich.
 Markup und CSS stehen **inline im Dokument**, nicht im Stylesheet: sonst
 blitzt die Seite auf, bevor der Vorhang da ist.
 
-Drei Regeln halten ihn harmlos:
+Vier Regeln halten ihn harmlos:
 
 - Er wartet auf `load`, **nicht** auf das Hero-Video — das lädt bewusst erst
   danach und würde ihn sonst sekundenlang stehen lassen.
-- Er hebt sich spätestens nach 4 Sekunden, egal was noch offen ist. Eine
-  hängende Datei darf niemanden aussperren.
-- Ohne JavaScript wird er per `<noscript>` ausgeblendet — sonst bliebe die
-  Seite für diese Besucher dauerhaft schwarz.
+- **Er öffnet sich per CSS-Animation nach 3,6 s von selbst**, ganz ohne
+  JavaScript. Das ist die eigentliche Sicherung: eine veraltete oder
+  fehlerhafte `main.js` reicht sonst, und die Seite bleibt für immer
+  schwarz — genau das ist einmal passiert.
+- JavaScript hebt ihn im Normalfall früher (rund 1,3 s), Notaus bei 3 s.
+- **Keine Scrollsperre.** Sie hing an JavaScript und wäre ein zweiter Riegel
+  gewesen, den niemand mehr öffnen kann. Der Vorhang deckt den Bildschirm
+  ohnehin ab.
+
+Sichtbar ist er damit höchstens 4,4 s — geprüft gegen veraltete, fehlende
+und syntaktisch kaputte `main.js`.
 
 Eine Mindestdauer von 620 ms verhindert, dass er bei schnellem Cache nur
 kurz aufblitzt; das wirkt wie ein Fehler. Bei `prefers-reduced-motion`
 entfallen Ein- und Ausblendung.
+
+### Beim Ändern von CSS oder JS: Version hochzählen
+
+`index.html` lädt Stylesheet und Skripte mit `?v=…`. **Diese Kennung muss
+bei jeder Änderung an `main.css`, `main.js` oder `gallery-data.js` erhöht
+werden.** Sonst liefert der Browser die alte Datei zu neuem HTML — und genau
+das hat den Vorhang einmal dauerhaft stehen lassen: neues HTML mit Vorhang,
+alte `main.js` ohne die Logik zum Aufziehen.
 
 ## Arbeiten — der Betrachter
 

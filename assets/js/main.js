@@ -17,9 +17,9 @@
      hängende Datei darf niemanden aussperren. */
   (function () {
     var curtain = document.getElementById('curtain');
-    if (!curtain) { doc.classList.remove('is-loading'); return; }
+    if (!curtain) return;
     var MINDESTDAUER = 620;   /* kurzes Aufblitzen wirkt wie ein Fehler */
-    var NOTAUS = 4000;
+    var NOTAUS = 3000;        /* vor der CSS-Rückfallebene bei 3,6 s */
     var start = Date.now();
     var gehoben = false;
 
@@ -28,7 +28,6 @@
       gehoben = true;
       var wartend = Math.max(0, MINDESTDAUER - (Date.now() - start));
       window.setTimeout(function () {
-        doc.classList.remove('is-loading');
         curtain.classList.add('is-lifting');
         var weg = function () { curtain.classList.add('is-gone'); };
         curtain.addEventListener('transitionend', weg, { once: true });
