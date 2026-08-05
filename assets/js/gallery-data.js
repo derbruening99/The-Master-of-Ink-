@@ -168,21 +168,17 @@ window.MOI_CONFIG = {
 
     /* Offizielle StudioLink-Maske einbetten.
 
-       SOBALD StudioLink mit dem Branch claude/public-pages-multi-studio
-       ausgerollt ist, hier eintragen:
-
-         appUrl: "https://studiolink-app.com"
-
-       Die Website ruft dann auf:
+       Die Website ruft auf:
          /anfrage?studio=<studioId>&embed=1&bg=080808&accent=c7c7c7
-       — also die echte Maske mit Artist-Wahl, Bild-Upload und zweitem
-       Schritt, im Farbklima dieser Seite und mit Herkunftshinweis.
+       — die echte Maske mit Artist-Wahl, Bild-Upload und zweitem Schritt,
+       im Farbklima dieser Seite und mit Herkunftshinweis.
 
-       BIS DAHIN LEER LASSEN. Die derzeit ausgerollte Fassung ignoriert
-       `studio` noch und würde Anfragen unter „golden-geometry" ablegen —
-       also im Münchner Posteingang statt in Rheine. Solange greift das
-       Formular unten, das direkt auf `studioId` schreibt. */
-    appUrl: ""
+       Umgeschaltet wird erst, wenn die Maske sich per postMessage als
+       genau dieses Studio meldet. Eine ältere StudioLink-Fassung kennt
+       den `studio`-Parameter nicht und meldet sich deshalb nicht — dann
+       bleibt das Formular unten stehen, statt Anfragen ins falsche
+       Studio zu schreiben. Leer lassen schaltet die Einbettung ganz ab. */
+    appUrl: "https://studiolink-app.com"
   },
 
   /* Rückfallebene, falls StudioLink nicht erreichbar ist */

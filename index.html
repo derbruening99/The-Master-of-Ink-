@@ -203,7 +203,9 @@
           <!-- Ist studiolink.appUrl gesetzt, ersetzt das offizielle
                StudioLink-Formular (/anfrage) diesen Block. -->
           <div class="booking__embed" hidden>
-            <iframe class="booking__frame" title="Anfrage — StudioLink" loading="lazy"
+            <!-- kein loading="lazy": der Rahmen startet verborgen und muss laden,
+                 um sich als richtiges Studio zu melden — sonst lädt er nie. -->
+            <iframe class="booking__frame" title="Anfrage — StudioLink"
                     referrerpolicy="strict-origin-when-cross-origin"></iframe>
             <p class="booking__embed-fallback">Formular lädt nicht? <a class="booking__embed-link" href="#" target="_blank" rel="noopener">In neuem Tab öffnen ↗</a></p>
           </div>

@@ -321,23 +321,78 @@
   var embed = document.querySelector('.booking__embed');
   var studiolinkApp = (CONFIG.studiolink || {}).appUrl;
   if (embed && studiolinkApp) {
+    var wantedStudio = (CONFIG.studiolink || {}).studioId || '';
     /* Studio, Einbettungsmodus und Farbklima mitgeben — sonst zeigt die
        Maske ihren eigenen Kopf und legt unter dem Standard-Studio ab. */
     var formUrl = studiolinkApp.replace(/\/$/, '') + '/anfrage'
-      + '?studio=' + encodeURIComponent((CONFIG.studiolink || {}).studioId || '')
+      + '?studio=' + encodeURIComponent(wantedStudio)
       + '&embed=1&bg=080808&accent=c7c7c7';
     var frame = embed.querySelector('.booking__frame');
     var openLink = embed.querySelector('.booking__embed-link');
+    var fallbackForm = document.getElementById('anfrage');
+    var origin = (function () {
+      var a = document.createElement('a');
+      a.href = studiolinkApp;
+      return a.protocol + '//' + a.host;
+    })();
+
+    /* Ob die eingebettete Maske den `studio`-Parameter überhaupt
+       auswertet, ist von hier aus nicht erkennbar — eine ältere Fassung
+       ignoriert ihn und legt unter ihrem Standard-Studio ab. Deshalb
+       zählt nur ihre eigene Rückmeldung: bleibt sie aus oder nennt sie
+       ein anderes Studio, bleibt das Formular dieser Seite stehen. */
+    var confirmed = false;
+    var onMessage = function (event) {
+      if (event.origin !== origin) return;
+      var msg = event.data || {};
+      if (msg.source !== 'studiolink' || msg.type !== 'embed-ready') return;
+      if (msg.studioId !== wantedStudio) return;
+      confirmed = true;
+      window.removeEventListener('message', onMessage);
+      embed.hidden = false;
+      if (fallbackForm) fallbackForm.hidden = true;
+      var bookingGrid = embed.closest('.booking__grid');
+      if (bookingGrid) bookingGrid.classList.add('booking__grid--embedded');
+    };
+    window.addEventListener('message', onMessage);
+
     if (frame) frame.src = formUrl;
     if (openLink) openLink.href = formUrl;
-    embed.hidden = false;
-    var fallbackForm = document.getElementById('anfrage');
-    if (fallbackForm) fallbackForm.hidden = true;
-    /* Die offizielle Maske ist als eigene Seite gesetzt — sie braucht die
-       ganze Breite, nicht die schmale Formularspalte. */
-    var bookingGrid = embed.closest('.booking__grid');
-    if (bookingGrid) bookingGrid.classList.add('booking__grid--embedded');
+
+    window.setTimeout(function () {
+      if (confirmed) return;
+      window.removeEventListener('message', onMessage);
+      if (frame) frame.removeAttribute('src');
+      if (window.console && console.warn) {
+        console.warn('[anfrage] StudioLink hat sich nicht als "' + wantedStudio +
+          '" gemeldet — es bleibt beim Formular dieser Seite.');
+      }
+    }, 6000);
   }
+
+  /* ---------- Ablauf: Achse wächst beim Scrollen mit ----------
+     Die Linie zeichnet den Fortschritt zwischen erstem und letztem
+     Schritt nach — die Bewegung kommt aus dem Scrollen, nicht aus
+     einer Schleife, die ohnehin läuft. */
+  var journey = document.querySelector('.process-journey__steps');
+  if (journey && !mqReduced.matches) {
+    var journeyRaf = null;
+    var updateJourney = function () {
+      if (journeyRaf) return;
+      journeyRaf = requestAnimationFrame(function () {
+        journeyRaf = null;
+        var box = journey.getBoundingClientRect();
+        var anchor = window.innerHeight * 0.62;
+        var progress = (anchor - box.top) / (box.height || 1);
+        progress = Math.max(0, Math.min(1, progress));
+        journey.style.setProperty('--journey-progress', (progress * 100).toFixed(2) + '%');
+      });
+    };
+    window.addEventListener('scroll', updateJourney, { passive: true });
+    window.addEventListener('resize', updateJourney);
+    updateJourney();
+  }
+
 
   /* ---------- Anfrage → StudioLink ----------
      Ruft dieselbe Funktion wie StudioLinks eigene /anfrage-Seite:

@@ -136,34 +136,36 @@ kurz hell ausbricht.
 
 ## Anfrageformular — StudioLink
 
-Der Termin-Abschnitt kann **StudioLinks offizielle Anfrage-Maske**
-einbetten — dieselbe Oberfläche wie in StudioLink selbst, mit Artist- und
-Standortwahl, Bild-Upload und dem zweistufigen Ablauf.
-
-**Noch nicht aktiv.** Die ausgerollte StudioLink-Fassung kann öffentlich nur
-ein Studio bedienen (`STUDIO_ID` steckt als Konstante im Code) und würde
-Anfragen unter „golden-geometry“ ablegen — im Münchner Posteingang statt in
-Rheine. Der Umbau liegt im Branch `claude/public-pages-multi-studio` des
-StudioLink-Repos: die öffentlichen Seiten lesen das Studio dann aus der
-Adresse.
-
-Sobald der ausgerollt ist, genügt in `assets/js/gallery-data.js`:
-
-```js
-appUrl: "https://studiolink-app.com"
-```
-
-Die Website ruft damit auf:
+Der Termin-Abschnitt zeigt **StudioLinks offizielle Anfrage-Maske** —
+dieselbe Oberfläche wie in StudioLink selbst, mit Artist- und Standortwahl,
+Bild-Upload und dem zweistufigen Ablauf. Aufgerufen wird:
 
 ```
-/anfrage?studio=the-master-of-ink&embed=1&bg=080808&accent=c7c7c7
+https://studiolink-app.com/anfrage?studio=the-master-of-ink&embed=1&bg=080808&accent=c7c7c7
 ```
 
 `embed=1` blendet Kopf, Fuß und eigenen Hintergrund der Maske aus, `bg` und
-`accent` geben ihr das Farbklima dieser Seite. Die Maske trägt dabei den
-Hinweis „Anfrageformular von StudioLink“. Unter der Einbettung steht ein
-Link, der sie in einem neuen Tab öffnet, falls ein Browser das Einbetten
-blockiert.
+`accent` geben ihr das Farbklima dieser Seite. Sie trägt dabei den Hinweis
+„Anfrageformular von StudioLink“.
+
+### Das Ziel ist fest — und wird geprüft
+
+Von außen ist nicht erkennbar, welche StudioLink-Fassung im Rahmen
+antwortet. Eine ältere ignoriert `studio` stillschweigend und legt unter
+ihrem eigenen Standard-Studio ab — Anfragen aus Rheine landeten dann in
+München. Deshalb wird nicht vertraut, sondern nachgefragt:
+
+1. Der Rahmen startet **verborgen** und lädt.
+2. Die Maske meldet sich per `postMessage` mit dem Studio, für das sie
+   tatsächlich arbeitet.
+3. Nur wenn Herkunft und `studioId` exakt `the-master-of-ink` ergeben,
+   wird auf sie umgeschaltet.
+4. Bleibt die Meldung aus oder nennt ein anderes Studio, bleibt das
+   Formular dieser Seite stehen — nach 6 Sekunden endgültig.
+
+Der Rahmen trägt deshalb **kein** `loading="lazy"`: verborgen und faul
+geladen würde er nie starten, sich nie melden und die Einbettung nie
+freischalten.
 
 ### Rückfallebene
 
@@ -219,8 +221,6 @@ sofort.
 
 - Telefonnummer im Impressum ergänzen (§ 5 DDG) und die Umsatzsteuer-Angabe
   klären — beide sind in `impressum.html` als TODO markiert
-- StudioLink-Branch `claude/public-pages-multi-studio` ausrollen, dann
-  `appUrl` setzen — danach zeigt die Seite die offizielle Maske
 - Porträt von Sebastian: derzeit ein enger Ausschnitt aus dem vorhandenen
   Studiofoto. Ein eigenes Porträt wäre besser — Dateien als
   `assets/img/team-sebastian-{420,670}.{jpg,webp}` ersetzen
