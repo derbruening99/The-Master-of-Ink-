@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-# Sitemap wird ergänzt, sobald die endgültige Domain feststeht.
+Sitemap: https://masterofink.vercel.app/sitemap.xml
