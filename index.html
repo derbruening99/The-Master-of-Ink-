@@ -19,7 +19,7 @@
   <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
   <link rel="preload" href="assets/fonts/cormorant-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="assets/css/main.css?v=20260805-curtain-viewer">
+  <link rel="stylesheet" href="assets/css/main.css?v=20260805-stage2">
 
   <script type="application/ld+json">
   {
@@ -139,34 +139,58 @@
     </section>
 
     <section class="process-journey section section--ink" id="prozess" aria-labelledby="process-title">
-      <div class="section__index reveal">02 / Haltung &amp; Prozess</div>
+      <div class="section__index reveal">02 / Prozess &amp; Arbeiten</div>
       <div class="process-journey__head reveal reveal--soak">
         <p class="eyebrow">Von der Idee bis zur verheilten Arbeit</p>
         <h2 id="process-title">Drei Schritte.<br><em>Ein Prozess.</em></h2>
         <p>Vertrauen entsteht nicht in einem einzelnen Moment. Es wächst entlang einer klaren Linie — vom ersten Zuhören bis zur persönlichen Begleitung danach.</p>
       </div>
-      <div class="process-journey__grid">
-        <figure class="process-journey__visual reveal reveal--plate">
-          <div class="process-journey__media">
-            <img src="assets/video/needle-poster-720.jpg" srcset="assets/video/needle-poster-720.jpg 720w, assets/video/needle-poster.jpg 1080w" sizes="(min-width: 900px) 43vw, 100vw" alt="Nahaufnahme einer präzisen Linienarbeit mit der Tätowiernadel" loading="lazy" decoding="async">
-            <video data-video-webm="assets/video/needle-loop.webm" data-video-mp4="assets/video/needle-loop.mp4" muted loop playsinline preload="none" poster="assets/video/needle-poster.jpg" tabindex="-1" aria-hidden="true"></video>
+      <div class="chapter__grid">
+        <div class="chapter__stage">
+          <!-- Eine Bühne für beides: sie klebt durch das ganze Kapitel und
+               blendet vom Video in die Arbeiten über. Ohne sie stünde neben
+               Schritt II und III die halbe Breite leer. -->
+          <div class="stage" id="stage">
+            <div class="stage__slot is-active" data-stage-slot="video">
+              <img src="assets/video/needle-poster-720.jpg" srcset="assets/video/needle-poster-720.jpg 720w, assets/video/needle-poster.jpg 1080w" sizes="(min-width: 900px) 46vw, 100vw" alt="Nahaufnahme einer präzisen Linienarbeit mit der Tätowiernadel" loading="lazy" decoding="async">
+              <video data-video-webm="assets/video/needle-loop.webm" data-video-mp4="assets/video/needle-loop.mp4" muted loop playsinline preload="none" poster="assets/video/needle-poster.jpg" tabindex="-1" aria-hidden="true"></video>
+            </div>
           </div>
-          <figcaption>Präzision ist kein Stilmittel. Sie ist die Grundlage.</figcaption>
-        </figure>
-        <ol class="process-journey__steps" aria-label="Unser Prozess in drei Schritten">
-          <li class="process-journey__step reveal reveal--soak">
-            <span class="process-journey__roman" aria-hidden="true">I</span>
-            <div><h3>Zuhören</h3><p>Du schickst uns deine Idee, die gewünschte Stelle und das, was hinter dem Motiv steckt. Wir prüfen persönlich und ehrlich, ob das Projekt zu uns passt.</p></div>
-          </li>
-          <li class="process-journey__step reveal reveal--soak">
-            <span class="process-journey__roman" aria-hidden="true">II</span>
-            <div><h3>Klären &amp; Komponieren</h3><p>Im Gespräch klären wir Richtung, Größe, Platzierung und Machbarkeit — privat und ohne laufenden Studiobetrieb. Daraus entsteht der Entwurf für deinen Körper: einmal gezeichnet, einmal tätowiert. Proportion, Bewegung und persönliche Bedeutung werden zu einer Einheit.</p></div>
-          </li>
-          <li class="process-journey__step reveal reveal--soak">
-            <span class="process-journey__roman" aria-hidden="true">III</span>
-            <div><h3>Tätowieren &amp; Begleiten</h3><p>Dein Termin gehört dir. Danach bleiben wir mit klaren Pflegehinweisen und persönlicher Erreichbarkeit an deiner Seite, bis die Arbeit sauber verheilt ist.</p></div>
-          </li>
-        </ol>
+          <p class="stage__caption" id="stage-caption" aria-live="polite">Präzision ist kein Stilmittel. Sie ist die Grundlage.</p>
+        </div>
+
+        <div class="chapter__scroll">
+          <ol class="process-journey__steps" aria-label="Unser Prozess in drei Schritten">
+            <li class="process-journey__step reveal reveal--soak" data-stage="video">
+              <span class="process-journey__roman" aria-hidden="true">I</span>
+              <div><h3>Zuhören</h3><p>Du schickst uns deine Idee, die gewünschte Stelle und das, was hinter dem Motiv steckt. Wir prüfen persönlich und ehrlich, ob das Projekt zu uns passt.</p></div>
+            </li>
+            <li class="process-journey__step reveal reveal--soak" data-stage="video">
+              <span class="process-journey__roman" aria-hidden="true">II</span>
+              <div><h3>Klären &amp; Komponieren</h3><p>Im Gespräch klären wir Richtung, Größe, Platzierung und Machbarkeit — privat und ohne laufenden Studiobetrieb. Daraus entsteht der Entwurf für deinen Körper: einmal gezeichnet, einmal tätowiert. Proportion, Bewegung und persönliche Bedeutung werden zu einer Einheit.</p></div>
+            </li>
+            <li class="process-journey__step reveal reveal--soak" data-stage="video">
+              <span class="process-journey__roman" aria-hidden="true">III</span>
+              <div><h3>Tätowieren &amp; Begleiten</h3><p>Dein Termin gehört dir. Danach bleiben wir mit klaren Pflegehinweisen und persönlicher Erreichbarkeit an deiner Seite, bis die Arbeit sauber verheilt ist.</p></div>
+            </li>
+          </ol>
+
+          <div class="worklane" id="arbeiten">
+            <div class="worklane__head reveal reveal--soak">
+              <p class="eyebrow">Portfolio / <span id="portfolio-artist-label">Studio</span></p>
+              <h2 id="work-title">Ausgewählte<br><em>Arbeiten.</em></h2>
+            </div>
+            <div class="gallery__filters" role="group" aria-label="Arbeiten nach Stil filtern"></div>
+            <div class="gallery" id="gallery" aria-live="polite">
+              <noscript>
+                <figure><img src="assets/img/work-schlange-640.jpg" alt="Fine-Line-Tätowierung: Schlange mit Pfingstrosen entlang der Hüfte" loading="lazy"></figure>
+                <figure><img src="assets/img/work-leopard-640.jpg" alt="Tätowierung eines halb verborgenen Leoparden am Oberarm" loading="lazy"></figure>
+                <figure><img src="assets/img/work-dobermann-640.jpg" alt="Cover-up-Tätowierung: Dobermann-Porträt auf dem Unterarm" loading="lazy"></figure>
+                <figure><img src="assets/img/work-fineline-640.jpg" alt="Fine-Line-Tätowierung eines Gehirns mit umlaufendem Faden" loading="lazy"></figure>
+              </noscript>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -191,27 +215,10 @@
       </div>
     </section>
 
-    <section class="work section section--paper" id="arbeiten" aria-labelledby="work-title">
-      <div class="section__index reveal">04 / Auswahl</div>
-      <div class="work__head reveal reveal--soak">
-        <div>
-          <p class="eyebrow">Portfolio / <span id="portfolio-artist-label">Studio</span></p>
-          <h2 id="work-title">Ausgewählte<br><em>Arbeiten.</em></h2>
-        </div>
-        <p>Eine bewusst kleine Auswahl als Einblick in die Handschriften unseres Teams. Der Filter bleibt für die Pflege des Portfolios erhalten — aber die Arbeit selbst steht im Vordergrund.</p>
-      </div>
-      <div class="gallery__filters" role="group" aria-label="Arbeiten nach Stil filtern"></div>
-      <div class="gallery" id="gallery" aria-live="polite">
-        <noscript>
-          <figure><img src="assets/img/work-schlange-640.jpg" alt="Fine-Line-Tätowierung: Schlange mit Pfingstrosen entlang der Hüfte" loading="lazy"></figure>
-          <figure><img src="assets/img/work-leopard-640.jpg" alt="Tätowierung eines halb verborgenen Leoparden am Oberarm" loading="lazy"></figure>
-          <figure><img src="assets/img/work-dobermann-640.jpg" alt="Cover-up-Tätowierung: Dobermann-Porträt auf dem Unterarm" loading="lazy"></figure>
-          <figure><img src="assets/img/work-fineline-640.jpg" alt="Fine-Line-Tätowierung eines Gehirns mit umlaufendem Faden" loading="lazy"></figure>
-        </noscript>
-      </div>
+    <section class="section section--paper work-outro" aria-label="Zum Portfolio">
       <div class="work__after reveal reveal--soak">
         <p>Nicht die Menge entscheidet.<br><em>Sondern ob eine Arbeit hängen bleibt.</em></p>
-        <a href="https://www.instagram.com/bruen.ink/" rel="noopener">Mehr Arbeiten auf Instagram <span aria-hidden="true">↗</span></a>
+        <a href="https://www.instagram.com/masterofinkger/" rel="noopener">Mehr Arbeiten auf Instagram <span aria-hidden="true">↗</span></a>
       </div>
     </section>
 
@@ -267,7 +274,7 @@
     <div class="colophon__base"><p>© 2026 The Master of Ink</p><p>Rheine · Nur nach Termin</p><nav class="colophon__legal" aria-label="Rechtliches"><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a></nav></div>
   </footer>
 
-  <script src="assets/js/gallery-data.js?v=20260805-curtain-viewer" defer></script>
-  <script src="assets/js/main.js?v=20260805-curtain-viewer" defer></script>
+  <script src="assets/js/gallery-data.js?v=20260805-stage2" defer></script>
+  <script src="assets/js/main.js?v=20260805-stage2" defer></script>
 </body>
 </html>

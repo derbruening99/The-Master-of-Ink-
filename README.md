@@ -260,21 +260,41 @@ werden.** Sonst liefert der Browser die alte Datei zu neuem HTML — und genau
 das hat den Vorhang einmal dauerhaft stehen lassen: neues HTML mit Vorhang,
 alte `main.js` ohne die Logik zum Aufziehen.
 
-## Arbeiten — der Betrachter
+## Arbeiten — geteilte Bühne (aktuell)
 
-Statt vier Tafeln untereinander liegt eine Tafel da, durch die der Zeiger
-waagerecht fährt: links die erste Arbeit, rechts die letzte. Wer nicht mag,
-scrollt weiter. Das kürzt den Abschnitt von 2458 px auf rund 1700 px.
+Prozess und Arbeiten teilen sich ein Kapitel und **eine** klebende
+Bildfläche. Links steht sie fest, rechts scrollt der Inhalt vorbei: neben
+den drei Prozessschritten zeigt sie das Nadel-Video, danach blendet sie auf
+die jeweils vorbeiziehende Arbeit um. Das füllt die Spalte, die vorher neben
+Schritt II und III leer stand, und ersetzt den kompletten eigenen
+Arbeiten-Abschnitt.
 
-Bedienung auf allen Wegen: Zeiger (gedrosselt über `requestAnimationFrame`),
-Ziehen auf Touch-Geräten, Pfeiltasten bei Tastaturfokus. Die Beschriftung
-steht in einem `aria-live`-Bereich, wechselt also auch für Screenreader mit.
+Wie es zusammenspielt:
 
-Die Bühne ist **hochformatig** (4:5) und in der Höhe gedeckelt: die
-Aufnahmen sind Hochformat, ein Querformat-Ausschnitt zeigt vor allem
-Hintergrund. `.gallery` ist ein 12-Spalten-Raster aus dem vorherigen Layout —
-der Betrachter braucht deshalb `grid-column:1/-1`, sonst kollabiert die
-Bühne auf 0 px Breite.
+- Jeder Text rechts trägt `data-stage="<id>"`; ein IntersectionObserver mit
+  mittigem Band (`rootMargin -40 %/-40 %`) schaltet die Bühne auf den
+  obersten sichtbaren Block.
+- **Jede Arbeit braucht Scrollstrecke** (`min-height: 44svh`), sonst kommt
+  sie nie an die Reihe.
+- Der Abschnitt nutzt `overflow: clip`, nicht `hidden` — `hidden` erzeugt
+  einen Scrollcontainer und macht jedes `position: sticky` darin wirkungslos.
+- Die alte `.gallery` war ein 12-Spalten-Raster; bleibt es stehen, liegen
+  alle Werkblöcke nebeneinander auf gleicher Höhe und nur der erste
+  bekommt je die Bühne.
+- Nach einem Filterwechsel baut `renderGallery()` Bühnen-Ausschnitte und
+  Blöcke gemeinsam neu auf; ohne Treffer bleibt das Video stehen.
+- Bei `prefers-reduced-motion` klebt nichts und die Ausschnitte wechseln
+  ohne Übergang; ohne JavaScript zeigt `<noscript>` die vier Bilder direkt.
+
+## Scroll-Gefühl
+
+`scroll-snap-type: y proximity` auf `html`, Rastpunkte an den
+Kapitelanfängen — **proximity, nicht mandatory**: es rastet nur ein, wer
+nahe einer Kante landet. `mandatory` würde die lange Werk-Spur unbenutzbar
+machen, weil man zwischen zwei Rastpunkten nie zum Stehen käme. Nur ab
+900 px Breite und ohne `prefers-reduced-motion`. Die Eintritte der
+Abschnitte laufen als weiches Aufsteigen mit Unschärfe über die
+`reveal--soak`-Klasse.
 
 ## Performance
 
