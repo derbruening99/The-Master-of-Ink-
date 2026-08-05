@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Master of Ink — Tattoostudio in Rheine</title>
+  <meta name="description" content="The Master of Ink — Tattoostudio in Rheine. Individuelle Tattoos von Brian: Fine Line, Realismus, Cover-up. Beratung nur nach Termin.">
+  <meta name="theme-color" content="#F2EDE3">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="The Master of Ink — Tattoostudio in Rheine">
+  <meta property="og:description" content="Tattoos, die zu dir passen. Individuelle Motive, von Hand gezeichnet — Beratung nur nach Termin.">
+  <meta property="og:image" content="assets/img/og-image.jpg">
+  <meta property="og:locale" content="de_DE">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+
+  <link rel="preload" href="assets/fonts/cormorant-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/cormorant-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/main.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TattooParlor",
+    "name": "The Master of Ink",
+    "slogan": "Tattoos, die zu dir passen.",
+    "image": "assets/img/og-image.jpg",
+    "logo": "assets/img/logo-320.png",
+    "address": { "@type": "PostalAddress", "addressLocality": "Rheine", "addressCountry": "DE" },
+    "sameAs": ["https://www.instagram.com/bruen.ink/"]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#arbeiten">Zum Inhalt springen</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Masthead -->
+  <header class="masthead">
+    <nav class="masthead__nav" aria-label="Hauptnavigation">
+      <a class="masthead__brand" href="#start" aria-label="The Master of Ink — zum Anfang">
+        <img src="assets/img/logo-160.png" alt="The Master of Ink" width="74" height="80" class="masthead__logo">
+        <span class="masthead__issue">Monografie — Rheine</span>
+      </a>
+      <div class="masthead__links">
+        <a href="#arbeiten">Arbeiten</a>
+        <a href="#team">Team</a>
+        <a href="#ablauf">Ablauf</a>
+        <a class="masthead__cta" href="#termin">Termin</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero — full-bleed studio footage -->
+    <section class="hero" id="start">
+      <div class="hero__media" aria-hidden="true">
+        <picture>
+          <source media="(orientation: portrait) and (max-width: 899px)" srcset="assets/video/studio-poster-portrait.jpg">
+          <img class="hero__poster"
+               src="assets/video/studio-poster-720.jpg"
+               srcset="assets/video/studio-poster-720.jpg 720w, assets/video/studio-poster.jpg 1080w"
+               sizes="100vw" alt="" decoding="async" fetchpriority="high">
+        </picture>
+        <video class="hero__video"
+               data-video-webm="assets/video/studio-loop.webm"
+               data-video-mp4="assets/video/studio-loop.mp4"
+               muted loop playsinline preload="none"
+               poster="assets/video/studio-poster.jpg" tabindex="-1"></video>
+        <div class="hero__scrim"></div>
+      </div>
+
+      <div class="hero__content">
+        <p class="hero__kicker">N°01 — Dein Tattoostudio in Rheine</p>
+        <div class="hero__foot">
+          <h1 class="hero__title" aria-label="The Master of Ink">Master<br>of&nbsp;Ink</h1>
+          <div class="hero__lede">
+            <p class="hero__line">Tattoos, die zu dir passen.</p>
+            <div class="hero__actions">
+              <a class="btn btn--solid" href="#termin">Beratung anfragen</a>
+              <a class="btn btn--ghost" href="#arbeiten">Arbeiten ansehen&nbsp;↓</a>
+            </div>
+            <p class="hero__note">Unverbindlich · Nur nach Termin · Rheine</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ink-edge ink-edge--hero" aria-hidden="true">
+        <svg viewBox="0 0 1440 52" preserveAspectRatio="none" focusable="false">
+          <defs>
+            <filter id="edge-hero" x="-5%" y="-120%" width="110%" height="340%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.011 0.19" numOctaves="2" seed="7" result="n"/>
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="30"/>
+            </filter>
+          </defs>
+          <rect x="-60" y="24" width="1560" height="80" fill="#F2EDE3" filter="url(#edge-hero)"/>
+          <rect x="-60" y="34" width="1560" height="80" fill="#F2EDE3" opacity="0.4" filter="url(#edge-hero)"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Kapitel 01 — Arbeiten -->
+    <section id="arbeiten" class="chapter chapter--arbeiten">
+      <div class="chapter__inner">
+        <div class="chapter__head reveal reveal--soak">
+          <span class="chapter__no">Kapitel 01</span>
+          <span class="chapter__rule" aria-hidden="true"></span>
+          <h2 class="chapter__title">Ausgewählte Arbeiten</h2>
+        </div>
+
+        <div class="gallery__filters" role="group" aria-label="Arbeiten filtern">
+          <!-- Buttons werden aus assets/js/gallery-data.js erzeugt -->
+        </div>
+
+        <div class="gallery" id="gallery" aria-live="polite">
+          <noscript>
+            <div class="gallery__noscript">
+              <img src="assets/img/work-schlange-640.jpg" alt="Fine-Line-Tätowierung: Schlange mit Pfingstrosen entlang der Hüfte" loading="lazy">
+              <img src="assets/img/work-leopard-640.jpg" alt="Tätowierung eines halb verborgenen Leoparden am Oberarm" loading="lazy">
+              <img src="assets/img/work-dobermann-640.jpg" alt="Cover-up-Tätowierung: Dobermann-Porträt auf dem Unterarm" loading="lazy">
+            </div>
+          </noscript>
+        </div>
+
+        <blockquote class="pullquote reveal reveal--soak">
+          <p>Ein Tattoo wird nicht auf den Körper gesetzt — <em>es wird für ihn komponiert.</em></p>
+        </blockquote>
+
+        <div class="contactsheet">
+          <p class="contactsheet__label">Kontaktbogen — aus dem Studio</p>
+          <div class="contactsheet__row">
+            <figure class="contactsheet__cell">
+              <div class="contactsheet__frame">
+                <picture>
+                  <source type="image/webp" srcset="assets/img/cs-session-560.webp">
+                  <img src="assets/img/cs-session-560.jpg" alt="Studiomoment: Session am Unterarm" loading="lazy" decoding="async" width="560" height="560">
+                </picture>
+              </div>
+              <figcaption>FR 08 — Session</figcaption>
+            </figure>
+            <figure class="contactsheet__cell">
+              <div class="contactsheet__frame">
+                <picture>
+                  <source type="image/webp" srcset="assets/img/cs-stencil-560.webp">
+                  <img src="assets/img/cs-stencil-560.jpg" alt="Studiomoment: Stencil wird zugeschnitten" loading="lazy" decoding="async" width="560" height="560">
+                </picture>
+              </div>
+              <figcaption>FR 04 — Stencil</figcaption>
+            </figure>
+            <figure class="contactsheet__cell">
+              <div class="contactsheet__frame">
+                <picture>
+                  <source type="image/webp" srcset="assets/img/cs-brian-560.webp">
+                  <img src="assets/img/cs-brian-560.jpg" alt="Studiomoment: Brian setzt Linien" loading="lazy" decoding="async" width="560" height="560">
+                </picture>
+              </div>
+              <figcaption>FR 23 — Linien</figcaption>
+            </figure>
+            <figure class="contactsheet__cell">
+              <div class="contactsheet__frame">
+                <picture>
+                  <source type="image/webp" srcset="assets/img/cs-dobermann-560.webp">
+                  <img src="assets/img/cs-dobermann-560.jpg" alt="Detail: Dobermann-Tätowierung" loading="lazy" decoding="async" width="560" height="560">
+                </picture>
+              </div>
+              <figcaption>FR 73 — Wächter</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Zwischenblatt — ruhiger Studiomoment -->
+    <section class="interleaf" aria-label="Studiomoment — die Nadel aus der Nähe">
+      <div class="ink-edge ink-edge--into" aria-hidden="true">
+        <svg viewBox="0 0 1440 52" preserveAspectRatio="none" focusable="false">
+          <defs>
+            <filter id="edge-in" x="-5%" y="-120%" width="110%" height="340%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.013 0.21" numOctaves="2" seed="11" result="n"/>
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="28"/>
+            </filter>
+          </defs>
+          <rect x="-60" y="26" width="1560" height="80" fill="#14100C" filter="url(#edge-in)"/>
+          <rect x="-60" y="36" width="1560" height="80" fill="#14100C" opacity="0.35" filter="url(#edge-in)"/>
+        </svg>
+      </div>
+
+      <div class="interleaf__inner">
+        <figure class="interleaf__plate reveal reveal--plate">
+          <div class="interleaf__media" data-moment>
+            <picture>
+              <img src="assets/video/needle-poster-720.jpg"
+                   srcset="assets/video/needle-poster-720.jpg 720w, assets/video/needle-poster.jpg 1080w"
+                   sizes="(min-width: 780px) 680px, 88vw"
+                   alt="Nahaufnahme: Tätowiernadel setzt eine Linie" loading="lazy" decoding="async">
+            </picture>
+            <video data-video-webm="assets/video/needle-loop.webm"
+                   data-video-mp4="assets/video/needle-loop.mp4"
+                   muted loop playsinline preload="none"
+                   poster="assets/video/needle-poster.jpg" tabindex="-1" aria-hidden="true"></video>
+          </div>
+          <figcaption class="interleaf__caption">Zwischenblatt — die Nadel, aus der Nähe. Eine Linie, ein Durchgang.</figcaption>
+        </figure>
+      </div>
+
+      <div class="ink-edge ink-edge--outof" aria-hidden="true">
+        <svg viewBox="0 0 1440 52" preserveAspectRatio="none" focusable="false">
+          <defs>
+            <filter id="edge-out" x="-5%" y="-120%" width="110%" height="340%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.012 0.2" numOctaves="2" seed="23" result="n"/>
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="28"/>
+            </filter>
+          </defs>
+          <rect x="-60" y="26" width="1560" height="80" fill="#14100C" filter="url(#edge-out)"/>
+          <rect x="-60" y="36" width="1560" height="80" fill="#14100C" opacity="0.35" filter="url(#edge-out)"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Kapitel 02 — Das Team -->
+    <section id="team" class="chapter chapter--team">
+      <div class="chapter__inner">
+        <div class="chapter__head reveal reveal--soak">
+          <span class="chapter__no">Kapitel 02</span>
+          <span class="chapter__rule" aria-hidden="true"></span>
+          <h2 class="chapter__title">Das Team</h2>
+        </div>
+
+        <p class="team__intro reveal reveal--soak">Ein Studio, ein Künstler — jede Arbeit entsteht aus einer Hand.</p>
+
+        <article class="artist">
+          <div class="artist__text">
+            <p class="artist__role">Der Künstler</p>
+            <p class="artist__name" aria-label="Brian">Brian</p>
+            <div class="artist__bio">
+              <p class="artist__meta">Rheine · Sketch-Realismus · Fine Line · Blackwork</p>
+              <p>Brian zeichnet jedes Stück von Hand — für einen Menschen, ein einziges Mal. Sein Studio hat die Ruhe eines Zeichenzimmers: Papier, Tinte, gutes Licht und Zeit.</p>
+              <p class="artist__quote"><span aria-hidden="true">—</span> „Haut ist die ehrlichste Leinwand, die es gibt. Sie verdient Geduld.“</p>
+              <p class="artist__ig"><a href="https://www.instagram.com/bruen.ink/" rel="noopener">Instagram — @bruen.ink</a></p>
+            </div>
+          </div>
+          <div class="artist__portrait reveal reveal--wipe" data-wipe="left">
+            <picture>
+              <source type="image/webp" srcset="assets/img/team-brian-800.webp 800w, assets/img/team-brian-1280.webp 1280w, assets/img/team-brian-1920.webp 1920w" sizes="(min-width: 900px) 48vw, 100vw">
+              <img src="assets/img/team-brian-1280.jpg"
+                   srcset="assets/img/team-brian-800.jpg 800w, assets/img/team-brian-1280.jpg 1280w, assets/img/team-brian-1920.jpg 1920w"
+                   sizes="(min-width: 900px) 48vw, 100vw"
+                   alt="Brian bei der Arbeit im Studio" loading="lazy" decoding="async">
+            </picture>
+          </div>
+        </article>
+
+        <div class="workpair">
+          <figure class="workpair__fig reveal reveal--wipe" data-wipe="up">
+            <div class="workpair__frame">
+              <picture>
+                <source type="image/webp" srcset="assets/img/studio-stencil-640.webp 640w, assets/img/studio-stencil-1024.webp 1024w" sizes="(min-width: 700px) 38vw, 90vw">
+                <img src="assets/img/studio-stencil-640.jpg"
+                     srcset="assets/img/studio-stencil-640.jpg 640w, assets/img/studio-stencil-1024.jpg 1024w"
+                     sizes="(min-width: 700px) 38vw, 90vw"
+                     alt="Stencil wird mit der Schere zugeschnitten" loading="lazy" decoding="async">
+              </picture>
+            </div>
+            <figcaption>Jeder Entwurf beginnt auf Papier</figcaption>
+          </figure>
+          <figure class="workpair__fig workpair__fig--offset reveal reveal--wipe" data-wipe="up">
+            <div class="workpair__frame">
+              <picture>
+                <source type="image/webp" srcset="assets/img/studio-session-640.webp 640w, assets/img/studio-session-1024.webp 1024w" sizes="(min-width: 700px) 34vw, 90vw">
+                <img src="assets/img/studio-session-640.jpg"
+                     srcset="assets/img/studio-session-640.jpg 640w, assets/img/studio-session-1024.jpg 1024w"
+                     sizes="(min-width: 700px) 34vw, 90vw"
+                     alt="Während der Session am Unterarm" loading="lazy" decoding="async">
+              </picture>
+            </div>
+            <figcaption>Während der Session</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Kapitel 03 — Ablauf -->
+    <section id="ablauf" class="chapter chapter--ablauf">
+      <div class="chapter__inner">
+        <div class="chapter__head reveal reveal--soak">
+          <span class="chapter__no">Kapitel 03</span>
+          <span class="chapter__rule" aria-hidden="true"></span>
+          <h2 class="chapter__title">Der Ablauf</h2>
+        </div>
+        <ol class="steps">
+          <li class="steps__item reveal reveal--soak">
+            <p class="steps__num">I</p>
+            <h3>Anfrage</h3>
+            <p>Schick ein paar Zeilen zu deiner Idee über StudioLink. Jede Anfrage liest Brian persönlich.</p>
+          </li>
+          <li class="steps__item steps__item--offset reveal reveal--soak">
+            <p class="steps__num">II</p>
+            <h3>Beratung</h3>
+            <p>Eine entspannte Stunde im Studio oder per Video — Platzierung, Größe, Referenzen und ehrliche Beratung.</p>
+          </li>
+          <li class="steps__item reveal reveal--soak">
+            <p class="steps__num">III</p>
+            <h3>Entwurf</h3>
+            <p>Eine eigene Zeichnung, komponiert für deinen Körper — mit einer durchdachten Runde Feinschliff.</p>
+          </li>
+          <li class="steps__item steps__item--offset reveal reveal--soak">
+            <p class="steps__num">IV</p>
+            <h3>Session</h3>
+            <p>Ruhige Atmosphäre, kein Zeitdruck — und Aftercare-Begleitung, die nicht an der Tür endet.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Kapitel 04 — Termin -->
+    <section id="termin" class="chapter chapter--termin">
+      <div class="chapter__inner">
+        <div class="chapter__head reveal reveal--soak">
+          <span class="chapter__no">Kapitel 04</span>
+          <span class="chapter__rule" aria-hidden="true"></span>
+          <h2 class="chapter__title">Termin</h2>
+        </div>
+        <div class="termin">
+          <div class="termin__copy">
+            <p class="termin__lead">Beginne das Gespräch.</p>
+            <p>Beratungen finden im Studio oder per Video statt — unverbindlich. Erzähl uns, was dir vorschwebt; ein Fragment einer Idee genügt.</p>
+            <p>Wir nehmen pro Saison eine begrenzte Zahl an Projekten an. Aktuelle Wartezeit bis zur ersten Session: 6–8 Wochen.</p>
+            <p class="termin__hint">Rheine · Nur nach Termin</p>
+          </div>
+          <div class="termin__form">
+            <form id="anfrage" novalidate>
+              <label class="field">
+                <span class="field__label">Name</span>
+                <input class="field__input" type="text" name="name" autocomplete="name" required>
+              </label>
+              <label class="field">
+                <span class="field__label">E-Mail</span>
+                <input class="field__input" type="email" name="email" autocomplete="email" required>
+              </label>
+              <label class="field">
+                <span class="field__label">Die Idee</span>
+                <textarea class="field__input" name="idea" rows="3" placeholder="Motiv, Platzierung, Größe — alles, was du schon weißt."></textarea>
+              </label>
+              <label class="field field--hp" aria-hidden="true">
+                <span class="field__label">Firma</span>
+                <input class="field__input" type="text" name="company" tabindex="-1" autocomplete="off">
+              </label>
+              <p class="form__error" role="alert" hidden></p>
+              <button class="form__submit" type="submit">Anfrage senden&nbsp;→</button>
+            </form>
+            <div class="termin__done" hidden>
+              <p class="termin__done-title">Angekommen.</p>
+              <p>Danke dir. Brian liest jede Anfrage persönlich — du hörst innerhalb von drei Werktagen von uns.</p>
+            </div>
+            <div class="studiolink">
+              <p>Anfragen &amp; Terminverwaltung — powered by StudioLink</p>
+              <a href="#" rel="noopener">So funktioniert StudioLink für Studios</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Colophon -->
+  <footer class="colophon">
+    <div class="colophon__inner">
+      <div class="colophon__grid">
+        <div class="colophon__brand">
+          <img src="assets/img/logo-160.png" alt="The Master of Ink" width="74" height="80" class="colophon__logo">
+          <p class="colophon__tagline">Tattoos, die zu dir passen.</p>
+        </div>
+        <div class="colophon__cols">
+          <div class="colophon__col">
+            <p class="colophon__head">Besuch</p>
+            <p>Tattoostudio in Rheine<br>Nur nach Termin</p>
+          </div>
+          <div class="colophon__col">
+            <p class="colophon__head">Kontakt</p>
+            <a href="mailto:studio@masterofink.example">studio@masterofink.example</a>
+            <a href="#termin">Beratung anfragen</a>
+          </div>
+          <div class="colophon__col">
+            <p class="colophon__head">Folgen</p>
+            <a href="https://www.instagram.com/bruen.ink/" rel="noopener">Instagram</a>
+          </div>
+        </div>
+      </div>
+      <div class="colophon__base">
+        <p>© 2026 The Master of Ink, Rheine. Alle Rechte vorbehalten.</p>
+        <p class="colophon__note">Termine über StudioLink</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/gallery-data.js" defer></script>
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>
