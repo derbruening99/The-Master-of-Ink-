@@ -21,9 +21,27 @@ Lokal ansehen — ein Server ist nötig, `file://` reicht für Videos nicht:
 python3 -m http.server 8000     # dann http://localhost:8000
 ```
 
-## Galerie pflegen
+## Künstler und Portfolio pflegen
 
-Alles Inhaltliche steht in **`assets/js/gallery-data.js`**. Bilder tragen
+Alles Inhaltliche steht in **`assets/js/gallery-data.js`**. Das Array
+`artists` erzeugt das Team-Verzeichnis; weitere Artists werden als zusätzliche
+Objekte ergänzt. Die Zuordnung einer Arbeit erfolgt über `works[].artistId`.
+
+```js
+{
+  id: "bryan",
+  name: "Bryan",
+  role: "Resident Artist",
+  specialties: ["Sketch-Realismus", "Fine Line", "Blackwork"],
+  portrait: {
+    slot: "team-brian",        // interner Medienname; sichtbar bleibt Bryan
+    widths: [800, 1280, 1920],
+    alt: "Bryan bei einer konzentrierten Tattoo-Session im Studio"
+  }
+}
+```
+
+Bilder tragen
 keinerlei eingebrannten Text; Titel, Kategorie und Beschreibung liegen
 ausschließlich als Daten daneben und erscheinen im Layout *neben* oder
 *unter* dem Bild, nie darüber.
@@ -33,6 +51,8 @@ Ein Eintrag:
 ```js
 {
   id: "schlange",
+  artistId: "bryan",          // Zuordnung zum Team-Eintrag
+  featured: true,              // erscheint in der kuratierten Auswahl
   slot: "work-schlange",        // Dateiname ohne Breite und Endung
   widths: [640, 1024, 1600],    // vorhandene Breiten
   ratio: "4 / 5",               // Bildausschnitt im Layout
@@ -60,15 +80,14 @@ for w in 640 1024 1600; do
 done
 ```
 
-Das Layout wechselt automatisch durch drei Satzspiegel (Tafel links mit
-Bildunterschrift daneben → Tafel randabfallend rechts → schmale Tafel links
-mit versetzter Unterschrift), damit die Galerie auch bei beliebig vielen
-Einträgen wie ein Magazin gesetzt bleibt.
+Die öffentliche Seite zeigt bewusst nur eine kleine, asymmetrische Auswahl.
+Das Portfolio bleibt datengetrieben, steht in der Dramaturgie aber erst nach
+Studio, Haltung, Prozess und Team.
 
 ### Kategorien
 
 `Cover-up`, `Fine Line`, `Realismus`, `Abstrakt` — definiert in
-`categories`. Der Filter „Alle“ wird automatisch vorangestellt. Eine
+`categories`. Der sekundäre Filter „Auswahl“ wird automatisch vorangestellt. Eine
 Kategorie ohne Arbeiten zeigt den Text aus `emptyNote` statt einer leeren
 Seite. Kategorien lassen sich umbenennen oder ergänzen; entscheidend ist,
 dass `work.category` zu einer `categories[].id` passt.

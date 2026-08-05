@@ -1,307 +1,291 @@
-/* ============================================================
-   The Master of Ink — Verhalten
-   Kein Framework, keine Abhängigkeiten.
-   ============================================================ */
+/* The Master of Ink — lightweight behaviour, no dependencies */
 (function () {
   'use strict';
 
   var doc = document.documentElement;
-  doc.classList.add('js');
-
-  var DATA = window.MOI_DATA || { categories: [], works: [], emptyNote: '' };
+  var DATA = window.MOI_DATA || { artists: [], categories: [], works: [], emptyNote: '' };
   var CONFIG = window.MOI_CONFIG || {};
-
   var mqVideo = window.matchMedia('(min-width: 900px)');
   var mqReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   var conn = navigator.connection || {};
+  doc.classList.add('js');
 
-  function videoAllowed() {
-    return mqVideo.matches && !mqReduced.matches && !conn.saveData;
+  /* Mobile navigation */
+  var menuButton = document.querySelector('.masthead__toggle');
+  var menu = document.getElementById('main-menu');
+  if (menuButton && menu) {
+    menuButton.addEventListener('click', function () {
+      var open = menuButton.getAttribute('aria-expanded') === 'true';
+      menuButton.setAttribute('aria-expanded', String(!open));
+      menuButton.textContent = open ? 'Menü' : 'Schließen';
+      menu.classList.toggle('is-open', !open);
+    });
+    menu.addEventListener('click', function (event) {
+      if (!event.target.closest('a')) return;
+      menuButton.setAttribute('aria-expanded', 'false');
+      menuButton.textContent = 'Menü';
+      menu.classList.remove('is-open');
+    });
   }
 
-  /* ---------- Masthead-Höhe für die Hero-Berechnung ---------- */
-  var masthead = document.querySelector('.masthead');
-  function setMastheadVar() {
-    if (masthead) doc.style.setProperty('--masthead-h', masthead.offsetHeight + 'px');
-  }
-  setMastheadVar();
-  window.addEventListener('resize', setMastheadVar);
-
-  /* ---------- Scroll-Reveals (Tinte zieht ein) ---------- */
+  /* Editorial reveals */
   var revealIO = null;
   function observeReveals(scope) {
     var nodes = (scope || document).querySelectorAll('.reveal:not(.is-in)');
     if (mqReduced.matches || !('IntersectionObserver' in window)) {
-      nodes.forEach(function (n) { n.classList.add('is-in'); });
+      nodes.forEach(function (node) { node.classList.add('is-in'); });
       return;
     }
     if (!revealIO) {
       revealIO = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) {
-            e.target.classList.add('is-in');
-            revealIO.unobserve(e.target);
-          }
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-in');
+          revealIO.unobserve(entry.target);
         });
-      }, { threshold: 0.15, rootMargin: '0px 0px -6% 0px' });
+      }, { threshold: 0.12, rootMargin: '0px 0px -5% 0px' });
     }
-    nodes.forEach(function (n) { revealIO.observe(n); });
+    nodes.forEach(function (node) { revealIO.observe(node); });
   }
 
-  /* ---------- Videos: lazy, stumm, Poster-Fallback ---------- */
-  function bindVideo(video, playIO) {
-    video.addEventListener('playing', function () { video.classList.add('is-playing'); });
-    /* Fallback für Server/Browser, bei denen 'playing' spät kommt */
-    video.addEventListener('timeupdate', function onTime() {
-      if (video.currentTime > 0.05 && !video.paused) {
-        video.classList.add('is-playing');
-        video.removeEventListener('timeupdate', onTime);
-      }
-    });
-    video.addEventListener('pause', function () { video.classList.remove('is-playing'); });
-    if (playIO) playIO.observe(video);
+  /* Video: WebM first, MP4 fallback; never load for mobile, reduced motion or Save-Data. */
+  function videoAllowed() {
+    return mqVideo.matches && !mqReduced.matches && !conn.saveData;
   }
-
-  /* WebM/VP9 zuerst (kleiner, Chrome/Firefox/Edge),
-     MP4/H.264 als Rückfall für Safari und iOS. */
   function loadSource(video) {
     if (video.dataset.loaded) return;
     video.dataset.loaded = '1';
     [
       { src: video.dataset.videoWebm, type: 'video/webm' },
       { src: video.dataset.videoMp4, type: 'video/mp4' }
-    ].forEach(function (cand) {
-      if (!cand.src) return;
-      var s = document.createElement('source');
-      s.src = cand.src;
-      s.type = cand.type;
-      video.appendChild(s);
+    ].forEach(function (candidate) {
+      if (!candidate.src) return;
+      var source = document.createElement('source');
+      source.src = candidate.src;
+      source.type = candidate.type;
+      video.appendChild(source);
     });
     video.load();
   }
-
   function tryPlay(video) {
-    var p = video.play();
-    if (p && p.catch) {
-      p.catch(function () {
-        var retry = function () {
-          video.play().catch(function () {});
-          window.removeEventListener('pointerdown', retry);
-          window.removeEventListener('keydown', retry);
-        };
-        window.addEventListener('pointerdown', retry, { once: true });
-        window.addEventListener('keydown', retry, { once: true });
-      });
-    }
+    var promise = video.play();
+    if (promise && promise.catch) promise.catch(function () {});
   }
-
   var videos = Array.prototype.slice.call(document.querySelectorAll('video[data-video-webm], video[data-video-mp4]'));
-  var playIO = null;
-
+  videos.forEach(function (video) {
+    video.addEventListener('playing', function () { video.classList.add('is-playing'); });
+    video.addEventListener('pause', function () { video.classList.remove('is-playing'); });
+  });
+  var playIO = 'IntersectionObserver' in window ? new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      var video = entry.target;
+      if (!videoAllowed()) { video.pause(); return; }
+      if (entry.isIntersecting) { loadSource(video); tryPlay(video); }
+      else video.pause();
+    });
+  }, { threshold: 0.2, rootMargin: '120px 0px' }) : null;
   function setupVideos() {
-    if (!videoAllowed()) {
-      videos.forEach(function (v) { v.pause(); v.classList.remove('is-playing'); });
-      return;
-    }
-    if (!('IntersectionObserver' in window)) {
-      videos.forEach(function (v) { loadSource(v); tryPlay(v); });
-      return;
-    }
-    if (!playIO) {
-      playIO = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          var v = e.target;
-          if (!videoAllowed()) return;
-          if (e.isIntersecting) {
-            loadSource(v);
-            tryPlay(v);
-          } else {
-            v.pause();
-          }
-        });
-      }, { threshold: 0.25, rootMargin: '120px 0px' });
-      videos.forEach(function (v) { bindVideo(v, playIO); });
-    }
+    videos.forEach(function (video) {
+      if (!videoAllowed()) { video.pause(); video.classList.remove('is-playing'); return; }
+      if (playIO) playIO.observe(video);
+      else { loadSource(video); tryPlay(video); }
+    });
   }
   setupVideos();
-  mqVideo.addEventListener ? mqVideo.addEventListener('change', setupVideos) : mqVideo.addListener(setupVideos);
-  mqReduced.addEventListener ? mqReduced.addEventListener('change', setupVideos) : mqReduced.addListener(setupVideos);
+  (mqVideo.addEventListener ? mqVideo.addEventListener('change', setupVideos) : mqVideo.addListener(setupVideos));
+  (mqReduced.addEventListener ? mqReduced.addEventListener('change', setupVideos) : mqReduced.addListener(setupVideos));
 
-  /* ---------- Hero: leichte Parallaxe ---------- */
-  var heroMedia = document.querySelector('.hero__media');
-  var hero = document.querySelector('.hero');
-  if (heroMedia && hero && !mqReduced.matches) {
-    heroMedia.style.top = '-6%';
-    heroMedia.style.bottom = '-6%';
-    var raf = null;
-    var onScroll = function () {
-      if (raf) return;
-      raf = requestAnimationFrame(function () {
-        raf = null;
-        var p = Math.min(1, Math.max(0, window.scrollY / (hero.offsetHeight || 1)));
-        heroMedia.style.transform = 'translateY(' + (p * 5.5) + '%)';
-      });
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text) node.textContent = text;
+    return node;
+  }
+  function imageSrcset(slot, widths, extension) {
+    return widths.map(function (width) {
+      return 'assets/img/' + slot + '-' + width + '.' + extension + ' ' + width + 'w';
+    }).join(', ');
+  }
+  function buildPicture(image, sizes) {
+    var picture = document.createElement('picture');
+    var source = document.createElement('source');
+    var img = document.createElement('img');
+    source.type = 'image/webp';
+    source.srcset = imageSrcset(image.slot, image.widths, 'webp');
+    source.sizes = sizes;
+    img.src = 'assets/img/' + image.slot + '-' + image.widths[Math.min(1, image.widths.length - 1)] + '.jpg';
+    img.srcset = imageSrcset(image.slot, image.widths, 'jpg');
+    img.sizes = sizes;
+    img.alt = image.alt || '';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    if (image.position) img.style.objectPosition = image.position;
+    picture.appendChild(source);
+    picture.appendChild(img);
+    return picture;
   }
 
-  /* ---------- Galerie: datengetrieben + Filter ---------- */
+  /* Data-driven artist directory: adding another artist requires data only. */
+  var directory = document.getElementById('artist-directory');
+  function renderArtists() {
+    if (!directory || !DATA.artists) return;
+    Array.prototype.slice.call(directory.children).forEach(function (child) {
+      if (child.tagName !== 'NOSCRIPT') directory.removeChild(child);
+    });
+    DATA.artists.forEach(function (artist) {
+      var card = el('article', 'artist-card');
+      card.id = 'artist-' + artist.id;
+      card.setAttribute('aria-labelledby', 'artist-name-' + artist.id);
+
+      var portrait = el('figure', 'artist-card__portrait reveal reveal--wipe');
+      portrait.setAttribute('data-wipe', 'up');
+      portrait.appendChild(buildPicture(artist.portrait, '(min-width: 781px) 58vw, 100vw'));
+
+      var content = el('div', 'artist-card__content');
+      var top = el('div', 'artist-card__top');
+      top.appendChild(el('p', '', artist.role));
+      top.appendChild(el('p', '', artist.location + ' / ' + artist.number));
+      content.appendChild(top);
+      var name = el('h3', 'artist-card__name', artist.name);
+      name.id = 'artist-name-' + artist.id;
+      content.appendChild(name);
+      content.appendChild(el('p', 'artist-card__styles', artist.specialties.join(' · ')));
+
+      var bio = el('div', 'artist-card__bio');
+      bio.appendChild(el('p', '', artist.bio));
+      bio.appendChild(el('blockquote', 'artist-card__quote', '„' + artist.quote + '“'));
+      var links = el('div', 'artist-card__links');
+      var portfolio = el('a', '', 'Portfolio ansehen ↓');
+      portfolio.href = '#arbeiten';
+      portfolio.setAttribute('data-artist-portfolio', artist.id);
+      var instagram = el('a', '', 'Instagram ' + artist.instagramLabel + ' ↗');
+      instagram.href = artist.instagram;
+      instagram.rel = 'noopener';
+      links.appendChild(portfolio);
+      links.appendChild(instagram);
+      bio.appendChild(links);
+      content.appendChild(bio);
+      card.appendChild(portrait);
+      card.appendChild(content);
+      directory.appendChild(card);
+    });
+    observeReveals(directory);
+  }
+
+  /* Restrained, data-driven portfolio */
   var gallery = document.getElementById('gallery');
   var filterWrap = document.querySelector('.gallery__filters');
   var activeFilter = 'all';
-
-  var SIZES = {
-    a: '(min-width: 900px) 52vw, 92vw',
-    b: '(min-width: 900px) min(46vw, 720px), 100vw',
-    c: '(min-width: 900px) 36vw, 92vw'
-  };
-
-  function srcset(slot, widths, ext) {
-    return widths.map(function (w) {
-      return 'assets/img/' + slot + '-' + w + '.' + ext + ' ' + w + 'w';
-    }).join(', ');
-  }
-
-  function buildPicture(work, variant) {
-    var pic = document.createElement('picture');
-    var source = document.createElement('source');
-    source.type = 'image/webp';
-    source.srcset = srcset(work.slot, work.widths, 'webp');
-    source.sizes = SIZES[variant];
-    var img = document.createElement('img');
-    img.src = 'assets/img/' + work.slot + '-' + work.widths[Math.min(1, work.widths.length - 1)] + '.jpg';
-    img.srcset = srcset(work.slot, work.widths, 'jpg');
-    img.sizes = SIZES[variant];
-    img.alt = work.alt || '';
-    img.loading = 'lazy';
-    img.decoding = 'async';
-    if (work.position) img.style.objectPosition = work.position;
-    pic.appendChild(source);
-    pic.appendChild(img);
-    return pic;
-  }
-
-  function el(tag, className, text) {
-    var n = document.createElement(tag);
-    if (className) n.className = className;
-    if (text) n.textContent = text;
-    return n;
-  }
-
-  function buildSpread(work, index) {
-    var variant = ['a', 'b', 'c'][index % 3];
-    var fig = el('figure', 'spread spread--' + variant);
-
+  var activeArtist = DATA.artists && DATA.artists.length ? DATA.artists[0].id : 'all';
+  var portfolioArtistLabel = document.getElementById('portfolio-artist-label');
+  function buildWork(work) {
+    var figure = el('figure', 'spread');
     var media = el('div', 'spread__media reveal reveal--wipe');
-    media.setAttribute('data-wipe', variant === 'b' ? 'up' : 'left');
-    media.style.aspectRatio = work.ratio || '4 / 5';
-    media.appendChild(buildPicture(work, variant));
-
-    if (variant === 'b') {
-      var frame = el('div', 'spread__frame');
-      frame.appendChild(media);
-      fig.appendChild(frame);
-      var cap = el('figcaption', 'spread__caption');
-      var h = el('h3', 'spread__title');
-      var num = el('span', 'spread__num', work.num);
-      num.setAttribute('aria-hidden', 'true');   /* Tafelnummer ist dekorativ */
-      h.appendChild(num);
-      h.appendChild(document.createTextNode(work.title));
-      cap.appendChild(h);
-      if (work.meta) cap.appendChild(el('p', 'spread__meta', work.meta));
-      if (work.caption) cap.appendChild(el('p', 'spread__body', work.caption));
-      fig.appendChild(cap);
-    } else {
-      fig.appendChild(media);
-      var cap2 = el('figcaption', 'spread__caption');
-      if (work.num) cap2.appendChild(el('p', 'spread__num', work.num));
-      cap2.appendChild(el('h3', 'spread__title', work.title));
-      if (work.meta) cap2.appendChild(el('p', 'spread__meta', work.meta));
-      if (work.caption) cap2.appendChild(el('p', 'spread__body', work.caption));
-      fig.appendChild(cap2);
-    }
-    return fig;
+    media.setAttribute('data-wipe', 'up');
+    media.appendChild(buildPicture(work, '(min-width: 900px) 34vw, (min-width: 461px) 50vw, 100vw'));
+    var caption = el('figcaption', 'spread__caption');
+    caption.appendChild(el('p', 'spread__num', work.num));
+    caption.appendChild(el('h3', 'spread__title', work.title));
+    if (work.meta) caption.appendChild(el('p', 'spread__meta', work.meta));
+    if (work.caption) caption.appendChild(el('p', 'spread__body', work.caption));
+    figure.appendChild(media);
+    figure.appendChild(caption);
+    return figure;
   }
-
   function renderGallery() {
     if (!gallery) return;
     Array.prototype.slice.call(gallery.children).forEach(function (child) {
       if (child.tagName !== 'NOSCRIPT') gallery.removeChild(child);
     });
-    var works = DATA.works.filter(function (w) {
-      return activeFilter === 'all' || w.category === activeFilter;
+    var works = (DATA.works || []).filter(function (work) {
+      var artistMatch = activeArtist === 'all' || work.artistId === activeArtist;
+      return work.featured !== false && artistMatch && (activeFilter === 'all' || work.category === activeFilter);
     });
-    if (!works.length) {
-      gallery.appendChild(el('p', 'gallery__empty', DATA.emptyNote || ''));
-      return;
+    if (portfolioArtistLabel) {
+      var artist = (DATA.artists || []).find(function (item) { return item.id === activeArtist; });
+      portfolioArtistLabel.textContent = artist ? artist.name : 'Studio';
     }
-    works.forEach(function (w, i) { gallery.appendChild(buildSpread(w, i)); });
+    if (!works.length) gallery.appendChild(el('p', 'gallery__empty', DATA.emptyNote || 'Keine Arbeiten in dieser Auswahl.'));
+    else works.forEach(function (work) { gallery.appendChild(buildWork(work)); });
     observeReveals(gallery);
   }
-
   function renderFilters() {
     if (!filterWrap) return;
-    if (!DATA.works.length) { filterWrap.hidden = true; return; }
-    var all = [{ id: 'all', label: 'Alle' }].concat(DATA.categories);
-    all.forEach(function (cat) {
-      var btn = el('button', 'filter-btn', cat.label);
-      btn.type = 'button';
-      btn.setAttribute('data-filter', cat.id);
-      btn.setAttribute('aria-pressed', cat.id === activeFilter ? 'true' : 'false');
-      btn.addEventListener('click', function () {
-        if (activeFilter === cat.id) return;
-        activeFilter = cat.id;
-        filterWrap.querySelectorAll('.filter-btn').forEach(function (b) {
-          b.setAttribute('aria-pressed', b.getAttribute('data-filter') === activeFilter ? 'true' : 'false');
+    var categories = [{ id: 'all', label: 'Auswahl' }].concat(DATA.categories || []);
+    categories.forEach(function (category) {
+      var button = el('button', 'filter-btn', category.label);
+      button.type = 'button';
+      button.setAttribute('data-filter', category.id);
+      button.setAttribute('aria-pressed', String(category.id === activeFilter));
+      button.addEventListener('click', function () {
+        if (activeFilter === category.id) return;
+        activeFilter = category.id;
+        filterWrap.querySelectorAll('.filter-btn').forEach(function (item) {
+          item.setAttribute('aria-pressed', String(item.getAttribute('data-filter') === activeFilter));
         });
         gallery.classList.add('is-switching');
         window.setTimeout(function () {
           renderGallery();
           gallery.classList.remove('is-switching');
-        }, 280);
+        }, mqReduced.matches ? 0 : 180);
       });
-      filterWrap.appendChild(btn);
+      filterWrap.appendChild(button);
     });
   }
 
+  renderArtists();
+  if (directory) {
+    directory.addEventListener('click', function (event) {
+      var link = event.target.closest('[data-artist-portfolio]');
+      if (!link) return;
+      activeArtist = link.getAttribute('data-artist-portfolio');
+      activeFilter = 'all';
+      if (filterWrap) filterWrap.querySelectorAll('.filter-btn').forEach(function (button) {
+        button.setAttribute('aria-pressed', String(button.getAttribute('data-filter') === 'all'));
+      });
+      renderGallery();
+    });
+  }
   renderFilters();
   renderGallery();
   observeReveals(document);
 
-  /* ---------- Anfrage-Formular ---------- */
+  /* Existing StudioLink-ready enquiry handoff. */
   var form = document.getElementById('anfrage');
   var done = document.querySelector('.termin__done');
   if (form && done) {
     var errorBox = form.querySelector('.form__error');
-    var showError = function (msg) {
-      errorBox.textContent = msg;
-      errorBox.hidden = !msg;
-    };
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.hidden = !message;
+      form.querySelectorAll('[aria-describedby="form-error"]').forEach(function (input) {
+        if (message) input.setAttribute('aria-invalid', 'true');
+        else input.removeAttribute('aria-invalid');
+      });
+    }
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
       showError('');
-      var fd = new FormData(form);
-      if (fd.get('company')) { form.hidden = true; done.hidden = false; return; }
-      var name = String(fd.get('name') || '').trim();
-      var email = String(fd.get('email') || '').trim();
-      var idea = String(fd.get('idea') || '').trim();
+      var data = new FormData(form);
+      if (data.get('company')) { form.hidden = true; done.hidden = false; return; }
+      var name = String(data.get('name') || '').trim();
+      var email = String(data.get('email') || '').trim();
+      var idea = String(data.get('idea') || '').trim();
       if (!name || !email) { showError('Bitte gib Name und E-Mail-Adresse an.'); return; }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Bitte prüfe die E-Mail-Adresse.'); return; }
-
-      var finish = function () { form.hidden = true; done.hidden = false; };
-
+      function finish() { form.hidden = true; done.hidden = false; }
       if (CONFIG.formEndpoint) {
-        var btn = form.querySelector('.form__submit');
-        btn.disabled = true;
+        var submit = form.querySelector('.form__submit');
+        submit.disabled = true;
         fetch(CONFIG.formEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name: name, email: email, idea: idea })
-        }).then(function (res) {
-          if (!res.ok) throw new Error('send failed');
+        }).then(function (response) {
+          if (!response.ok) throw new Error('send failed');
           finish();
         }).catch(function () {
-          btn.disabled = false;
+          submit.disabled = false;
           showError('Das hat leider nicht geklappt. Schreib uns direkt: ' + (CONFIG.contactEmail || ''));
         });
       } else {
@@ -312,4 +296,4 @@
       }
     });
   }
-})();
+}());

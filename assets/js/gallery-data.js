@@ -19,6 +19,29 @@
    ============================================================ */
 
 window.MOI_DATA = {
+  /* Künstlerverzeichnis. Weitere Artists werden als zusätzliche Objekte
+     ergänzt; die Team-Sektion wird automatisch daraus erzeugt. */
+  artists: [
+    {
+      id: "bryan",
+      name: "Bryan",
+      role: "Resident Artist",
+      number: "01",
+      location: "Rheine",
+      specialties: ["Sketch-Realismus", "Fine Line", "Blackwork"],
+      bio: "Bryan entwickelt jedes Stück aus dem Gespräch heraus und zeichnet es für genau einen Menschen. Sein Fokus liegt auf klarer Komposition, ruhiger Ausführung und Motiven, die auch nach Jahren noch selbstverständlich zum Körper gehören.",
+      quote: "Haut ist die ehrlichste Leinwand, die es gibt. Sie verdient Geduld.",
+      instagram: "https://www.instagram.com/bruen.ink/",
+      instagramLabel: "@bruen.ink",
+      portrait: {
+        slot: "team-brian",
+        widths: [800, 1280, 1920],
+        alt: "Bryan bei einer konzentrierten Tattoo-Session im Studio",
+        position: "50% 38%"
+      }
+    }
+  ],
+
   /* Filterkategorien der Galerie (Reihenfolge = Anzeige) */
   categories: [
     { id: "cover-up",  label: "Cover-up" },
@@ -33,6 +56,8 @@ window.MOI_DATA = {
   works: [
     {
       id: "schlange",
+      artistId: "bryan",
+      featured: true,
       slot: "work-schlange",            /* -> assets/img/work-schlange-{640,1024,1600}.{jpg,webp} */
       widths: [640, 1024, 1600],
       ratio: "4 / 5",
@@ -46,6 +71,8 @@ window.MOI_DATA = {
     },
     {
       id: "leopard",
+      artistId: "bryan",
+      featured: true,
       slot: "work-leopard",
       widths: [640, 1024, 1440],
       ratio: "10 / 16",
@@ -59,6 +86,8 @@ window.MOI_DATA = {
     },
     {
       id: "dobermann",
+      artistId: "bryan",
+      featured: true,
       slot: "work-dobermann",
       widths: [640, 1024, 1600],
       ratio: "4 / 5",
