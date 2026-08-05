@@ -176,7 +176,7 @@
       portrait.setAttribute('data-wipe', 'up');
       portrait.appendChild(buildPicture(artist.portrait, '(min-width: 781px) 58vw, 100vw'));
 
-      var content = el('div', 'artist-card__content');
+      var content = el('div', 'artist-card__content reveal reveal--soak');
       var top = el('div', 'artist-card__top');
       top.appendChild(el('p', '', artist.role));
       top.appendChild(el('p', '', artist.location + ' / ' + artist.number));
