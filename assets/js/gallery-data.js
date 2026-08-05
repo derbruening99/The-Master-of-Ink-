@@ -13,7 +13,7 @@
       (Empfohlene Breiten: 640, 1024, 1600 — siehe README für den
        ffmpeg-Einzeiler.)
    2. Unten einen Eintrag ergänzen bzw. anpassen.
-   3. category muss eine id aus `categories` sein.
+   3. categories enthält eine oder mehrere ids aus `categories`.
    Felder, die noch nicht feststehen, leer lassen ("") —
    sie werden dann einfach nicht angezeigt. Nichts erfinden.
    ============================================================ */
@@ -39,6 +39,24 @@ window.MOI_DATA = {
         alt: "Bryan lächelt während einer konzentrierten Tattoo-Session im Studio",
         position: "50% 42%"
       }
+    },
+    {
+      id: "sebastian",
+      name: "Sebastian",
+      role: "Inhaber & Artist",
+      number: "02",
+      location: "Rheine",
+      specialties: ["Realismus", "Fine Line", "Symbolische Kompositionen"],
+      bio: "Sebastian hat The Master of Ink gegründet und das Tätowieren erst nach der Gründung gelernt. Seine Arbeiten verbinden Realismus, feine Linien und symbolische Kompositionen — entwickelt aus der Geschichte hinter dem Motiv.",
+      quote: "",
+      instagram: "",
+      instagramLabel: "",
+      portrait: {
+        slot: "team-sebastian",
+        widths: [640, 1080],
+        alt: "Sebastian konzentriert an seinem Arbeitsplatz im Tattoostudio",
+        position: "50% 46%"
+      }
     }
   ],
 
@@ -62,11 +80,12 @@ window.MOI_DATA = {
       widths: [640, 1024, 1600],
       ratio: "4 / 5",
       position: "50% 50%",
-      alt: "Fine-Line-Tätowierung: Schlange mit Pfingstrosen entlang der Hüfte",
+      alt: "Realistische Tätowierung einer Schlange mit Pfingstrosen entlang der Hüfte",
       num: "01",
-      title: "Schlange & Pfingstrose",
-      category: "fine-line",
-      meta: "Fine Line · Hüfte",
+      title: "Realismusarbeiten",
+      category: "realismus",
+      categories: ["realismus"],
+      meta: "Schlange & Pfingstrose",
       caption: "Gezeichnet entlang der Hüftlinie, damit die Bewegung des Körpers Teil der Komposition wird. Punktschattierung, keine harten Flächen."
     },
     {
@@ -79,9 +98,10 @@ window.MOI_DATA = {
       position: "50% 38%",
       alt: "Tätowierung eines halb verborgenen Leoparden am Oberarm",
       num: "02",
-      title: "Leopard, halb verborgen",
-      category: "realismus",            /* aus der Werkangabe "Blackwork-Realismus" */
-      meta: "Blackwork-Realismus · Oberarm",
+      title: "Abstrakte Arbeiten",
+      category: "abstrakt",
+      categories: ["abstrakt"],
+      meta: "Leopard · Oberarm",
       caption: ""                        /* TODO: Beschreibung ergänzen */
     },
     {
@@ -94,10 +114,27 @@ window.MOI_DATA = {
       position: "50% 42%",
       alt: "Cover-up-Tätowierung: Dobermann-Porträt auf dem Unterarm",
       num: "03",
-      title: "Wächter",
+      title: "Realismus, Blackwork & Cover-Ups",
       category: "cover-up",
-      meta: "Cover-up · Unterarm",
+      categories: ["realismus", "cover-up"],
+      meta: "Dobermann · Unterarm",
       caption: ""                        /* TODO: Beschreibung ergänzen */
+    },
+    {
+      id: "gehirn-faden",
+      artistId: "sebastian",
+      featured: true,
+      slot: "work-fineline",
+      widths: [640, 1024, 1600],
+      ratio: "4 / 5",
+      position: "50% 50%",
+      alt: "Fine-Line-Tätowierung eines Gehirns mit umlaufendem Faden",
+      num: "04",
+      title: "Fineline-Arbeiten",
+      category: "fine-line",
+      categories: ["fine-line"],
+      meta: "Gehirn & Faden",
+      caption: ""
     }
   ]
 };

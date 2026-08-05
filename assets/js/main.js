@@ -153,16 +153,18 @@
 
       var bio = el('div', 'artist-card__bio');
       bio.appendChild(el('p', '', artist.bio));
-      bio.appendChild(el('blockquote', 'artist-card__quote', '„' + artist.quote + '“'));
+      if (artist.quote) bio.appendChild(el('blockquote', 'artist-card__quote', '„' + artist.quote + '“'));
       var links = el('div', 'artist-card__links');
       var portfolio = el('a', '', 'Portfolio ansehen ↓');
       portfolio.href = '#arbeiten';
       portfolio.setAttribute('data-artist-portfolio', artist.id);
-      var instagram = el('a', '', 'Instagram ' + artist.instagramLabel + ' ↗');
-      instagram.href = artist.instagram;
-      instagram.rel = 'noopener';
       links.appendChild(portfolio);
-      links.appendChild(instagram);
+      if (artist.instagram) {
+        var instagram = el('a', '', 'Instagram ' + artist.instagramLabel + ' ↗');
+        instagram.href = artist.instagram;
+        instagram.rel = 'noopener';
+        links.appendChild(instagram);
+      }
       bio.appendChild(links);
       content.appendChild(bio);
       card.appendChild(portrait);
@@ -176,7 +178,7 @@
   var gallery = document.getElementById('gallery');
   var filterWrap = document.querySelector('.gallery__filters');
   var activeFilter = 'all';
-  var activeArtist = DATA.artists && DATA.artists.length ? DATA.artists[0].id : 'all';
+  var activeArtist = 'all';
   var portfolioArtistLabel = document.getElementById('portfolio-artist-label');
   function buildWork(work) {
     var figure = el('figure', 'spread');
@@ -199,7 +201,8 @@
     });
     var works = (DATA.works || []).filter(function (work) {
       var artistMatch = activeArtist === 'all' || work.artistId === activeArtist;
-      return work.featured !== false && artistMatch && (activeFilter === 'all' || work.category === activeFilter);
+      var categories = work.categories || [work.category];
+      return work.featured !== false && artistMatch && (activeFilter === 'all' || categories.indexOf(activeFilter) !== -1);
     });
     if (portfolioArtistLabel) {
       var artist = (DATA.artists || []).find(function (item) { return item.id === activeArtist; });
