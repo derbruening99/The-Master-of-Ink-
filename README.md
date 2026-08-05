@@ -177,9 +177,9 @@ spätere Änderungen: Diese Prüfung läuft **nach** der Feldvalidierung.
 Andersherum quittiert ein schnell abgeschicktes leeres Formular mit
 „Angekommen“, ohne etwas zu senden.
 
-### Studio-Zuordnung — bitte prüfen
+### Studio-Zuordnung
 
-Die Anfragen laufen auf `studio_id = "golden-geometry"`. In der Datenbank
+Die Anfragen laufen auf `studio_id = "the-master-of-ink"`. In der Datenbank
 liegen drei Studios:
 
 | id | name |
@@ -188,13 +188,17 @@ liegen drei Studios:
 | `the-master-of-ink` | The Master of Ink |
 | `template-tattoo` | Tattoo-Studio (Vorlage) |
 
-Alle bisherigen Anfragen liegen auf `golden-geometry`, und StudioLink selbst
-hat diese id fest verdrahtet (`lib/supabase.ts`). Anfragen erscheinen also im
-tatsächlich genutzten Posteingang — aber unter einem Studio, das „Golden
-Geometry“ heißt. Der Datensatz `the-master-of-ink` ist leer und wird von der
-App nirgends gelesen. Wer das geradeziehen will, muss das in StudioLink tun
-(Studio umbenennen oder `STUDIO_ID` umstellen und Bestand migrieren) — nicht
-auf dieser Website.
+Sebastian hat auf `the-master-of-ink` ein aktives Manager-Profil
+(masterofinkger@gmail.com); StudioLink löst das Studio beim Login über
+`lib/active-studio.tsx` auf. Anfragen dieser Website erscheinen also im
+richtigen Posteingang, sobald man sich mit dieser Adresse anmeldet.
+
+Nicht nutzbar ist derzeit StudioLinks **öffentliche** Maske `/anfrage`: dort
+steckt die Studio-id noch als Konstante im Code (`lib/supabase.ts`,
+`STUDIO_ID = "golden-geometry"`). Die angemeldeten Bereiche sind längst
+mandantenfähig, die öffentlichen Seiten wurden nur nicht mitgezogen. Sobald
+`/anfrage` das Studio aus der Adresse liest, kann `appUrl` gesetzt und die
+offizielle Maske eingebettet werden — der Code dafür steht bereits.
 
 ## Ablauf-Abschnitt
 
@@ -206,9 +210,10 @@ sofort.
 
 ## Was noch zu tun ist
 
-- `leadLinkBase` auf die StudioLink-Adresse setzen, damit Anfragende
-  Details nachreichen können
-- Echte Studioadresse, E-Mail-Adresse und den StudioLink-Link eintragen
-  (aktuell Platzhalter: `studio@masterofink.example`, `href="#"`)
-- Datenschutzerklärung verlinken — die Einwilligung verweist darauf
+- Telefonnummer im Impressum ergänzen (§ 5 DDG) und die Umsatzsteuer-Angabe
+  klären — beide sind in `impressum.html` als TODO markiert
+- StudioLinks `/anfrage` mandantenfähig machen, dann `appUrl` setzen
+- Porträt von Sebastian: derzeit ein enger Ausschnitt aus dem vorhandenen
+  Studiofoto. Ein eigenes Porträt wäre besser — Dateien als
+  `assets/img/team-sebastian-{420,670}.{jpg,webp}` ersetzen
 - Impressum und Datenschutzerklärung ergänzen — in Deutschland Pflicht

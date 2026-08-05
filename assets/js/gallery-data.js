@@ -35,9 +35,9 @@ window.MOI_DATA = {
       instagramLabel: "",
       portrait: {
         slot: "team-sebastian",
-        widths: [640, 1080],
+        widths: [420, 670],
         alt: "Sebastian konzentriert an seinem Arbeitsplatz im Tattoostudio",
-        position: "50% 46%"
+        position: "50% 30%"
       }
     },
     {
@@ -162,22 +162,26 @@ window.MOI_CONFIG = {
     url: "https://vdhscdhyniqmaynsayrz.supabase.co",
     key: "sb_publishable_LZ9KBBL1pwtonk9VHam5Pw_8GVQ5K0r",
     schema: "inkcore",
-    studioId: "golden-geometry",
+    studioId: "the-master-of-ink",
     privacyPolicyVersion: "2026-07",
     leadLinkBase: "",
 
-    /* Adresse der StudioLink-Installation, z. B. "https://studiolink.example".
-       IST SIE GESETZT, zeigt der Termin-Abschnitt das offizielle
-       StudioLink-Anfrageformular (/anfrage) — dieselbe Maske wie in
-       StudioLink selbst, mit Artist- und Standortwahl, Bild-Upload und
-       dem zweistufigen Ablauf. Sie bleibt automatisch aktuell.
+    /* Adresse der StudioLink-Installation.
 
-       Ist sie leer, greift das schlanke Formular unten auf der Seite.
-       Es schreibt über dieselbe Funktion in dieselbe Pipeline, hat aber
-       nur die Pflichtfelder. */
-    appUrl: "https://studiolink-app.com"
+       AKTUELL BEWUSST LEER. Ist sie gesetzt, wird StudioLinks offizielle
+       Maske (/anfrage) eingebettet — die kann heute aber nur Anfragen für
+       EIN Studio annehmen: `STUDIO_ID` ist in StudioLinks lib/supabase.ts
+       fest auf "golden-geometry" verdrahtet. Angemeldete Bereiche sind
+       längst mandantenfähig (lib/active-studio.tsx), die öffentlichen
+       Seiten wurden nur nicht mitgezogen.
+
+       Anfragen von dieser Website würden damit im falschen Posteingang
+       landen. Bis /anfrage das Studio aus der Adresse liest (z. B.
+       /anfrage?studio=the-master-of-ink), greift deshalb das Formular
+       unten — es schreibt auf `studioId` und damit ins richtige Studio. */
+    appUrl: ""
   },
 
   /* Rückfallebene, falls StudioLink nicht erreichbar ist */
-  contactEmail: "studio@masterofink.example"
+  contactEmail: "masterofinkger@gmail.com"
 };

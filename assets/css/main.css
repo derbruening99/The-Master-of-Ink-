@@ -203,3 +203,18 @@ h2 em{font-weight:400;color:var(--gold)}
 
 .booking__grid--embedded{grid-template-columns:1fr}
 .booking__grid--embedded .booking__form{grid-column:1/-1;max-width:920px;width:100%}
+
+/* Rechtliches im Fuß + Rechtsseiten */
+.colophon__legal{display:flex;gap:22px}
+.legal{max-width:74ch;margin:0 auto;padding:clamp(90px,13vh,150px) var(--pad-x) clamp(60px,9vh,110px)}
+.legal__back{display:inline-block;margin-bottom:clamp(32px,5vh,56px);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#6d6d6d}
+.legal h1{font:500 clamp(38px,5.5vw,74px)/1 var(--serif);letter-spacing:-.03em;margin-bottom:clamp(30px,4vh,48px)}
+.legal h2{font:500 clamp(21px,2.4vw,29px)/1.15 var(--serif);margin:clamp(34px,5vh,56px) 0 14px}
+.legal h3{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#6d6d6d;margin:26px 0 8px}
+.legal p,.legal li{font-size:14px;line-height:1.75;color:#4a4a4a}
+.legal p+p{margin-top:12px}
+.legal ul{margin:10px 0 0 18px}
+.legal li{margin-bottom:6px}
+.legal address{font-style:normal;font-size:14px;line-height:1.75;color:#4a4a4a}
+.legal a{border-bottom:1px solid rgba(20,16,12,.2)}
+.legal__updated{margin-top:clamp(40px,6vh,70px);padding-top:16px;border-top:1px solid rgba(20,16,12,.14);font-size:11px;color:#7b7b7b}
