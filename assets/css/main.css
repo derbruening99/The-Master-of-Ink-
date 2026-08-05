@@ -218,3 +218,34 @@ h2 em{font-weight:400;color:var(--gold)}
 .legal address{font-style:normal;font-size:14px;line-height:1.75;color:#4a4a4a}
 .legal a{border-bottom:1px solid rgba(20,16,12,.2)}
 .legal__updated{margin-top:clamp(40px,6vh,70px);padding-top:16px;border-top:1px solid rgba(20,16,12,.14);font-size:11px;color:#7b7b7b}
+
+/* Werkbetrachter — eine Tafel, mit dem Zeiger durchfahrbar */
+/* .gallery ist ein 12-Spalten-Raster aus dem vorherigen Layout — der
+   Betrachter nimmt die volle Breite, sonst kollabiert die Bühne auf 0. */
+.workviewer{grid-column:1/-1;display:grid;grid-template-columns:auto minmax(240px,400px);justify-content:start;gap:clamp(28px,4vw,64px);align-items:end}
+/* Die Aufnahmen sind Hochformat — ein Querformat-Ausschnitt zeigt vor
+   allem Hintergrund. Die Höhe führt, die Breite folgt. */
+.workviewer__stage{position:relative;height:min(66svh,700px);aspect-ratio:4/5;width:auto;justify-self:start;overflow:hidden;background:rgba(8,8,8,.06);cursor:ew-resize;touch-action:pan-y}
+.workviewer__stage:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+.workviewer__plate{position:absolute;inset:0;opacity:0;transition:opacity .5s var(--ease)}
+.workviewer__plate.is-active{opacity:1}
+.workviewer__plate picture,.workviewer__plate img{width:100%;height:100%;display:block}
+.workviewer__plate img{object-fit:cover;filter:grayscale(1) contrast(1.04)}
+.workviewer__marks{position:absolute;left:0;right:0;bottom:0;display:flex;gap:2px}
+.workviewer__mark{flex:1;height:2px;background:rgba(244,244,244,.3);transition:background .35s var(--ease)}
+.workviewer__mark.is-active{background:var(--paper)}
+.workviewer__hint{position:absolute;right:14px;bottom:16px;font-size:8px;letter-spacing:.24em;text-transform:uppercase;color:rgba(244,244,244,.72);pointer-events:none;transition:opacity .4s}
+.workviewer__stage:hover .workviewer__hint{opacity:0}
+.workviewer__meta{padding-bottom:6px}
+.workviewer__index{font-size:9px;letter-spacing:.24em;color:var(--gold);font-variant-numeric:tabular-nums;margin-bottom:14px}
+.workviewer__category{font:500 clamp(26px,3vw,44px)/1.02 var(--serif);letter-spacing:-.03em}
+.workviewer__motif{margin-top:12px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#5f5f5f}
+.workviewer__caption{margin-top:16px;font-size:13px;line-height:1.72;color:#4a4a4a;max-width:38ch}
+@media (max-width:780px){
+  .workviewer{grid-column:1/-1;grid-template-columns:1fr;gap:24px;align-items:start}
+  .workviewer__stage{height:auto;width:100%;aspect-ratio:4/5;cursor:default}
+  .workviewer__hint{opacity:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .workviewer__plate{transition:none}
+}

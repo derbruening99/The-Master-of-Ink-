@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" class="is-loading">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -35,8 +35,28 @@
     "telephone": ""
   }
   </script>
+  <style>
+    /* Vorhang — inline, damit er ohne Wartezeit auf das Stylesheet steht. */
+    .curtain{position:fixed;inset:0;z-index:400;display:grid;place-items:center;
+      background:#080808;transition:opacity .9s cubic-bezier(.22,1,.36,1)}
+    .curtain__mark{width:clamp(124px,14vw,177px);height:auto;opacity:0;
+      filter:brightness(2.5) grayscale(1);
+      animation:curtainMark 1.1s cubic-bezier(.22,1,.36,1) .15s forwards}
+    @keyframes curtainMark{from{opacity:0;transform:scale(.97)}to{opacity:.95;transform:none}}
+    .curtain.is-lifting{opacity:0}
+    .curtain.is-gone{display:none}
+    html.is-loading,html.is-loading body{overflow:hidden}
+    @media (prefers-reduced-motion:reduce){
+      .curtain{transition:none}
+      .curtain__mark{animation:none;opacity:.95}
+    }
+  </style>
+  <noscript><style>.curtain{display:none}</style></noscript>
 </head>
 <body>
+  <div class="curtain" id="curtain" aria-hidden="true">
+    <img class="curtain__mark" src="assets/img/logo-160.png" alt="" width="74" height="80" fetchpriority="high">
+  </div>
   <a class="skip-link" href="#studio">Zum Inhalt springen</a>
   <div class="grain" aria-hidden="true"></div>
 

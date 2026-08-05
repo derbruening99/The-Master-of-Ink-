@@ -10,6 +10,37 @@
   var conn = navigator.connection || {};
   doc.classList.add('js');
 
+  /* ---------- Vorhang ----------
+     Schwarz mit Signet, bis die Seite steht. Zwei Regeln halten ihn
+     harmlos: er wartet nie auf das Hero-Video (das lädt bewusst erst
+     nach `load`), und er geht spätestens nach 4 Sekunden auf — eine
+     hängende Datei darf niemanden aussperren. */
+  (function () {
+    var curtain = document.getElementById('curtain');
+    if (!curtain) { doc.classList.remove('is-loading'); return; }
+    var MINDESTDAUER = 620;   /* kurzes Aufblitzen wirkt wie ein Fehler */
+    var NOTAUS = 4000;
+    var start = Date.now();
+    var gehoben = false;
+
+    function hebe() {
+      if (gehoben) return;
+      gehoben = true;
+      var wartend = Math.max(0, MINDESTDAUER - (Date.now() - start));
+      window.setTimeout(function () {
+        doc.classList.remove('is-loading');
+        curtain.classList.add('is-lifting');
+        var weg = function () { curtain.classList.add('is-gone'); };
+        curtain.addEventListener('transitionend', weg, { once: true });
+        window.setTimeout(weg, 1200);      /* falls transitionend ausbleibt */
+      }, wartend);
+    }
+
+    if (document.readyState === 'complete') hebe();
+    else window.addEventListener('load', hebe, { once: true });
+    window.setTimeout(hebe, NOTAUS);
+  }());
+
   /* Mobile navigation */
   var menuButton = document.querySelector('.masthead__toggle');
   var menu = document.getElementById('main-menu');
@@ -221,20 +252,105 @@
   var activeFilter = 'all';
   var activeArtist = 'all';
   var portfolioArtistLabel = document.getElementById('portfolio-artist-label');
-  function buildWork(work) {
-    var figure = el('figure', 'spread');
-    var media = el('div', 'spread__media reveal reveal--wipe');
-    media.setAttribute('data-wipe', 'up');
-    media.appendChild(buildPicture(work, '(min-width: 900px) 34vw, (min-width: 461px) 50vw, 100vw'));
-    var caption = el('figcaption', 'spread__caption');
-    caption.appendChild(el('p', 'spread__num', work.num));
-    caption.appendChild(el('h3', 'spread__title', work.title));
-    if (work.meta) caption.appendChild(el('p', 'spread__meta', work.meta));
-    if (work.caption) caption.appendChild(el('p', 'spread__body', work.caption));
-    figure.appendChild(media);
-    figure.appendChild(caption);
-    return figure;
+  /* ---------- Werkbetrachter ----------
+     Eine Tafel statt vier untereinander: die Arbeiten liegen übereinander,
+     der Cursor fährt waagerecht hindurch. Wer nicht mag, scrollt weiter —
+     der Abschnitt bleibt einen Bildschirm hoch statt drei. */
+  function buildViewer(works) {
+    var wrap = el('div', 'workviewer');
+
+    var stage = el('div', 'workviewer__stage');
+    stage.tabIndex = 0;
+    stage.setAttribute('role', 'group');
+    stage.setAttribute('aria-label', 'Arbeiten durchsehen — darüberfahren oder Pfeiltasten benutzen');
+
+    var plates = works.map(function (work, i) {
+      var plate = el('figure', 'workviewer__plate' + (i === 0 ? ' is-active' : ''));
+      plate.appendChild(buildPicture(work, '(min-width: 900px) 64vw, 100vw'));
+      if (i > 0) {
+        var img = plate.querySelector('img');
+        if (img) img.loading = 'lazy';
+      }
+      stage.appendChild(plate);
+      return plate;
+    });
+
+    var marks = el('div', 'workviewer__marks');
+    marks.setAttribute('aria-hidden', 'true');
+    var markEls = works.map(function (_, i) {
+      var mark = el('span', 'workviewer__mark' + (i === 0 ? ' is-active' : ''));
+      marks.appendChild(mark);
+      return mark;
+    });
+    stage.appendChild(marks);
+
+    var hint = el('p', 'workviewer__hint', works.length > 1 ? 'Darüberfahren' : '');
+    hint.setAttribute('aria-hidden', 'true');
+    stage.appendChild(hint);
+
+    var meta = el('div', 'workviewer__meta');
+    meta.setAttribute('aria-live', 'polite');
+    var counter = el('p', 'workviewer__index');
+    var title = el('h3', 'workviewer__category');
+    var motif = el('p', 'workviewer__motif');
+    var caption = el('p', 'workviewer__caption');
+    [counter, title, motif, caption].forEach(function (n) { meta.appendChild(n); });
+
+    var index = -1;
+    function show(i) {
+      i = Math.max(0, Math.min(works.length - 1, i));
+      if (i === index) return;
+      index = i;
+      plates.forEach(function (n, k) { n.classList.toggle('is-active', k === i); });
+      markEls.forEach(function (n, k) { n.classList.toggle('is-active', k === i); });
+      var work = works[i];
+      counter.textContent = ('0' + (i + 1)).slice(-2) + ' / ' + ('0' + works.length).slice(-2);
+      title.textContent = work.title || '';
+      motif.textContent = work.meta || '';
+      caption.textContent = work.caption || '';
+      motif.hidden = !work.meta;
+      caption.hidden = !work.caption;
+    }
+
+    /* Zeigerbewegung in einen Index übersetzen, gedrosselt über rAF —
+       so bleibt das Durchfahren auch auf schwachen Geräten ruhig. */
+    var raf = null, lastX = 0;
+    function fromPointer() {
+      raf = null;
+      var box = stage.getBoundingClientRect();
+      if (!box.width) return;
+      var share = (lastX - box.left) / box.width;
+      show(Math.floor(Math.max(0, Math.min(0.9999, share)) * works.length));
+    }
+    stage.addEventListener('pointermove', function (event) {
+      if (event.pointerType === 'touch') return;
+      lastX = event.clientX;
+      if (!raf) raf = requestAnimationFrame(fromPointer);
+    });
+
+    /* Touch kennt kein Darüberfahren — hier wird gezogen. */
+    var startX = null, startIndex = 0;
+    stage.addEventListener('touchstart', function (e) {
+      startX = e.touches[0].clientX; startIndex = index;
+    }, { passive: true });
+    stage.addEventListener('touchmove', function (e) {
+      if (startX === null) return;
+      var box = stage.getBoundingClientRect();
+      show(startIndex - Math.round((e.touches[0].clientX - startX) / (box.width || 1) * works.length));
+    }, { passive: true });
+    stage.addEventListener('touchend', function () { startX = null; });
+
+    stage.addEventListener('keydown', function (event) {
+      if (event.key === 'ArrowRight') { show(index + 1); event.preventDefault(); }
+      if (event.key === 'ArrowLeft') { show(index - 1); event.preventDefault(); }
+    });
+
+    wrap.appendChild(stage);
+    wrap.appendChild(meta);
+    show(0);
+    return wrap;
   }
+
   function renderGallery() {
     if (!gallery) return;
     Array.prototype.slice.call(gallery.children).forEach(function (child) {
@@ -243,14 +359,15 @@
     var works = (DATA.works || []).filter(function (work) {
       var artistMatch = activeArtist === 'all' || work.artistId === activeArtist;
       var categories = work.categories || [work.category];
-      return work.featured !== false && artistMatch && (activeFilter === 'all' || categories.indexOf(activeFilter) !== -1);
+      return work.slot && work.featured !== false && artistMatch &&
+        (activeFilter === 'all' || categories.indexOf(activeFilter) !== -1);
     });
     if (portfolioArtistLabel) {
       var artist = (DATA.artists || []).find(function (item) { return item.id === activeArtist; });
       portfolioArtistLabel.textContent = artist ? artist.name : 'Studio';
     }
     if (!works.length) gallery.appendChild(el('p', 'gallery__empty', DATA.emptyNote || 'Keine Arbeiten in dieser Auswahl.'));
-    else works.forEach(function (work) { gallery.appendChild(buildWork(work)); });
+    else gallery.appendChild(buildViewer(works));
     observeReveals(gallery);
   }
   function renderFilters() {

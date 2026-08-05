@@ -226,6 +226,41 @@ sofort.
   `assets/img/team-sebastian-{420,670}.{jpg,webp}` ersetzen
 - Impressum und Datenschutzerklärung ergänzen — in Deutschland Pflicht
 
+## Vorhang beim Laden
+
+Schwarzer Bildschirm mit dem Signet, bis die Seite steht — dann hebt er sich.
+Markup und CSS stehen **inline im Dokument**, nicht im Stylesheet: sonst
+blitzt die Seite auf, bevor der Vorhang da ist.
+
+Drei Regeln halten ihn harmlos:
+
+- Er wartet auf `load`, **nicht** auf das Hero-Video — das lädt bewusst erst
+  danach und würde ihn sonst sekundenlang stehen lassen.
+- Er hebt sich spätestens nach 4 Sekunden, egal was noch offen ist. Eine
+  hängende Datei darf niemanden aussperren.
+- Ohne JavaScript wird er per `<noscript>` ausgeblendet — sonst bliebe die
+  Seite für diese Besucher dauerhaft schwarz.
+
+Eine Mindestdauer von 620 ms verhindert, dass er bei schnellem Cache nur
+kurz aufblitzt; das wirkt wie ein Fehler. Bei `prefers-reduced-motion`
+entfallen Ein- und Ausblendung.
+
+## Arbeiten — der Betrachter
+
+Statt vier Tafeln untereinander liegt eine Tafel da, durch die der Zeiger
+waagerecht fährt: links die erste Arbeit, rechts die letzte. Wer nicht mag,
+scrollt weiter. Das kürzt den Abschnitt von 2458 px auf rund 1700 px.
+
+Bedienung auf allen Wegen: Zeiger (gedrosselt über `requestAnimationFrame`),
+Ziehen auf Touch-Geräten, Pfeiltasten bei Tastaturfokus. Die Beschriftung
+steht in einem `aria-live`-Bereich, wechselt also auch für Screenreader mit.
+
+Die Bühne ist **hochformatig** (4:5) und in der Höhe gedeckelt: die
+Aufnahmen sind Hochformat, ein Querformat-Ausschnitt zeigt vor allem
+Hintergrund. `.gallery` ist ein 12-Spalten-Raster aus dem vorherigen Layout —
+der Betrachter braucht deshalb `grid-column:1/-1`, sonst kollabiert die
+Bühne auf 0 px Breite.
+
 ## Performance
 
 Gemessen mit Chromium, Zahlen bis zum `load`-Ereignis:
