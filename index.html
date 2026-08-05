@@ -198,6 +198,13 @@
           <p class="booking__meta">Rheine · Beratung nur nach Termin</p>
         </div>
         <div class="booking__form reveal reveal--soak">
+          <!-- Ist studiolink.appUrl gesetzt, ersetzt das offizielle
+               StudioLink-Formular (/anfrage) diesen Block. -->
+          <div class="booking__embed" hidden>
+            <iframe class="booking__frame" title="Anfrage — StudioLink" loading="lazy"
+                    referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            <p class="booking__embed-fallback">Formular lädt nicht? <a class="booking__embed-link" href="#" target="_blank" rel="noopener">In neuem Tab öffnen ↗</a></p>
+          </div>
           <form id="anfrage" novalidate>
             <label class="field"><span class="field__label">Name</span><input class="field__input" type="text" name="name" autocomplete="name" aria-describedby="form-error" required></label>
             <label class="field"><span class="field__label">E-Mail</span><input class="field__input" type="email" name="email" autocomplete="email" aria-describedby="form-error" required></label>

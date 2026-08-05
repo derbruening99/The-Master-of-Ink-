@@ -312,6 +312,29 @@
     updateJourney();
   }
 
+  /* ---------- Offizielles StudioLink-Formular ----------
+     Ist `appUrl` gesetzt, zeigt der Termin-Abschnitt StudioLinks eigene
+     /anfrage-Maske. Das ist dieselbe Oberfläche wie in StudioLink selbst
+     — Artist- und Standortwahl, Bild-Upload, zweistufiger Ablauf — und
+     sie bleibt automatisch aktuell, ohne dass hier etwas nachgezogen
+     werden muss. Das schlanke Formular darunter ist nur die Rückfallebene. */
+  var embed = document.querySelector('.booking__embed');
+  var studiolinkApp = (CONFIG.studiolink || {}).appUrl;
+  if (embed && studiolinkApp) {
+    var formUrl = studiolinkApp.replace(/\/$/, '') + '/anfrage';
+    var frame = embed.querySelector('.booking__frame');
+    var openLink = embed.querySelector('.booking__embed-link');
+    if (frame) frame.src = formUrl;
+    if (openLink) openLink.href = formUrl;
+    embed.hidden = false;
+    var fallbackForm = document.getElementById('anfrage');
+    if (fallbackForm) fallbackForm.hidden = true;
+    /* Die offizielle Maske ist als eigene Seite gesetzt — sie braucht die
+       ganze Breite, nicht die schmale Formularspalte. */
+    var bookingGrid = embed.closest('.booking__grid');
+    if (bookingGrid) bookingGrid.classList.add('booking__grid--embedded');
+  }
+
   /* ---------- Anfrage → StudioLink ----------
      Ruft dieselbe Funktion wie StudioLinks eigene /anfrage-Seite:
      inkcore.public_create_lead(p_payload jsonb) returns text.

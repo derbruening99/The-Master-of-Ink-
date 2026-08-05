@@ -164,7 +164,18 @@ window.MOI_CONFIG = {
     schema: "inkcore",
     studioId: "golden-geometry",
     privacyPolicyVersion: "2026-07",
-    leadLinkBase: ""
+    leadLinkBase: "",
+
+    /* Adresse der StudioLink-Installation, z. B. "https://studiolink.example".
+       IST SIE GESETZT, zeigt der Termin-Abschnitt das offizielle
+       StudioLink-Anfrageformular (/anfrage) — dieselbe Maske wie in
+       StudioLink selbst, mit Artist- und Standortwahl, Bild-Upload und
+       dem zweistufigen Ablauf. Sie bleibt automatisch aktuell.
+
+       Ist sie leer, greift das schlanke Formular unten auf der Seite.
+       Es schreibt über dieselbe Funktion in dieselbe Pipeline, hat aber
+       nur die Pflichtfelder. */
+    appUrl: "https://studiolink-app.com"
   },
 
   /* Rückfallebene, falls StudioLink nicht erreichbar ist */

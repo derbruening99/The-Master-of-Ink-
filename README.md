@@ -136,68 +136,65 @@ kurz hell ausbricht.
 
 ## Anfrageformular — StudioLink
 
-Das Formular im Abschnitt „Termin“ spricht dieselbe Schnittstelle an wie
-StudioLinks eigene `/anfrage`-Seite: die SECURITY-DEFINER-Funktion
-`inkcore.public_create_lead(p_payload jsonb)`. Die Anfrage landet damit
-direkt in der Studio-Pipeline — kein Postfach dazwischen, kein zweiter
-Datensatz.
+Der Termin-Abschnitt zeigt **StudioLinks offizielle Anfrage-Maske**
+(`/anfrage`), eingebettet von der laufenden Installation. Das ist dieselbe
+Oberfläche wie in StudioLink selbst — Artist- und Standortwahl, Bild-Upload,
+zweistufiger Ablauf „Lead sichern, dann qualifizieren“. Sie bleibt
+automatisch aktuell: Änderungen in StudioLink erscheinen hier, ohne dass an
+dieser Website etwas nachgezogen werden muss.
 
-Konfiguriert wird das unten in `assets/js/gallery-data.js`:
+Gesteuert wird das über einen einzigen Wert in `assets/js/gallery-data.js`:
 
 ```js
 window.MOI_CONFIG = {
   studiolink: {
-    url: "https://<projekt>.supabase.co",
-    key: "sb_publishable_…",   // veröffentlichbarer Schlüssel, kein Geheimnis
-    schema: "inkcore",
-    studioId: "golden-geometry",
-    privacyPolicyVersion: "2026-07",
-    leadLinkBase: ""            // z. B. "https://studiolink.example"
-  },
-  contactEmail: "studio@masterofink.example"
+    appUrl: "https://studiolink-app.com",   // ← Installation
+    …
+  }
 };
 ```
+
+Ist `appUrl` gesetzt, wird die Maske eingebettet und das schlanke Formular
+darunter ausgeblendet. Unter der Einbettung steht ein Link, der die Maske in
+einem neuen Tab öffnet — falls ein Browser das Einbetten blockiert.
+
+### Rückfallebene
+
+Ist `appUrl` leer, greift ein schlankes Formular auf der Seite selbst. Es
+schreibt über dieselbe Funktion in dieselbe Pipeline
+(`inkcore.public_create_lead(p_payload jsonb)`, SECURITY DEFINER, anonym
+aufrufbar), hat aber nur Name, E-Mail, Telefon, Idee und Einwilligung.
 
 Der Aufruf geht als `POST` an `/rest/v1/rpc/public_create_lead` mit den
 Headern `apikey`, `Authorization: Bearer …` sowie `Content-Profile` und
 `Accept-Profile` auf `inkcore` — ohne die beiden Profile-Header sucht
-PostgREST die Funktion im falschen Schema.
+PostgREST die Funktion im falschen Schema. Nur `studio_id` ist Pflicht und
+muss in `inkcore.studios` existieren.
 
-Gesendet werden `first_name`/`last_name` (aus dem Namensfeld getrennt),
-`contact_email`, `contact_phone`, `motif`, `message`, die Einwilligung mit
-Zeitstempel und Richtlinienversion sowie `form_type: "quick"`. Alle Felder
-außer `studio_id` sind optional; `studio_id` muss in `inkcore.studios`
-existieren, sonst lehnt die Funktion ab.
+Gegen Automaten: ein verstecktes Feld („Firma“) und drei Sekunden
+Mindestverweildauer, dieselbe Schwelle wie in StudioLink. Wichtig für
+spätere Änderungen: Diese Prüfung läuft **nach** der Feldvalidierung.
+Andersherum quittiert ein schnell abgeschicktes leeres Formular mit
+„Angekommen“, ohne etwas zu senden.
 
-**Ist `leadLinkBase` gesetzt**, bekommen Anfragende nach dem Absenden einen
-Link zum Nachreichen von Details. StudioLink gibt dafür ein Token zurück
-(14 Tage gültig), das auf `/lead/<token>` denselben Lead ergänzt statt einen
-zweiten anzulegen.
+### Studio-Zuordnung — bitte prüfen
 
-Gegen Automaten: ein verstecktes Feld („Firma“) und eine Mindestverweildauer
-von 3 Sekunden — dieselbe Schwelle wie in StudioLink. Greift eine der beiden,
-wird die Anfrage stillschweigend verworfen. Wichtig für spätere Änderungen:
-Diese Prüfung läuft **nach** der Feldvalidierung. Andersherum quittiert ein
-schnell abgeschicktes leeres Formular mit „Angekommen“, ohne etwas zu senden.
+Die Anfragen laufen auf `studio_id = "golden-geometry"`. In der Datenbank
+liegen drei Studios:
 
-Schlägt der Aufruf fehl, bleibt das Formular stehen, der Button wird wieder
-nutzbar und es erscheint die Kontaktadresse als Rückfallebene.
+| id | name |
+| --- | --- |
+| `golden-geometry` | Golden Geometry |
+| `the-master-of-ink` | The Master of Ink |
+| `template-tattoo` | Tattoo-Studio (Vorlage) |
 
-## Bewegung
-
-Die Übergänge sind auf physische Tinte hin gebaut, nicht auf generische
-Formen: die Überschrift *saugt sich ein* (Unschärfe + Kontrast laufen
-zusammen), Bildtafeln *trocknen von einer Kante her auf* (`clip-path`), und
-zwischen Papier und Studioaufnahme steht eine per `feTurbulence` +
-`feDisplacementMap` gerissene Tintenkante statt einer glatten Welle.
-
-Wichtig für spätere Änderungen: der `clip-path` liegt bewusst auf dem
-inneren `<picture>`, nie auf dem beobachteten Element — ein Element mit
-`clip-path` meldet dem `IntersectionObserver` immer `intersectionRatio: 0`,
-ein Schwellwert größer 0 würde also nie auslösen.
-
-Bei `prefers-reduced-motion: reduce` entfallen alle Animationen, Videos
-werden ausgeblendet und die Inhalte sind sofort sichtbar.
+Alle bisherigen Anfragen liegen auf `golden-geometry`, und StudioLink selbst
+hat diese id fest verdrahtet (`lib/supabase.ts`). Anfragen erscheinen also im
+tatsächlich genutzten Posteingang — aber unter einem Studio, das „Golden
+Geometry“ heißt. Der Datensatz `the-master-of-ink` ist leer und wird von der
+App nirgends gelesen. Wer das geradeziehen will, muss das in StudioLink tun
+(Studio umbenennen oder `STUDIO_ID` umstellen und Bestand migrieren) — nicht
+auf dieser Website.
 
 ## Ablauf-Abschnitt
 

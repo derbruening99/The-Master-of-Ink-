@@ -194,3 +194,12 @@ h2 em{font-weight:400;color:var(--gold)}
 .form__submit[aria-busy="true"]{opacity:.55;cursor:progress}
 .termin__done-supplement{margin-top:18px;font-size:13px;color:#8a8a8a}
 .termin__done-link{border-bottom:1px solid var(--gold);padding-bottom:2px}
+
+/* Offizielles StudioLink-Formular, eingebettet */
+.booking__embed{display:grid;gap:14px}
+.booking__frame{width:100%;min-height:clamp(720px,118svh,1240px);border:1px solid var(--line-dark);background:#070708;display:block}
+.booking__embed-fallback{font-size:11px;letter-spacing:.04em;color:#666}
+.booking__embed-link{border-bottom:1px solid var(--gold);padding-bottom:2px}
+
+.booking__grid--embedded{grid-template-columns:1fr}
+.booking__grid--embedded .booking__form{grid-column:1/-1;max-width:920px;width:100%}
