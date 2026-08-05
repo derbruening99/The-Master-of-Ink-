@@ -34,10 +34,10 @@ window.MOI_DATA = {
       instagram: "https://www.instagram.com/bruen.ink/",
       instagramLabel: "@bruen.ink",
       portrait: {
-        slot: "team-brian",
-        widths: [800, 1280, 1920],
-        alt: "Bryan bei einer konzentrierten Tattoo-Session im Studio",
-        position: "50% 38%"
+        slot: "team-bryan",
+        widths: [640, 1200],
+        alt: "Bryan lächelt während einer konzentrierten Tattoo-Session im Studio",
+        position: "50% 42%"
       }
     }
   ],

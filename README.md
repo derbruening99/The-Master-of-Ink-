@@ -34,9 +34,9 @@ Objekte ergänzt. Die Zuordnung einer Arbeit erfolgt über `works[].artistId`.
   role: "Resident Artist",
   specialties: ["Sketch-Realismus", "Fine Line", "Blackwork"],
   portrait: {
-    slot: "team-brian",        // interner Medienname; sichtbar bleibt Bryan
-    widths: [800, 1280, 1920],
-    alt: "Bryan bei einer konzentrierten Tattoo-Session im Studio"
+    slot: "team-bryan",
+    widths: [640, 1200],
+    alt: "Bryan lächelt während einer konzentrierten Tattoo-Session im Studio"
   }
 }
 ```
