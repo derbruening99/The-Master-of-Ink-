@@ -201,13 +201,22 @@
           <form id="anfrage" novalidate>
             <label class="field"><span class="field__label">Name</span><input class="field__input" type="text" name="name" autocomplete="name" aria-describedby="form-error" required></label>
             <label class="field"><span class="field__label">E-Mail</span><input class="field__input" type="email" name="email" autocomplete="email" aria-describedby="form-error" required></label>
+            <label class="field"><span class="field__label">Telefon <span class="field__hint">optional</span></span><input class="field__input" type="tel" name="phone" autocomplete="tel"></label>
             <label class="field"><span class="field__label">Deine Idee</span><textarea class="field__input" name="idea" rows="3" placeholder="Motiv, Stelle, Größe — was du schon weißt."></textarea></label>
+            <label class="field field--check">
+              <input class="field__check" type="checkbox" name="consent" value="ja" required>
+              <span>Ich bin damit einverstanden, zu meiner Anfrage kontaktiert zu werden. Die Angaben werden ausschließlich dafür verwendet.</span>
+            </label>
             <label class="field field--hp" aria-hidden="true"><span class="field__label">Firma</span><input class="field__input" type="text" name="company" tabindex="-1" autocomplete="off"></label>
             <p class="form__error" id="form-error" role="alert" hidden></p>
             <button class="form__submit" type="submit">Anfrage beginnen <span aria-hidden="true">↗</span></button>
           </form>
-          <div class="termin__done" hidden><p class="termin__done-title">Angekommen.</p><p>Danke dir. Unser Team liest jede Anfrage persönlich — du hörst innerhalb von drei Werktagen von uns.</p></div>
-          <div class="studiolink"><span>Terminübergabe</span><p>Die Verwaltung erfolgt diskret über StudioLink.</p><a href="#" rel="noopener">StudioLink öffnen ↗</a></div>
+          <div class="termin__done" hidden>
+            <p class="termin__done-title">Angekommen.</p>
+            <p>Danke dir. Deine Anfrage liegt jetzt bei uns — du hörst innerhalb von drei Werktagen persönlich von uns.</p>
+            <p class="termin__done-supplement" hidden>Du kannst deine Anfrage noch in Ruhe ergänzen — Referenzen, Größe, Wunschtermin:<br><a class="termin__done-link" href="#" rel="noopener">Angaben ergänzen ↗</a></p>
+          </div>
+          <div class="studiolink"><span>Terminübergabe</span><p>Anfragen und Termine laufen über StudioLink.</p><a href="#" rel="noopener">StudioLink öffnen ↗</a></div>
         </div>
       </div>
     </section>

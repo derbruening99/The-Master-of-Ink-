@@ -143,6 +143,30 @@ window.MOI_DATA = {
    endpoint gesetzt  -> Formular sendet JSON per POST dorthin
    endpoint leer     -> Fallback: öffnet das E-Mail-Programm (mailto) */
 window.MOI_CONFIG = {
-  formEndpoint: "",
+  /* ---------------------------------------------------------
+     StudioLink — offizielle Anfrage-Schnittstelle.
+     Das Formular ruft dieselbe Funktion auf wie StudioLinks
+     eigene /anfrage-Seite: inkcore.public_create_lead(p_payload).
+     Die Anfrage landet damit direkt im Studio-Posteingang, nicht
+     in einem Postfach nebenan.
+
+     `key` ist der veröffentlichbare Supabase-Schlüssel — er steckt
+     per Design in jedem Browser-Bundle und ist kein Geheimnis.
+     Der Zugriff ist serverseitig auf diese eine Funktion begrenzt.
+
+     leadLinkBase: Adresse der StudioLink-Installation. Ist sie
+     gesetzt, bekommen Anfragende nach dem Absenden einen Link, um
+     Details nachzureichen (StudioLink gibt dafür ein Token zurück).
+     --------------------------------------------------------- */
+  studiolink: {
+    url: "https://vdhscdhyniqmaynsayrz.supabase.co",
+    key: "sb_publishable_LZ9KBBL1pwtonk9VHam5Pw_8GVQ5K0r",
+    schema: "inkcore",
+    studioId: "golden-geometry",
+    privacyPolicyVersion: "2026-07",
+    leadLinkBase: ""
+  },
+
+  /* Rückfallebene, falls StudioLink nicht erreichbar ist */
   contactEmail: "studio@masterofink.example"
 };

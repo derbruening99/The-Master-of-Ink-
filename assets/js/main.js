@@ -289,11 +289,42 @@
   renderGallery();
   observeReveals(document);
 
-  /* Existing StudioLink-ready enquiry handoff. */
+  /* ---------- Ablauf: Achse wächst beim Scrollen mit ----------
+     Die Linie zeichnet den Fortschritt zwischen erstem und letztem
+     Schritt nach — die Bewegung kommt aus dem Scrollen, nicht aus
+     einer Schleife, die ohnehin läuft. */
+  var journey = document.querySelector('.process-journey__steps');
+  if (journey && !mqReduced.matches) {
+    var journeyRaf = null;
+    var updateJourney = function () {
+      if (journeyRaf) return;
+      journeyRaf = requestAnimationFrame(function () {
+        journeyRaf = null;
+        var box = journey.getBoundingClientRect();
+        var anchor = window.innerHeight * 0.62;
+        var progress = (anchor - box.top) / (box.height || 1);
+        progress = Math.max(0, Math.min(1, progress));
+        journey.style.setProperty('--journey-progress', (progress * 100).toFixed(2) + '%');
+      });
+    };
+    window.addEventListener('scroll', updateJourney, { passive: true });
+    window.addEventListener('resize', updateJourney);
+    updateJourney();
+  }
+
+  /* ---------- Anfrage → StudioLink ----------
+     Ruft dieselbe Funktion wie StudioLinks eigene /anfrage-Seite:
+     inkcore.public_create_lead(p_payload jsonb) returns text.
+     Rückgabe ist ein Ergänzungs-Token (14 Tage gültig). */
   var form = document.getElementById('anfrage');
   var done = document.querySelector('.termin__done');
+  var MIN_FILL_SECONDS = 3;      /* wie in StudioLinks LeadIntakeForm */
   if (form && done) {
+    var openedAt = Date.now();
     var errorBox = form.querySelector('.form__error');
+    var supplement = done.querySelector('.termin__done-supplement');
+    var supplementLink = done.querySelector('.termin__done-link');
+
     function showError(message) {
       errorBox.textContent = message;
       errorBox.hidden = !message;
@@ -302,37 +333,101 @@
         else input.removeAttribute('aria-invalid');
       });
     }
+
+    function finish(token) {
+      form.hidden = true;
+      done.hidden = false;
+      var base = (CONFIG.studiolink || {}).leadLinkBase;
+      if (token && base && supplement && supplementLink) {
+        supplementLink.href = base.replace(/\/$/, '') + '/lead/' + token;
+        supplement.hidden = false;
+      }
+      done.setAttribute('tabindex', '-1');
+      done.focus();
+    }
+
+    /* Vor- und Nachname trennen, wie StudioLink es erwartet. */
+    function splitName(full) {
+      var parts = full.split(/\s+/).filter(Boolean);
+      return { first: parts.shift() || '', last: parts.join(' ') };
+    }
+
+    function sendToStudioLink(payload) {
+      var cfg = CONFIG.studiolink || {};
+      return fetch(cfg.url.replace(/\/$/, '') + '/rest/v1/rpc/public_create_lead', {
+        method: 'POST',
+        headers: {
+          'apikey': cfg.key,
+          'Authorization': 'Bearer ' + cfg.key,
+          'Content-Type': 'application/json',
+          'Content-Profile': cfg.schema,
+          'Accept-Profile': cfg.schema
+        },
+        body: JSON.stringify({ p_payload: payload })
+      }).then(function (response) {
+        if (!response.ok) {
+          return response.text().then(function (body) {
+            throw new Error('StudioLink ' + response.status + ': ' + body.slice(0, 200));
+          });
+        }
+        return response.json();
+      });
+    }
+
     form.addEventListener('submit', function (event) {
       event.preventDefault();
       showError('');
       var data = new FormData(form);
-      if (data.get('company')) { form.hidden = true; done.hidden = false; return; }
       var name = String(data.get('name') || '').trim();
       var email = String(data.get('email') || '').trim();
+      var phone = String(data.get('phone') || '').trim();
       var idea = String(data.get('idea') || '').trim();
+
+      /* Erst prüfen, dann auf Automaten testen — sonst quittiert ein
+         schnell abgeschicktes leeres Formular mit „Angekommen“. */
       if (!name || !email) { showError('Bitte gib Name und E-Mail-Adresse an.'); return; }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Bitte prüfe die E-Mail-Adresse.'); return; }
-      function finish() { form.hidden = true; done.hidden = false; }
-      if (CONFIG.formEndpoint) {
-        var submit = form.querySelector('.form__submit');
-        submit.disabled = true;
-        fetch(CONFIG.formEndpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: name, email: email, idea: idea })
-        }).then(function (response) {
-          if (!response.ok) throw new Error('send failed');
-          finish();
-        }).catch(function () {
-          submit.disabled = false;
-          showError('Das hat leider nicht geklappt. Schreib uns direkt: ' + (CONFIG.contactEmail || ''));
-        });
-      } else {
-        var subject = encodeURIComponent('Tattoo-Anfrage — ' + name);
-        var body = encodeURIComponent('Name: ' + name + '\nE-Mail: ' + email + '\n\nIdee:\n' + idea + '\n');
-        window.location.href = 'mailto:' + (CONFIG.contactEmail || '') + '?subject=' + subject + '&body=' + body;
-        finish();
+      if (!data.get('consent')) { showError('Bitte bestätige, dass wir dich zu deiner Anfrage kontaktieren dürfen.'); return; }
+
+      /* Automat: still abbrechen, statt zu verraten, woran es lag. */
+      var tooFast = (Date.now() - openedAt) / 1000 < MIN_FILL_SECONDS;
+      if (String(data.get('company') || '').trim() !== '' || tooFast) { finish(null); return; }
+
+      var cfg = CONFIG.studiolink || {};
+      var submit = form.querySelector('.form__submit');
+      if (!cfg.url || !cfg.key || !cfg.studioId) {
+        showError('Das Anfrageformular ist noch nicht verbunden. Schreib uns direkt: ' + (CONFIG.contactEmail || ''));
+        return;
       }
+
+      var parts = splitName(name);
+      submit.disabled = true;
+      submit.setAttribute('aria-busy', 'true');
+      sendToStudioLink({
+        studio_id: cfg.studioId,
+        source: 'web',
+        source_detail: 'website_termin',
+        source_page: 'website',
+        source_section: 'termin',
+        first_name: parts.first,
+        last_name: parts.last || null,
+        contact_email: email,
+        contact_phone: phone || null,
+        preferred_contact_channel: 'email',
+        motif: idea || null,
+        message: idea || null,
+        consent_to_contact: true,
+        consent_timestamp: new Date().toISOString(),
+        privacy_policy_version: cfg.privacyPolicyVersion || null,
+        form_type: 'quick'
+      }).then(function (token) {
+        finish(typeof token === 'string' ? token : null);
+      }).catch(function (error) {
+        if (window.console && console.error) console.error('[anfrage] StudioLink', error);
+        submit.disabled = false;
+        submit.removeAttribute('aria-busy');
+        showError('Die Anfrage kam nicht durch. Bitte versuch es gleich noch einmal — oder schreib uns direkt: ' + (CONFIG.contactEmail || ''));
+      });
     });
   }
 }());

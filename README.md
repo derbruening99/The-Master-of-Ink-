@@ -134,20 +134,54 @@ Die Hero-Aufnahme wird per CSS abgedunkelt
 Verlauf. So trägt die Typografie in jedem Frame, auch wenn das Material
 kurz hell ausbricht.
 
-## Anfrageformular
+## Anfrageformular — StudioLink
 
-Standardmäßig öffnet das Formular das E-Mail-Programm der Besucherin. Für
-echten Serverversand in `assets/js/gallery-data.js` unten eintragen:
+Das Formular im Abschnitt „Termin“ spricht dieselbe Schnittstelle an wie
+StudioLinks eigene `/anfrage`-Seite: die SECURITY-DEFINER-Funktion
+`inkcore.public_create_lead(p_payload jsonb)`. Die Anfrage landet damit
+direkt in der Studio-Pipeline — kein Postfach dazwischen, kein zweiter
+Datensatz.
+
+Konfiguriert wird das unten in `assets/js/gallery-data.js`:
 
 ```js
 window.MOI_CONFIG = {
-  formEndpoint: "https://…/anfrage",   // bekommt {name, email, idea} als JSON
+  studiolink: {
+    url: "https://<projekt>.supabase.co",
+    key: "sb_publishable_…",   // veröffentlichbarer Schlüssel, kein Geheimnis
+    schema: "inkcore",
+    studioId: "golden-geometry",
+    privacyPolicyVersion: "2026-07",
+    leadLinkBase: ""            // z. B. "https://studiolink.example"
+  },
   contactEmail: "studio@masterofink.example"
 };
 ```
 
-Ein verstecktes Feld („Firma“) fängt Bots ab; ausgefüllt wird die Anfrage
-stillschweigend verworfen.
+Der Aufruf geht als `POST` an `/rest/v1/rpc/public_create_lead` mit den
+Headern `apikey`, `Authorization: Bearer …` sowie `Content-Profile` und
+`Accept-Profile` auf `inkcore` — ohne die beiden Profile-Header sucht
+PostgREST die Funktion im falschen Schema.
+
+Gesendet werden `first_name`/`last_name` (aus dem Namensfeld getrennt),
+`contact_email`, `contact_phone`, `motif`, `message`, die Einwilligung mit
+Zeitstempel und Richtlinienversion sowie `form_type: "quick"`. Alle Felder
+außer `studio_id` sind optional; `studio_id` muss in `inkcore.studios`
+existieren, sonst lehnt die Funktion ab.
+
+**Ist `leadLinkBase` gesetzt**, bekommen Anfragende nach dem Absenden einen
+Link zum Nachreichen von Details. StudioLink gibt dafür ein Token zurück
+(14 Tage gültig), das auf `/lead/<token>` denselben Lead ergänzt statt einen
+zweiten anzulegen.
+
+Gegen Automaten: ein verstecktes Feld („Firma“) und eine Mindestverweildauer
+von 3 Sekunden — dieselbe Schwelle wie in StudioLink. Greift eine der beiden,
+wird die Anfrage stillschweigend verworfen. Wichtig für spätere Änderungen:
+Diese Prüfung läuft **nach** der Feldvalidierung. Andersherum quittiert ein
+schnell abgeschicktes leeres Formular mit „Angekommen“, ohne etwas zu senden.
+
+Schlägt der Aufruf fehl, bleibt das Formular stehen, der Button wird wieder
+nutzbar und es erscheint die Kontaktadresse als Rückfallebene.
 
 ## Bewegung
 
@@ -165,9 +199,19 @@ ein Schwellwert größer 0 würde also nie auslösen.
 Bei `prefers-reduced-motion: reduce` entfallen alle Animationen, Videos
 werden ausgeblendet und die Inhalte sind sofort sichtbar.
 
+## Ablauf-Abschnitt
+
+Drei Schritte statt vier — Klären und Komponieren sind eine Etappe. Die
+senkrechte Achse links wächst beim Scrollen mit (`--journey-progress`, aus
+`main.js`), Ziffer, Titellinie und Punkt setzen beim Eintreten nacheinander
+ein. Bei `prefers-reduced-motion` bleibt die Achse ungefüllt und alles steht
+sofort.
+
 ## Was noch zu tun ist
 
-- `caption` für „Leopard, halb verborgen“ und „Wächter“ ergänzen
+- `leadLinkBase` auf die StudioLink-Adresse setzen, damit Anfragende
+  Details nachreichen können
 - Echte Studioadresse, E-Mail-Adresse und den StudioLink-Link eintragen
   (aktuell Platzhalter: `studio@masterofink.example`, `href="#"`)
+- Datenschutzerklärung verlinken — die Einwilligung verweist darauf
 - Impressum und Datenschutzerklärung ergänzen — in Deutschland Pflicht
