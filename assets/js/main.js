@@ -172,7 +172,43 @@
       directory.appendChild(card);
     });
     observeReveals(directory);
+    fitNames();
   }
+
+  /* Der Name füllt seine Spalte aus, statt sie zu sprengen: die
+     Display-Größe kann nicht für alle Namenslängen gleich sein
+     ("Bryan" passt, "Sebastian" ist fast doppelt so breit). */
+  function fitNames() {
+    var names = directory ? directory.querySelectorAll('.artist-card__name') : [];
+    if (!names.length) return;
+    var target = Infinity;
+    Array.prototype.forEach.call(names, function (node) {
+      node.style.fontSize = '';
+      node.style.whiteSpace = '';
+      var cap = parseFloat(window.getComputedStyle(node).fontSize);
+      var avail = node.clientWidth;
+      if (!cap || !avail) return;
+      /* scrollWidth taugt hier nicht — bei Blockelementen ist es nie
+         kleiner als die Box. Die echte Textbreite liefert nur ein Range. */
+      node.style.whiteSpace = 'nowrap';
+      node.style.fontSize = '100px';
+      var range = document.createRange();
+      range.selectNodeContents(node);
+      var needed = range.getBoundingClientRect().width;
+      node.style.fontSize = '';
+      node.style.whiteSpace = '';
+      if (!needed) return;
+      target = Math.min(target, Math.floor(avail / needed * 100), cap);
+    });
+    if (!isFinite(target)) return;
+    /* Ein gemeinsamer Grad für alle Namen — zwei verschiedene Größen
+       nebeneinander lesen sich wie ein Fehler, nicht wie ein System. */
+    Array.prototype.forEach.call(names, function (node) {
+      node.style.fontSize = target + 'px';
+    });
+  }
+  window.addEventListener('resize', fitNames);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitNames);
 
   /* Restrained, data-driven portfolio */
   var gallery = document.getElementById('gallery');

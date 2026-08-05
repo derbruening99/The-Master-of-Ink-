@@ -23,28 +23,10 @@ window.MOI_DATA = {
      ergänzt; die Team-Sektion wird automatisch daraus erzeugt. */
   artists: [
     {
-      id: "bryan",
-      name: "Bryan",
-      role: "Resident Artist",
-      number: "01",
-      location: "Rheine",
-      specialties: ["Sketch-Realismus", "Fine Line", "Blackwork"],
-      bio: "Bryan entwickelt jedes Stück aus dem Gespräch heraus und zeichnet es für genau einen Menschen. Sein Fokus liegt auf klarer Komposition, ruhiger Ausführung und Motiven, die auch nach Jahren noch selbstverständlich zum Körper gehören.",
-      quote: "Haut ist die ehrlichste Leinwand, die es gibt. Sie verdient Geduld.",
-      instagram: "https://www.instagram.com/bruen.ink/",
-      instagramLabel: "@bruen.ink",
-      portrait: {
-        slot: "team-bryan",
-        widths: [640, 1200],
-        alt: "Bryan lächelt während einer konzentrierten Tattoo-Session im Studio",
-        position: "50% 42%"
-      }
-    },
-    {
       id: "sebastian",
       name: "Sebastian",
-      role: "Inhaber & Artist",
-      number: "02",
+      role: "Inhaber & Tätowierer",
+      number: "01",
       location: "Rheine",
       specialties: ["Realismus", "Fine Line", "Symbolische Kompositionen"],
       bio: "Sebastian hat The Master of Ink gegründet und das Tätowieren erst nach der Gründung gelernt. Seine Arbeiten verbinden Realismus, feine Linien und symbolische Kompositionen — entwickelt aus der Geschichte hinter dem Motiv.",
@@ -56,6 +38,24 @@ window.MOI_DATA = {
         widths: [640, 1080],
         alt: "Sebastian konzentriert an seinem Arbeitsplatz im Tattoostudio",
         position: "50% 46%"
+      }
+    },
+    {
+      id: "bryan",
+      name: "Bryan",
+      role: "Resident Artist",
+      number: "02",
+      location: "Rheine",
+      specialties: ["Sketch-Realismus", "Fine Line", "Blackwork"],
+      bio: "Bryan entwickelt jedes Stück aus dem Gespräch heraus und zeichnet es für genau einen Menschen. Sein Fokus liegt auf klarer Komposition, ruhiger Ausführung und Motiven, die auch nach Jahren noch selbstverständlich zum Körper gehören.",
+      quote: "Haut ist die ehrlichste Leinwand, die es gibt. Sie verdient Geduld.",
+      instagram: "https://www.instagram.com/bruen.ink/",
+      instagramLabel: "@bruen.ink",
+      portrait: {
+        slot: "team-bryan",
+        widths: [640, 1200],
+        alt: "Bryan lächelt während einer konzentrierten Tattoo-Session im Studio",
+        position: "50% 42%"
       }
     }
   ],
