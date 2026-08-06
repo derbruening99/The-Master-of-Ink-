@@ -121,8 +121,11 @@ Poster: `studio-poster.jpg` (1080 px), `studio-poster-720.jpg`,
 `studio-poster-portrait.jpg` (Hochformat für Telefone) sowie
 `needle-poster*.jpg`.
 
-Neu kodieren — der Zuschnitt `crop=1080:915:0:0` schneidet das
-Social-Media-Wasserzeichen der Originalaufnahmen weg:
+Neu kodieren. Beide Aufnahmen tragen ein `@bruen.ink`-Wasserzeichen auf
+halber Höhe; die Zuschnitte umgehen es (delogo verschmiert die feinen
+Linien und ist keine Option).
+
+**Hero** — `crop=1080:915:0:0` nimmt alles oberhalb des Wasserzeichens:
 
 ```bash
 SRC=original.MOV
@@ -135,6 +138,28 @@ ffmpeg -y -i "$SRC" -vf "crop=1080:915:0:0,hqdn3d=2:1.5:3:3" -an \
 ffmpeg -y -ss 11 -i "$SRC" -frames:v 1 -vf "crop=1080:915:0:0" -q:v 3 \
   assets/video/studio-poster.jpg
 ```
+
+**Nadel** — aus `backtattoo_bw_2.MOV` (2160x3840). Die ersten zwei
+Sekunden zeigen die Schablone, erst danach die Nadel über der Haut;
+deshalb der Beschnitt auf 2,1 s–6,2 s. Der Ausschnitt sitzt links unter
+der Bildmitte, damit die Haut das Bild füllt statt des Maschinenkörpers:
+
+```bash
+SRC=backtattoo_bw_2.MOV
+VF="crop=1076:1345:330:500,hqdn3d=2:1.5:3:3"
+ffmpeg -y -ss 2.1 -t 4.1 -i "$SRC" -vf "$VF,scale=1080:1350" -an \
+  -c:v libvpx-vp9 -crf 36 -b:v 0 -row-mt 1 -deadline good -cpu-used 3 \
+  assets/video/needle-loop.webm
+ffmpeg -y -ss 2.1 -t 4.1 -i "$SRC" -vf "$VF,scale=1080:1350" -an \
+  -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 24 -preset slow \
+  -movflags +faststart assets/video/needle-loop.mp4
+ffmpeg -y -ss 4.2 -i "$SRC" -frames:v 1 -vf "crop=1076:1345:330:500,scale=1080:1350" \
+  -q:v 3 assets/video/needle-poster.jpg
+```
+
+Das Ergebnis ist Hochformat (4:5). Am Telefon ist die Bühne Querformat,
+deshalb rückt CSS den Ausschnitt dort nach unten
+(`object-position:50% 100%`) — sonst stünde nur die Maschine im Bild.
 
 Die Hero-Aufnahme wird per CSS abgedunkelt
 (`filter: brightness(.76) contrast(1.08)`) und liegt unter einem doppelten

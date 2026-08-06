@@ -331,6 +331,11 @@ h2 em{font-weight:400;color:var(--gold)}
   .chapter__grid{grid-template-columns:1fr;gap:34px}
   .chapter__stage{position:sticky;top:64px;z-index:2;background:var(--ink);padding-bottom:10px}
   .stage{aspect-ratio:5/4;max-height:44svh}
+  /* Das Nadel-Video ist Hochformat, die Bühne am Telefon Querformat.
+     Ohne Versatz zeigte der Ausschnitt nur den Maschinenkörper —
+     nach unten gerückt läuft die Nadel sichtbar über die Haut. */
+  .stage__slot[data-stage-slot="video"] video,
+  .stage__slot[data-stage-slot="video"] img{object-position:50% 100%}
   .worklane__item{min-height:0;padding:34px 0}
 }
 @media (prefers-reduced-motion:reduce){

@@ -55,10 +55,7 @@ window.MOI_DATA = {
       quote: "Haut ist die ehrlichste Leinwand, die es gibt. Sie verdient Geduld.",
       instagram: "https://www.instagram.com/tattoobryaan/",
       instagramLabel: "@tattoobryaan",
-      /* Bryan hat noch kein StudioLink-Profil. Solange es fehlt, landet
-         sein Name im Anfragetext statt in der Artist-Zuordnung. Sobald es
-         angelegt ist, hier die Profil-ID eintragen — mehr ist nicht nötig. */
-      studiolinkId: "",
+      studiolinkId: "01c4142e-1893-4d4d-bca2-2e5eed828d41",
       portrait: {
         slot: "team-bryan",
         widths: [640, 1200],
