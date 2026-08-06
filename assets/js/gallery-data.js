@@ -49,10 +49,8 @@ window.MOI_DATA = {
       specialties: ["Sketch-Realismus", "Fine Line", "Blackwork"],
       bio: "Bryan zeichnet jedes Motiv für genau einen Menschen — entwickelt aus dem Gespräch und aus der Geschichte, die dahinter steht. Sein Fokus liegt auf klarer Komposition und ruhiger Ausführung: Arbeiten, die auch nach Jahren noch selbstverständlich wirken.",
       quote: "Haut ist die ehrlichste Leinwand, die es gibt. Sie verdient Geduld.",
-      /* Bryans eigenes Konto steht noch aus — leer lassen blendet den
-         Link aus, statt auf ein fremdes Profil zu verweisen. */
-      instagram: "",
-      instagramLabel: "",
+      instagram: "https://www.instagram.com/tattoobryaan/",
+      instagramLabel: "@tattoobryaan",
       portrait: {
         slot: "team-bryan",
         widths: [640, 1200],
@@ -77,7 +75,7 @@ window.MOI_DATA = {
   works: [
     {
       id: "schlange",
-      artistId: "bryan",
+      artistId: "sebastian",
       featured: true,
       slot: "work-schlange",            /* -> assets/img/work-schlange-{640,1024,1600}.{jpg,webp} */
       widths: [640, 1024, 1600],
@@ -93,7 +91,7 @@ window.MOI_DATA = {
     },
     {
       id: "leopard",
-      artistId: "bryan",
+      artistId: "sebastian",
       featured: true,
       slot: "work-leopard",
       widths: [640, 1024, 1440],
@@ -109,7 +107,7 @@ window.MOI_DATA = {
     },
     {
       id: "dobermann",
-      artistId: "bryan",
+      artistId: "sebastian",
       featured: true,
       slot: "work-dobermann",
       widths: [640, 1024, 1600],

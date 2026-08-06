@@ -167,6 +167,16 @@
 
   /* Data-driven artist directory: adding another artist requires data only. */
   var directory = document.getElementById('artist-directory');
+
+  /* Hat dieser Künstler überhaupt etwas zu zeigen? Ein Eintrag ohne Bild
+     (slot leer) zählt nicht — sonst führte "Portfolio ansehen" in eine
+     leere Galerie. Der Link erscheint von selbst, sobald Bilder da sind. */
+  function hatArbeiten(artistId) {
+    return (DATA.works || []).some(function (work) {
+      return work.slot && work.featured !== false && work.artistId === artistId;
+    });
+  }
+
   function renderArtists() {
     if (!directory || !DATA.artists) return;
     Array.prototype.slice.call(directory.children).forEach(function (child) {
@@ -195,10 +205,12 @@
       bio.appendChild(el('p', '', artist.bio));
       if (artist.quote) bio.appendChild(el('blockquote', 'artist-card__quote', '„' + artist.quote + '“'));
       var links = el('div', 'artist-card__links');
-      var portfolio = el('a', '', 'Portfolio ansehen ↓');
-      portfolio.href = '#arbeiten';
-      portfolio.setAttribute('data-artist-portfolio', artist.id);
-      links.appendChild(portfolio);
+      if (hatArbeiten(artist.id)) {
+        var portfolio = el('a', '', 'Portfolio ansehen ↓');
+        portfolio.href = '#arbeiten';
+        portfolio.setAttribute('data-artist-portfolio', artist.id);
+        links.appendChild(portfolio);
+      }
       if (artist.instagram) {
         var instagram = el('a', '', 'Instagram ' + artist.instagramLabel + ' ↗');
         instagram.href = artist.instagram;
