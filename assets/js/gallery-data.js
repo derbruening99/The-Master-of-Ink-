@@ -142,6 +142,76 @@ window.MOI_DATA = {
       meta: "Gehirn & Faden",
       caption: ""    },
 
+    {
+      id: "ruecken",
+      artistId: "sebastian",
+      featured: true,
+      slot: "work-ruecken",
+      widths: [640, 1024],
+      ratio: "4 / 5",
+      position: "50% 50%",
+      alt: "Großflächige Fine-Line-Tätowierung über den Rücken: zwei Pfingstrosen, Schriftzug entlang der Wirbelsäule, Schmetterling",
+      num: "05",
+      title: "Fineline-Arbeiten",
+      category: "fine-line",
+      categories: ["fine-line"],
+      meta: "Pfingstrosen & Schriftzug · Rücken",
+      caption: "Über die ganze Rückenfläche komponiert: Die Blüten folgen den Schulterblättern, der Schriftzug der Wirbelsäule."
+    },
+    {
+      id: "auge",
+      artistId: "sebastian",
+      featured: true,
+      slot: "work-auge",
+      widths: [640, 1024],
+      ratio: "4 / 5",
+      position: "50% 50%",
+      alt: "Tätowierung eines realistischen Auges hinter zerbrochenem Glas, umgeben von Blättern am Oberarm",
+      num: "06",
+      title: "Realismusarbeiten",
+      category: "realismus",
+      categories: ["realismus", "fine-line"],
+      meta: "Auge hinter Glas · Oberarm",
+      caption: ""
+    },
+    {
+      id: "biene",
+      artistId: "sebastian",
+      featured: true,
+      slot: "work-biene",
+      widths: [640],
+      ratio: "4 / 5",
+      position: "50% 50%",
+      alt: "Realistische Tätowierung einer Biene mit fein gezeichneten Flügeln am Oberarm",
+      num: "07",
+      title: "Realismusarbeiten",
+      category: "realismus",
+      categories: ["realismus"],
+      meta: "Biene · Oberarm",
+      caption: ""
+    },
+    {
+      /* Japanisches Sleeve (Hannya-Maske). Das vorhandene Foto zeigt im
+         Hintergrund Spiegel und Raum; im 4:5-Rahmen der Bühne bekommt man
+         den Arm nicht sauber freigestellt. Sobald ein Bild da ist, auf dem
+         das Motiv den Rahmen füllt: als work-japan ablegen und den slot
+         eintragen. Ohne slot wird der Eintrag übersprungen. */
+      id: "japan",
+      artistId: "sebastian",
+      featured: true,
+      slot: "",                          /* -> work-japan */
+      widths: [640, 1024],
+      ratio: "4 / 5",
+      position: "50% 50%",
+      alt: "Japanisches Sleeve in Schwarz-Grau: Hannya-Maske, Samurai und Kirschblüte am Unterarm",
+      num: "08",
+      title: "Blackwork-Arbeiten",
+      category: "blackwork",
+      categories: ["blackwork"],
+      meta: "Hannya & Samurai · Sleeve",
+      caption: ""
+    },
+
     /* ---------------------------------------------------------------
        ARBEITEN VON BRYAN.
        Die Vorlagen lagen nur in 1200-1486 px vor und sind zusätzlich
