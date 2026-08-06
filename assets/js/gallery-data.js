@@ -28,11 +28,11 @@ window.MOI_DATA = {
       role: "Inhaber & Tätowierer",
       number: "01",
       location: "Rheine",
-      specialties: ["Realismus", "Fine Line", "Symbolische Kompositionen"],
-      bio: "Sebastian hat The Master of Ink gegründet und das Tätowieren erst nach der Gründung gelernt. Seine Arbeiten verbinden Realismus, feine Linien und symbolische Kompositionen — entwickelt aus der Geschichte hinter dem Motiv.",
+      specialties: ["Fine Line", "Abstrakt", "Realismus"],
+      bio: "Sebastian hat The Master of Ink gegründet und das Tätowieren erst danach gelernt. Er arbeitet mit dem Flow des Körpers: Ein Motiv wird nicht auf eine Stelle gelegt, sondern an ihr entlang entwickelt und auf den Menschen angepasst, der es trägt — in feinen Linien, abstrakten Formen oder realistischen Elementen, je nachdem, was die Stelle verlangt.",
       quote: "",
-      instagram: "",
-      instagramLabel: "",
+      instagram: "https://www.instagram.com/bruen.ink/",
+      instagramLabel: "@bruen.ink",
       portrait: {
         slot: "team-sebastian",
         widths: [420, 670],
@@ -47,10 +47,12 @@ window.MOI_DATA = {
       number: "02",
       location: "Rheine",
       specialties: ["Sketch-Realismus", "Fine Line", "Blackwork"],
-      bio: "Bryan entwickelt jedes Stück aus dem Gespräch heraus und zeichnet es für genau einen Menschen. Sein Fokus liegt auf klarer Komposition, ruhiger Ausführung und Motiven, die auch nach Jahren noch selbstverständlich zum Körper gehören.",
+      bio: "Bryan zeichnet jedes Motiv für genau einen Menschen — entwickelt aus dem Gespräch und aus der Geschichte, die dahinter steht. Sein Fokus liegt auf klarer Komposition und ruhiger Ausführung: Arbeiten, die auch nach Jahren noch selbstverständlich wirken.",
       quote: "Haut ist die ehrlichste Leinwand, die es gibt. Sie verdient Geduld.",
-      instagram: "https://www.instagram.com/bruen.ink/",
-      instagramLabel: "@bruen.ink",
+      /* Bryans eigenes Konto steht noch aus — leer lassen blendet den
+         Link aus, statt auf ein fremdes Profil zu verweisen. */
+      instagram: "",
+      instagramLabel: "",
       portrait: {
         slot: "team-bryan",
         widths: [640, 1200],
