@@ -138,17 +138,20 @@ window.MOI_DATA = {
       caption: ""    },
 
     /* ---------------------------------------------------------------
-       NEUE ARBEITEN VON BRYAN — Einträge stehen, Bilder fehlen noch.
-       Sobald die Ableitungen unter assets/img/ liegen, jeweils nur
-       `slot` ausfüllen; ohne slot wird der Eintrag übersprungen.
-       Erzeugen mit dem Einzeiler aus dem README (640/1024/1600).
+       ARBEITEN VON BRYAN.
+       Die Vorlagen lagen nur in 1200-1486 px vor und sind zusätzlich
+       eng auf das Motiv beschnitten, damit die kleinen Arbeiten das
+       Bild füllen. Deshalb gibt es hier nur die 640er-Breite —
+       widths listet nur, was wirklich existiert.
+       Liegen bessere Originale vor: nach assets/img/neu/ legen und
+       ./bilder-einlesen.sh laufen lassen, dann 1600 hier ergänzen.
        --------------------------------------------------------------- */
     {
       id: "herzen",
       artistId: "bryan",
       featured: true,
-      slot: "",                          /* -> work-herzen */
-      widths: [640, 1024, 1600],
+      slot: "work-herzen",
+      widths: [640],
       ratio: "4 / 5",
       position: "50% 50%",
       alt: "Fine-Line-Tätowierung: zwei Herzfiguren Hand in Hand am Unterarm, rote und schwarze Linien",
@@ -163,10 +166,10 @@ window.MOI_DATA = {
       id: "amor-fati",
       artistId: "bryan",
       featured: true,
-      slot: "",                          /* -> work-amor-fati */
-      widths: [640, 1024, 1600],
+      slot: "work-amor-fati",
+      widths: [640],
       ratio: "4 / 5",
-      position: "50% 45%",
+      position: "50% 50%",
       alt: "Feine Schrift-Tätowierung „amor fati“ am Oberschenkel",
       num: "06",
       title: "Fineline-Arbeiten",
@@ -179,26 +182,26 @@ window.MOI_DATA = {
       id: "hundertfuesser",
       artistId: "bryan",
       featured: true,
-      slot: "",                          /* -> work-hundertfuesser */
-      widths: [640, 1024, 1600],
+      slot: "work-hundertfuesser",
+      widths: [640],
       ratio: "4 / 5",
-      position: "50% 45%",
-      alt: "Blackwork-Tätowierung eines Hundertfüßers, der sich über die Wade windet",
+      position: "50% 50%",
+      alt: "Blackwork-Tätowierung eines Hundertfüßers, der sich über den Unterschenkel windet",
       num: "07",
       title: "Blackwork-Arbeiten",
       category: "blackwork",
       categories: ["blackwork"],
-      meta: "Hundertfüßer · Wade",
+      meta: "Hundertfüßer · Unterschenkel",
       caption: ""
     },
     {
       id: "schleife",
       artistId: "bryan",
       featured: true,
-      slot: "",                          /* -> work-schleife */
-      widths: [640, 1024, 1600],
+      slot: "work-schleife",
+      widths: [640],
       ratio: "4 / 5",
-      position: "50% 45%",
+      position: "50% 50%",
       alt: "Fine-Line-Tätowierung einer Schleife mit den Jahreszahlen 1971, 1976 und 2004 am Unterarm",
       num: "08",
       title: "Fineline-Arbeiten",
@@ -211,10 +214,10 @@ window.MOI_DATA = {
       id: "everything-happens",
       artistId: "bryan",
       featured: true,
-      slot: "",                          /* -> work-everything-happens */
-      widths: [640, 1024, 1600],
+      slot: "work-everything-happens",
+      widths: [640],
       ratio: "4 / 5",
-      position: "50% 45%",
+      position: "50% 50%",
       alt: "Feine Schrift-Tätowierung „everything happens for a reason“ am Oberarm",
       num: "09",
       title: "Fineline-Arbeiten",
