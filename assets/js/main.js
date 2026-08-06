@@ -341,6 +341,9 @@
     }
     if (!works.length) {
       gallery.appendChild(el('p', 'gallery__empty', DATA.emptyNote || 'Keine Arbeiten in dieser Auswahl.'));
+      /* Ohne Werke gibt es nichts zu beobachten — sonst bliebe die Bühne
+         schwarz, weil kein Ausschnitt mehr aktiv ist. */
+      zeigeBuehne('video', 'Präzision ist kein Stilmittel. Sie ist die Grundlage.');
     } else {
       works.forEach(function (work, i) {
         if (stage) stage.appendChild(buildStageSlot(work));
@@ -349,6 +352,8 @@
     }
     observeReveals(gallery);
     beobachteBuehne();
+    /* Nach einem Filterwechsel steht die Bühne wieder am Anfang. */
+    if (works.length) zeigeBuehne('video', 'Präzision ist kein Stilmittel. Sie ist die Grundlage.');
   }
 
   function renderFilters() {
