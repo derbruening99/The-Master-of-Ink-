@@ -105,10 +105,17 @@ wenn sie in den Viewport kommen:
 WebM/VP9 wird zuerst angeboten (deutlich kleiner, Chrome/Firefox/Edge),
 MP4/H.264 ist der Rückfall für Safari und iOS.
 
-**Video wird durch das Poster ersetzt, wenn** der Viewport schmaler als
-900 px ist, das System `prefers-reduced-motion: reduce` meldet, oder der
-Browser Datensparen signalisiert (`navigator.connection.saveData`). Beim
-Verlassen des Viewports pausiert das Video wieder.
+**Auf dem Telefon laufen die Videos ebenfalls** — dort aber in einer
+eigenen, kleineren Fassung (`*-loop-mobil.{webm,mp4}`, 720 px breit). Welche
+Datei geladen wird, entscheidet die Bildschirmbreite; das Markup führt beide
+über `data-video-*` bzw. `data-video-*-mobil`.
+
+**Durch das Poster ersetzt wird das Video nur**, wenn das System
+`prefers-reduced-motion: reduce` meldet oder der Browser Datensparen
+signalisiert (`navigator.connection.saveData`). Beim Verlassen des Viewports
+pausiert es.
+
+Datenmenge nach vollem Durchscrollen: Desktop 4,6 MB, Telefon 1,8 MB.
 
 Poster: `studio-poster.jpg` (1080 px), `studio-poster-720.jpg`,
 `studio-poster-portrait.jpg` (Hochformat für Telefone) sowie

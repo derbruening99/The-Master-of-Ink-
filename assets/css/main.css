@@ -297,6 +297,8 @@ h2 em{font-weight:400;color:var(--gold)}
 @media (prefers-reduced-motion:reduce){
   .chapter__stage{position:static}
   .stage__slot{transition:none;transform:none}
+  /* Kein Bewegtbild: das Poster steht, das Video wird gar nicht geladen. */
+  .hero__video,.stage__slot video{display:none}
 }
 
 /* ---------- Hero-Auftritt nach dem Vorhang ---------- */

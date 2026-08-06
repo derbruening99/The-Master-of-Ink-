@@ -79,15 +79,20 @@
   }
 
   /* Video: WebM first, MP4 fallback; never load for mobile, reduced motion or Save-Data. */
+  /* Video läuft auf ALLEN Geräten — am Telefon nur mit der kleinen
+     Fassung (rund ein Drittel der Datenmenge). Hart abgeschaltet wird es
+     weiterhin bei „Bewegung reduzieren" und bei aktivem Datensparen; dann
+     bleibt das Poster stehen. */
   function videoAllowed() {
-    return mqVideo.matches && !mqReduced.matches && !conn.saveData;
+    return !mqReduced.matches && !conn.saveData;
   }
   function loadSource(video) {
     if (video.dataset.loaded) return;
     video.dataset.loaded = '1';
+    var klein = !mqVideo.matches;
     [
-      { src: video.dataset.videoWebm, type: 'video/webm' },
-      { src: video.dataset.videoMp4, type: 'video/mp4' }
+      { src: (klein && video.dataset.videoWebmMobil) || video.dataset.videoWebm, type: 'video/webm' },
+      { src: (klein && video.dataset.videoMp4Mobil) || video.dataset.videoMp4, type: 'video/mp4' }
     ].forEach(function (candidate) {
       if (!candidate.src) return;
       var source = document.createElement('source');
