@@ -150,7 +150,7 @@ h2 em{font-weight:400;color:var(--gold)}
 .booking__form{padding-top:clamp(20px,8vw,130px)}
 #anfrage{display:grid;gap:32px}.field{display:grid;gap:8px}.field__label{font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,244,244,.54)}
 .field__input{width:100%;border:0;border-bottom:1px solid var(--line-dark);border-radius:0;background:none;color:var(--paper);padding:9px 0;font-size:15px;outline:none}.field__input:focus{border-color:var(--gold)}.field__input::placeholder{color:rgba(244,244,244,.28)}textarea.field__input{resize:vertical;min-height:86px}
-.field--hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}.form__error{font-size:12px;color:#e0e0e0}
+.field--hp{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.form__error{font-size:12px;color:#e0e0e0}
 .form__submit{justify-self:start;border:1px solid rgba(244,244,244,.45);background:none;color:var(--paper);cursor:pointer;padding:15px 18px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;transition:background .25s,color .25s}.form__submit:hover{background:var(--paper);color:var(--ink)}
 .termin__done-title{font:italic 400 42px/1 var(--serif);color:var(--gold);margin-bottom:16px}.termin__done>p:last-child{font-size:14px;color:rgba(244,244,244,.67)}
 .studiolink{display:grid;grid-template-columns:auto 1fr auto;gap:18px;margin-top:55px;padding-top:17px;border-top:1px solid var(--line-dark)}.studiolink span{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}.studiolink p,.studiolink a{font-size:10px;color:rgba(244,244,244,.55)}.studiolink a{text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
@@ -318,3 +318,52 @@ h2 em{font-weight:400;color:var(--gold)}
 .colophon__finale-eyebrow{font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold)}
 .colophon__finale-line{font:500 clamp(44px,7vw,110px)/.92 var(--serif);letter-spacing:-.04em;text-wrap:balance}
 .colophon__finale-line em{font-weight:400;color:var(--gold)}
+
+/* ---------- Mobil ----------
+   Drei Dinge, die am Telefon zählen: Finger treffen (44 px nach den
+   Richtlinien von Apple und Google), Text lesbar (nicht 8 px), und
+   Eingabefelder mit 16 px — darunter zoomt iOS Safari beim Antippen
+   ungefragt in die Seite hinein. */
+@media (max-width:860px){
+  :root{--section-y:clamp(60px,10vw,110px)}
+
+  /* Tippziele */
+  .btn{min-height:48px;padding-top:0;padding-bottom:0;align-items:center}
+  .btn--primary{padding:0 22px}
+  .btn--text{padding:14px 0;border-bottom:0}
+  .masthead__links a{min-height:46px;display:flex;align-items:center}
+  .masthead__toggle{min-height:46px;min-width:46px;display:inline-flex;align-items:center;justify-content:flex-end}
+  .masthead__cta{padding:14px 18px}
+  .filter-btn{min-height:44px;display:inline-flex;align-items:center}
+  .colophon__nav a,.colophon__contact a,.colophon__legal a,.studiolink a,
+  .artist-card__links a,.work__after a,.booking__embed-link,.legal__back{
+    min-height:44px;display:inline-flex;align-items:center}
+  .colophon__base{gap:6px}
+
+  /* Eingaben */
+  .field__input{font-size:16px;padding:13px 0}
+  textarea.field__input{min-height:104px}
+  .field--check{gap:14px;align-items:center}
+  .field--check .field__check{width:24px;height:24px;margin-top:0}
+  .form__submit{min-height:48px}
+
+  /* Lesbarkeit — Kleinstgrade anheben */
+  .eyebrow,.section__index,.field__label,.artist-card__styles,.artist-card__top,
+  .hero__note,.hero__eyebrow,.booking__meta,.worklane__motif,.worklane__index,
+  .colophon__base p,.colophon__nav a,.colophon__contact a,.colophon__contact p,
+  .stage__caption,.studiolink p,.masthead__links a,.masthead__wordmark{font-size:11px}
+  .colophon__finale-eyebrow{font-size:11px}
+  .btn,.artist-card__links a,.work__after a,.studiolink a,.studiolink span,
+  .colophon__legal a,.filter-btn{font-size:12px}
+  .worklane__text,.artist-card__bio,.manifesto__copy>p:last-child{font-size:15px;line-height:1.7}
+  .process-journey__step>div p{font-size:15px;line-height:1.7}
+}
+
+/* Sehr schmale Geräte (iPhone SE): Länge weiter zurücknehmen */
+@media (max-width:400px){
+  :root{--section-y:clamp(52px,9vw,84px)}
+  .worklane__item{padding:26px 0}
+  .process-journey__step{padding:26px 0}
+  .artist-card__name{margin:34px 0 22px}
+  .colophon__top{margin-bottom:clamp(40px,8vw,70px)}
+}
