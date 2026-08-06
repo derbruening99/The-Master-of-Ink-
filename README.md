@@ -21,6 +21,46 @@ Lokal ansehen — ein Server ist nötig, `file://` reicht für Videos nicht:
 python3 -m http.server 8000     # dann http://localhost:8000
 ```
 
+## Stand (6. August 2026)
+
+Die Seite ist fertig und veröffentlicht. Was drinsteckt:
+
+| | |
+| --- | --- |
+| Arbeiten | 13 Einträge, davon **12 sichtbar** (`japan` wartet auf ein besseres Foto) |
+| Künstler | Sebastian (`bruen.ink`) und Bryan (`tattoobryaan`) — alle gezeigten Arbeiten sind Sebastians |
+| Kategorien | Cover-up, Fine Line, Realismus, Blackwork, Abstrakt |
+| Anfragen | vierstufiger Wizard → Supabase → Posteingang von **The Master of Ink** in StudioLink |
+| Videos | zwei, stumm, in Schleife, erst beim Sichtbarwerden geladen |
+| Rechtliches | Impressum und Datenschutz stehen; im Impressum fehlen noch Telefonnummer und Umsatzsteuer-Angabe |
+
+Offene Punkte stehen unten unter „Was noch zu tun ist". Das Gegenstück —
+StudioLink, wo die Anfragen landen — liegt in einem eigenen Repo; dessen Stand
+steht dort in `docs/STAND_2026-08-06.md`.
+
+## Veröffentlichung
+
+Die Seite liegt auf **Vercel** unter `https://masterofink.vercel.app/` und wird
+bei jedem Push automatisch neu ausgeliefert. Es gibt keinen Build-Schritt — was
+im Repo liegt, ist die Seite.
+
+| | |
+| --- | --- |
+| Zweig | `claude/master-of-ink-production-bg11la` — der **einzige** Zweig, also zugleich der Produktionszweig |
+| Adresse | `https://masterofink.vercel.app/` (steht als canonical und `og:url` in allen drei Seiten) |
+| Kopfzeilen | `vercel.json` — Schriften/Bilder/Videos ein Jahr unveränderlich, CSS/JS eine Stunde |
+| Adresse ändern | `./set-domain.sh https://neue-adresse` stempelt canonical, `og:url`, JSON-LD, `sitemap.xml` und `robots.txt` in einem Zug um |
+
+Für dieses Repo ist zusätzlich **GitHub Pages** aktiv. Das ist ein Überbleibsel
+und nicht die ausgelieferte Seite: Der Pages-Bau hinkt gelegentlich einen
+Commit hinterher (zuletzt bei `c5ea427`). Solange die Adresse oben auf Vercel
+zeigt, ist das folgenlos — wer Pages nicht braucht, kann es in den
+Repo-Einstellungen abschalten.
+
+**Nach jeder Änderung an CSS oder JS** muss `./bump-version.sh` laufen, sonst
+liefern Browser die alten Dateien aus dem Zwischenspeicher aus. Siehe
+„Beim Ändern von CSS oder JS: Version hochzählen".
+
 ## Künstler und Portfolio pflegen
 
 Alles Inhaltliche steht in **`assets/js/gallery-data.js`**. Das Array
@@ -51,7 +91,7 @@ Ein Eintrag:
 ```js
 {
   id: "schlange",
-  artistId: "bryan",          // Zuordnung zum Team-Eintrag
+  artistId: "sebastian",      // Zuordnung zum Team-Eintrag
   featured: true,              // erscheint in der kuratierten Auswahl
   slot: "work-schlange",        // Dateiname ohne Breite und Endung
   widths: [640, 1024, 1600],    // vorhandene Breiten
@@ -60,15 +100,23 @@ Ein Eintrag:
   alt: "…",                     // Bildbeschreibung (Barrierefreiheit)
   num: "01",
   title: "Schlange & Pfingstrose",
-  category: "fine-line",        // eine id aus `categories`
+  categories: ["fine-line"],    // ids aus `categories` — eine Arbeit darf
+  category: "fine-line",        //   in mehreren Filtern auftauchen
   meta: "Fine Line · Hüfte",
   caption: "…"                  // leer lassen, wenn noch nichts feststeht
 }
 ```
 
+Zu den zwei Kategorie-Feldern: Maßgeblich ist die **Liste** `categories` —
+`main.js` liest `work.categories || [work.category]`. Das Einzelfeld ist die
+ältere Schreibweise und bleibt als Rückfall stehen. Beim Anlegen einer Arbeit
+beide setzen; beim Umkategorisieren nicht vergessen, beide zu ändern.
+
 Leere Felder werden einfach nicht gerendert — lieber `""` stehen lassen als
-etwas erfinden. `caption: ""` ist bei zwei Arbeiten bewusst als Platzhalter
-gesetzt und mit `TODO` markiert.
+etwas erfinden. Derzeit tragen nur `schlange` und `ruecken` einen Text;
+bei den übrigen elf steht `caption: ""`, weil dazu nichts feststand. Das ist
+Absicht, kein Versehen: Ein erfundener Satz unter einer echten Arbeit fällt
+sofort auf. Sebastian kann sie jederzeit nachreichen.
 
 **Neues Bild einsetzen** — Ableitungen erzeugen und den `slot` eintragen:
 
@@ -86,7 +134,7 @@ Studio, Haltung, Prozess und Team.
 
 ### Kategorien
 
-`Cover-up`, `Fine Line`, `Realismus`, `Abstrakt` — definiert in
+`Cover-up`, `Fine Line`, `Realismus`, `Blackwork`, `Abstrakt` — definiert in
 `categories`. Der sekundäre Filter „Auswahl“ wird automatisch vorangestellt. Eine
 Kategorie ohne Arbeiten zeigt den Text aus `emptyNote` statt einer leeren
 Seite. Kategorien lassen sich umbenennen oder ergänzen; entscheidend ist,
@@ -259,12 +307,23 @@ sofort.
 
 ## Was noch zu tun ist
 
-- Telefonnummer im Impressum ergänzen (§ 5 DDG) und die Umsatzsteuer-Angabe
-  klären — beide sind in `impressum.html` als TODO markiert
-- Porträt von Sebastian: derzeit ein enger Ausschnitt aus dem vorhandenen
+Nach Dringlichkeit, oben das Rechtliche:
+
+- **Telefonnummer im Impressum** ergänzen (§ 5 DDG) und die Umsatzsteuer-Angabe
+  klären — beide stehen in `impressum.html` als TODO im Markup. Das ist der
+  einzige Punkt der Liste mit einer rechtlichen Frist; alles andere ist Kür.
+  (Die Seiten `impressum.html` und `datenschutz.html` selbst stehen und sind
+  verlinkt — nur diese zwei Angaben fehlen.)
+- **Japanisches Sleeve**: Der Eintrag `japan` in `gallery-data.js` ist
+  vollständig vorbereitet, aber `slot: ""` — also unsichtbar. Grund steht in
+  `c5ea427`: Das vorhandene Foto zeigt den Arm schräg im Raum, mit Spiegel und
+  Sockelleiste dahinter; im 4:5-Rahmen bleibt der Hintergrund in jedem
+  Zuschnitt sichtbar. Sobald ein Foto da ist, auf dem das Motiv den Rahmen
+  füllt: durch `bilder-einlesen.sh` schicken, Dateinamen in `slot` eintragen,
+  fertig.
+- **Porträt von Sebastian**: derzeit ein enger Ausschnitt aus dem vorhandenen
   Studiofoto. Ein eigenes Porträt wäre besser — Dateien als
-  `assets/img/team-sebastian-{420,670}.{jpg,webp}` ersetzen
-- Impressum und Datenschutzerklärung ergänzen — in Deutschland Pflicht
+  `assets/img/team-sebastian-{420,670}.{jpg,webp}` ersetzen.
 
 ## Vorhang beim Laden
 
