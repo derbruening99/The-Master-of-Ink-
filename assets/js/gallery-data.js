@@ -33,6 +33,10 @@ window.MOI_DATA = {
       quote: "",
       instagram: "https://www.instagram.com/bruen.ink/",
       instagramLabel: "@bruen.ink",
+      /* StudioLink-Profil-ID. Nur mit ihr kann eine Anfrage direkt einem
+         Artist zugeordnet werden. Fehlt sie, wird der Wunsch trotzdem im
+         Anfragetext festgehalten — er geht also nie verloren. */
+      studiolinkId: "223df2f8-780d-452f-8417-27b20f84950c",
       portrait: {
         slot: "team-sebastian",
         widths: [420, 670],
@@ -51,6 +55,10 @@ window.MOI_DATA = {
       quote: "Haut ist die ehrlichste Leinwand, die es gibt. Sie verdient Geduld.",
       instagram: "https://www.instagram.com/tattoobryaan/",
       instagramLabel: "@tattoobryaan",
+      /* Bryan hat noch kein StudioLink-Profil. Solange es fehlt, landet
+         sein Name im Anfragetext statt in der Artist-Zuordnung. Sobald es
+         angelegt ist, hier die Profil-ID eintragen — mehr ist nicht nötig. */
+      studiolinkId: "",
       portrait: {
         slot: "team-bryan",
         widths: [640, 1200],
@@ -269,6 +277,52 @@ window.MOI_CONFIG = {
        bleibt das Formular unten stehen, statt Anfragen ins falsche
        Studio zu schreiben. Leer lassen schaltet die Einbettung ganz ab. */
     appUrl: "https://studiolink-app.com"
+  },
+
+  /* -----------------------------------------------------------------
+     Anfrage-Wizard.
+
+     Die `wert`-Angaben sind NICHT frei wählbar — StudioLink prüft sie
+     serverseitig und weist unbekannte Werte ab. Erlaubt sind:
+       art      : tattoo · coverup · nachstechen · beratung · unsicher
+                  (auch piercing, hier nicht angeboten)
+       farbe    : black_grey · color · both · unsure
+       budget   : under_200 · 200_500 · 500_1000 · 1000_2500 · over_2500
+                  · unsure · not_provided
+       kanal    : email · whatsapp · phone · instagram · sms
+     Die Beschriftungen (`label`, `hinweis`) sind frei änderbar.
+     Reihenfolge = Anzeigereihenfolge. Einträge dürfen weg.
+     ----------------------------------------------------------------- */
+  wizard: {
+    art: [
+      { wert: "tattoo",      label: "Neues Tattoo",   hinweis: "Ein eigener Entwurf, von Grund auf" },
+      { wert: "coverup",     label: "Cover-up",       hinweis: "Bestehendes überdecken oder einbinden" },
+      { wert: "nachstechen", label: "Nachstechen",    hinweis: "Eine ältere Arbeit auffrischen" },
+      { wert: "beratung",    label: "Erst beraten",   hinweis: "Ich möchte in Ruhe darüber sprechen" },
+      { wert: "unsicher",    label: "Noch unsicher",  hinweis: "Die Idee ist noch nicht fertig" }
+    ],
+    stile: ["Fine Line", "Realismus", "Blackwork", "Abstrakt", "Lettering", "Noch offen"],
+    farbe: [
+      { wert: "black_grey", label: "Schwarz & Grau" },
+      { wert: "color",      label: "Farbe" },
+      { wert: "both",       label: "Beides" },
+      { wert: "unsure",     label: "Weiß ich noch nicht" }
+    ],
+    budget: [
+      { wert: "not_provided", label: "Sag ich lieber im Gespräch" },
+      { wert: "under_200",    label: "bis 200 €" },
+      { wert: "200_500",      label: "200 – 500 €" },
+      { wert: "500_1000",     label: "500 – 1.000 €" },
+      { wert: "1000_2500",    label: "1.000 – 2.500 €" },
+      { wert: "over_2500",    label: "über 2.500 €" },
+      { wert: "unsure",       label: "Keine Vorstellung" }
+    ],
+    kanal: [
+      { wert: "email",     label: "E-Mail" },
+      { wert: "whatsapp",  label: "WhatsApp" },
+      { wert: "phone",     label: "Telefon" },
+      { wert: "instagram", label: "Instagram" }
+    ]
   },
 
   /* Rückfallebene, falls StudioLink nicht erreichbar ist */

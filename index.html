@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
   <link rel="preload" href="assets/fonts/cormorant-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="assets/css/main.css?v=20260806-0759">
+  <link rel="stylesheet" href="assets/css/main.css?v=20260806-0816">
 
   <script type="application/ld+json">
   {
@@ -157,9 +157,17 @@
                blendet vom Video in die Arbeiten über. Ohne sie stünde neben
                Schritt II und III die halbe Breite leer. -->
           <div class="stage" id="stage">
-            <div class="stage__slot is-active" data-stage-slot="video">
+            <!-- data-stage-fest: bleibt beim Filtern stehen. Ohne das
+                 Kennzeichen räumt renderGallery() den Ausschnitt weg. -->
+            <div class="stage__slot is-active" data-stage-slot="video" data-stage-fest>
               <img src="assets/video/needle-poster-720.jpg" srcset="assets/video/needle-poster-720.jpg 720w, assets/video/needle-poster.jpg 1080w" sizes="(min-width: 900px) 46vw, 100vw" alt="Nahaufnahme einer präzisen Linienarbeit mit der Tätowiernadel" loading="lazy" decoding="async">
               <video data-video-webm="assets/video/needle-loop.webm" data-video-mp4="assets/video/needle-loop.mp4" data-video-webm-mobil="assets/video/needle-loop-mobil.webm" data-video-mp4-mobil="assets/video/needle-loop-mobil.mp4" muted loop playsinline preload="none" poster="assets/video/needle-poster.jpg" tabindex="-1" aria-hidden="true"></video>
+            </div>
+            <div class="stage__slot" data-stage-slot="schablone" data-stage-fest>
+              <picture>
+                <source type="image/webp" srcset="assets/img/process-schablone-640.webp 640w, assets/img/process-schablone-1024.webp 1024w, assets/img/process-schablone-1600.webp 1600w" sizes="(min-width: 900px) 46vw, 100vw">
+                <img src="assets/img/process-schablone-1024.jpg" srcset="assets/img/process-schablone-640.jpg 640w, assets/img/process-schablone-1024.jpg 1024w, assets/img/process-schablone-1600.jpg 1600w" sizes="(min-width: 900px) 46vw, 100vw" alt="Behandschuhte Hände schneiden eine Tattoo-Schablone mit der Schere zu" loading="lazy" decoding="async">
+              </picture>
             </div>
           </div>
           <p class="stage__caption" id="stage-caption" aria-live="polite">Präzision ist kein Stilmittel. Sie ist die Grundlage.</p>
@@ -167,15 +175,15 @@
 
         <div class="chapter__scroll">
           <ol class="process-journey__steps" aria-label="Unser Prozess in drei Schritten">
-            <li class="process-journey__step reveal reveal--soak" data-stage="video">
+            <li class="process-journey__step reveal reveal--soak" data-stage="video" data-stage-caption="Präzision ist kein Stilmittel. Sie ist die Grundlage.">
               <span class="process-journey__roman" aria-hidden="true">I</span>
               <div><h3>Zuhören</h3><p>Du schickst uns deine Idee, die gewünschte Stelle und das, was hinter dem Motiv steckt. Wir prüfen persönlich und ehrlich, ob das Projekt zu uns passt.</p></div>
             </li>
-            <li class="process-journey__step reveal reveal--soak" data-stage="video">
+            <li class="process-journey__step reveal reveal--soak" data-stage="schablone" data-stage-caption="Der Entwurf wird zugeschnitten — einmal, für einen Körper.">
               <span class="process-journey__roman" aria-hidden="true">II</span>
               <div><h3>Klären &amp; Komponieren</h3><p>Im Gespräch klären wir Richtung, Größe, Platzierung und Machbarkeit — in ruhiger Atmosphäre und ohne Zeitdruck. Daraus entsteht der Entwurf für deinen Körper: einmal gezeichnet, einmal tätowiert. Proportion, Bewegung und persönliche Bedeutung werden zu einer Einheit.</p></div>
             </li>
-            <li class="process-journey__step reveal reveal--soak" data-stage="video">
+            <li class="process-journey__step reveal reveal--soak" data-stage="video" data-stage-caption="Die Nadel ist der letzte Schritt, nicht der erste.">
               <span class="process-journey__roman" aria-hidden="true">III</span>
               <div><h3>Tätowieren &amp; Begleiten</h3><p>Dein Termin gehört dir. Danach bleiben wir mit klaren Pflegehinweisen und persönlicher Erreichbarkeit an deiner Seite, bis die Arbeit sauber verheilt ist.</p></div>
             </li>
@@ -238,33 +246,18 @@
           <p class="booking__meta">Rheine · Beratung nur nach Termin</p>
         </div>
         <div class="booking__form reveal reveal--soak">
-          <!-- Ist studiolink.appUrl gesetzt, ersetzt das offizielle
-               StudioLink-Formular (/anfrage) diesen Block. -->
-          <div class="booking__embed" hidden>
-            <!-- kein loading="lazy": der Rahmen startet verborgen und muss laden,
-                 um sich als richtiges Studio zu melden — sonst lädt er nie. -->
-            <iframe class="booking__frame" title="Anfrage — StudioLink"
-                    referrerpolicy="strict-origin-when-cross-origin"></iframe>
-            <p class="booking__embed-fallback">Formular lädt nicht? <a class="booking__embed-link" href="#" target="_blank" rel="noopener">In neuem Tab öffnen ↗</a></p>
-          </div>
-          <form id="anfrage" novalidate>
-            <label class="field"><span class="field__label">Name</span><input class="field__input" type="text" name="name" autocomplete="name" aria-describedby="form-error" required></label>
-            <label class="field"><span class="field__label">E-Mail</span><input class="field__input" type="email" name="email" autocomplete="email" aria-describedby="form-error" required></label>
-            <label class="field"><span class="field__label">Telefon <span class="field__hint">optional</span></span><input class="field__input" type="tel" name="phone" autocomplete="tel"></label>
-            <label class="field"><span class="field__label">Deine Idee</span><textarea class="field__input" name="idea" rows="3" placeholder="Motiv, Stelle, Größe — was du schon weißt."></textarea></label>
-            <label class="field field--check">
-              <input class="field__check" type="checkbox" name="consent" value="ja" required>
-              <span>Ich bin damit einverstanden, zu meiner Anfrage kontaktiert zu werden. Die Angaben werden ausschließlich dafür verwendet.</span>
-            </label>
-            <label class="field field--hp" aria-hidden="true"><span class="field__label">Firma</span><input class="field__input" type="text" name="company" tabindex="-1" autocomplete="off"></label>
-            <p class="form__error" id="form-error" role="alert" hidden></p>
-            <button class="form__submit" type="submit">Anfrage beginnen <span aria-hidden="true">↗</span></button>
-          </form>
-          <div class="termin__done" hidden>
-            <p class="termin__done-title">Angekommen.</p>
-            <p>Danke dir. Deine Anfrage liegt jetzt bei uns — du hörst innerhalb von drei Werktagen persönlich von uns.</p>
-            <p class="termin__done-supplement" hidden>Du kannst deine Anfrage noch in Ruhe ergänzen — Referenzen, Größe, Wunschtermin:<br><a class="termin__done-link" href="#" rel="noopener">Angaben ergänzen ↗</a></p>
-          </div>
+          <!-- Der Wizard wird aus MOI_CONFIG.wizard aufgebaut und schreibt
+               über inkcore.public_create_lead direkt in den Posteingang von
+               The Master of Ink — dieselbe Schnittstelle, die StudioLinks
+               eigenes Anfrageformular benutzt. -->
+          <div class="wizard" id="wizard" data-studiolink></div>
+          <noscript>
+            <div class="wizard__noscript">
+              <p>Für das Anfrageformular braucht dein Browser JavaScript. Schreib uns stattdessen gern direkt:</p>
+              <p><a href="mailto:masterofinkger@gmail.com">masterofinkger@gmail.com</a><br>
+                 <a href="https://www.instagram.com/masterofinkger/" rel="noopener">Instagram @masterofinkger ↗</a></p>
+            </div>
+          </noscript>
           <div class="studiolink"><span>Terminübergabe</span><p>Anfragen und Termine laufen über StudioLink.</p><a href="https://studiolink-app.com" target="_blank" rel="noopener">StudioLink öffnen ↗</a></div>
         </div>
       </div>
@@ -285,7 +278,7 @@
     <div class="colophon__base"><p>© 2026 The Master of Ink</p><p>Rheine · Nur nach Termin</p><nav class="colophon__legal" aria-label="Rechtliches"><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a></nav></div>
   </footer>
 
-  <script src="assets/js/gallery-data.js?v=20260806-0759" defer></script>
-  <script src="assets/js/main.js?v=20260806-0759" defer></script>
+  <script src="assets/js/gallery-data.js?v=20260806-0816" defer></script>
+  <script src="assets/js/main.js?v=20260806-0816" defer></script>
 </body>
 </html>

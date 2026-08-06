@@ -307,14 +307,34 @@
     if (!bloecke.length) return;
     if (mqReduced.matches || !('IntersectionObserver' in window)) return;
     if (stageIO) stageIO.disconnect();
+
+    /* Der Beobachter meldet nur ÄNDERUNGEN. Wer gerade im Band steht,
+       muss deshalb mitgeführt werden — sonst entschiede eine Meldung
+       über einen Block, der längst nicht mehr der richtige ist. */
+    var imBand = [];
+    function waehle() {
+      if (!imBand.length) return;
+      /* Der Block gewinnt, dessen Mitte der Bildschirmmitte am nächsten
+         liegt. „Der oberste sichtbare" wäre falsch: die Schritte sind
+         hoch, ein fast durchgelaufener ragt noch ins Band und würde den
+         gerade gelesenen verdrängen — die Bühne hinkte hinterher. */
+      var mitte = window.innerHeight / 2;
+      var beste = null, bester = Infinity;
+      imBand.forEach(function (node) {
+        var r = node.getBoundingClientRect();
+        var d = Math.abs(r.top + r.height / 2 - mitte);
+        if (d < bester) { bester = d; beste = node; }
+      });
+      if (beste) zeigeBuehne(beste.getAttribute('data-stage'), beste.getAttribute('data-stage-caption'));
+    }
+
     stageIO = new IntersectionObserver(function (entries) {
-      /* Den obersten sichtbaren Block gewinnen lassen — bei schnellem
-         Scrollen sind kurzzeitig mehrere im Blick. */
-      var sichtbar = entries.filter(function (e) { return e.isIntersecting; });
-      if (!sichtbar.length) return;
-      sichtbar.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
-      var ziel = sichtbar[0].target;
-      zeigeBuehne(ziel.getAttribute('data-stage'), ziel.getAttribute('data-stage-caption'));
+      entries.forEach(function (e) {
+        var i = imBand.indexOf(e.target);
+        if (e.isIntersecting) { if (i === -1) imBand.push(e.target); }
+        else if (i !== -1) imBand.splice(i, 1);
+      });
+      waehle();
     }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
     Array.prototype.forEach.call(bloecke, function (b) { stageIO.observe(b); });
   }
@@ -338,7 +358,9 @@
     });
     if (stage) {
       Array.prototype.slice.call(stage.querySelectorAll('.stage__slot')).forEach(function (slot) {
-        if (slot.getAttribute('data-stage-slot') !== 'video') stage.removeChild(slot);
+        /* Feste Ausschnitte (Video, Schablone) gehören zum Ablauf und
+           bleiben stehen — nur die Werke werden neu aufgebaut. */
+        if (!slot.hasAttribute('data-stage-fest')) stage.removeChild(slot);
       });
     }
     var works = (DATA.works || []).filter(function (work) {
@@ -534,122 +556,425 @@
   }
 
 
-  /* ---------- Anfrage → StudioLink ----------
+  /* ---------- Anfrage-Wizard → StudioLink ----------
      Ruft dieselbe Funktion wie StudioLinks eigene /anfrage-Seite:
      inkcore.public_create_lead(p_payload jsonb) returns text.
-     Rückgabe ist ein Ergänzungs-Token (14 Tage gültig). */
-  var form = document.getElementById('anfrage');
-  var done = document.querySelector('.termin__done');
-  var MIN_FILL_SECONDS = 3;      /* wie in StudioLinks LeadIntakeForm */
-  if (form && done) {
-    var openedAt = Date.now();
-    var errorBox = form.querySelector('.form__error');
-    var supplement = done.querySelector('.termin__done-supplement');
-    var supplementLink = done.querySelector('.termin__done-link');
+     Rückgabe ist ein Ergänzungs-Token (14 Tage gültig).
 
-    function showError(message) {
-      errorBox.textContent = message;
-      errorBox.hidden = !message;
-      form.querySelectorAll('[aria-describedby="form-error"]').forEach(function (input) {
-        if (message) input.setAttribute('aria-invalid', 'true');
-        else input.removeAttribute('aria-invalid');
+     Der Wizard führt in vier ruhigen Schritten durch die Anfrage. Alle
+     Auswahlmöglichkeiten stehen als Daten in MOI_CONFIG.wizard; hier
+     steht nur, wie sie zusammengesetzt und geprüft werden. */
+  var wizardRoot = document.getElementById('wizard');
+  if (wizardRoot) {
+    var SL       = CONFIG.studiolink || {};
+    var W        = CONFIG.wizard || {};
+    var MIN_FILL_SECONDS = 3;          /* wie in StudioLinks LeadIntakeForm */
+    var geoeffnetUm = Date.now();
+
+    /* Gesammelte Antworten. Nichts wird verschickt, bevor der letzte
+       Schritt bestätigt ist. */
+    var antwort = {
+      art: '', motiv: '', stelle: '', groesse: '',
+      stile: [], farbe: '', budget: '',
+      artist: '', kanal: 'email',
+      vorname: '', nachname: '', email: '', telefon: '', instagram: '',
+      einwilligung: false, falle: ''
+    };
+
+    var artists = (DATA.artists || []).map(function (a) {
+      return { id: a.id, name: a.name, role: a.role, slId: a.studiolinkId || '' };
+    });
+
+    function feld(tag, klasse, text) { return el(tag, klasse, text); }
+
+    /* --- Bausteine ------------------------------------------------- */
+
+    function chipGruppe(optionen, mehrfach, gewaehlt, beiWahl) {
+      var box = el('div', 'wizard__chips');
+      box.setAttribute('role', mehrfach ? 'group' : 'radiogroup');
+      optionen.forEach(function (opt) {
+        var wert  = opt.wert !== undefined ? opt.wert : opt;
+        var label = opt.label !== undefined ? opt.label : opt;
+        var chip = el('button', 'wizard__chip');
+        chip.type = 'button';
+        chip.setAttribute('role', mehrfach ? 'checkbox' : 'radio');
+        var an = mehrfach ? gewaehlt.indexOf(wert) !== -1 : gewaehlt === wert;
+        chip.setAttribute(mehrfach ? 'aria-checked' : 'aria-checked', String(an));
+        chip.classList.toggle('is-on', an);
+        chip.appendChild(el('span', 'wizard__chip-label', label));
+        if (opt.hinweis) chip.appendChild(el('span', 'wizard__chip-hint', opt.hinweis));
+        chip.addEventListener('click', function () { beiWahl(wert); });
+        box.appendChild(chip);
       });
+      return box;
     }
 
-    function finish(token) {
-      form.hidden = true;
-      done.hidden = false;
-      var base = (CONFIG.studiolink || {}).leadLinkBase;
-      if (token && base && supplement && supplementLink) {
-        supplementLink.href = base.replace(/\/$/, '') + '/lead/' + token;
-        supplement.hidden = false;
+    function textFeld(label, wert, beiEingabe, opt) {
+      opt = opt || {};
+      var wrap = el('label', 'field');
+      var kopf = el('span', 'field__label', label);
+      if (opt.optional) kopf.appendChild(el('span', 'field__hint', ' optional'));
+      wrap.appendChild(kopf);
+      var input = el(opt.mehrzeilig ? 'textarea' : 'input', 'field__input');
+      if (opt.mehrzeilig) { input.rows = opt.rows || 3; }
+      else { input.type = opt.type || 'text'; }
+      if (opt.autocomplete) input.autocomplete = opt.autocomplete;
+      if (opt.platzhalter) input.placeholder = opt.platzhalter;
+      if (opt.inputmode) input.inputMode = opt.inputmode;
+      input.value = wert || '';
+      input.addEventListener('input', function () { beiEingabe(input.value); });
+      wrap.appendChild(input);
+      return wrap;
+    }
+
+    /* --- Die Schritte ---------------------------------------------- */
+
+    var schritte = [
+      {
+        titel: 'Was hast du vor?',
+        unter: 'Eine Richtung genügt — der Rest klärt sich im Gespräch.',
+        bauen: function (ziel, neuZeichnen) {
+          ziel.appendChild(chipGruppe(W.art || [], false, antwort.art, function (v) {
+            antwort.art = v; neuZeichnen();
+          }));
+        },
+        pruefen: function () {
+          return antwort.art ? '' : 'Wähl bitte aus, worum es geht.';
+        }
+      },
+      {
+        titel: 'Dein Motiv.',
+        unter: 'So viel oder so wenig, wie du schon weißt.',
+        bauen: function (ziel) {
+          ziel.appendChild(textFeld('Motiv / Idee', antwort.motiv, function (v) { antwort.motiv = v; },
+            { mehrzeilig: true, rows: 3, platzhalter: 'Was soll es zeigen — und warum?' }));
+          var reihe = el('div', 'wizard__row');
+          reihe.appendChild(textFeld('Körperstelle', antwort.stelle, function (v) { antwort.stelle = v; },
+            { optional: true, platzhalter: 'z. B. Unterarm' }));
+          reihe.appendChild(textFeld('Größe', antwort.groesse, function (v) { antwort.groesse = v; },
+            { optional: true, platzhalter: 'z. B. 15 cm' }));
+          ziel.appendChild(reihe);
+        },
+        pruefen: function () {
+          if (antwort.art === 'beratung' || antwort.art === 'unsicher') return '';
+          return antwort.motiv.trim() ? '' : 'Beschreib kurz, worum es geht — ein Satz reicht.';
+        }
+      },
+      {
+        titel: 'Stil, Farbe, Artist.',
+        unter: 'Noch offen? Dann lass es offen.',
+        bauen: function (ziel, neuZeichnen) {
+          ziel.appendChild(el('p', 'wizard__legend', 'Stilrichtung'));
+          ziel.appendChild(chipGruppe(W.stile || [], true, antwort.stile, function (v) {
+            var i = antwort.stile.indexOf(v);
+            if (i === -1) antwort.stile.push(v); else antwort.stile.splice(i, 1);
+            neuZeichnen();
+          }));
+          ziel.appendChild(el('p', 'wizard__legend', 'Farbe'));
+          ziel.appendChild(chipGruppe(W.farbe || [], false, antwort.farbe, function (v) {
+            antwort.farbe = v; neuZeichnen();
+          }));
+          if (artists.length) {
+            ziel.appendChild(el('p', 'wizard__legend', 'Artist'));
+            var wahl = artists.map(function (a) {
+              return { wert: a.id, label: a.name, hinweis: a.role };
+            });
+            wahl.push({ wert: 'egal', label: 'Empfehlt mir jemanden', hinweis: 'Ihr kennt eure Handschriften' });
+            ziel.appendChild(chipGruppe(wahl, false, antwort.artist, function (v) {
+              antwort.artist = v; neuZeichnen();
+            }));
+          }
+          ziel.appendChild(el('p', 'wizard__legend', 'Budgetrahmen'));
+          ziel.appendChild(chipGruppe(W.budget || [], false, antwort.budget, function (v) {
+            antwort.budget = v; neuZeichnen();
+          }));
+        },
+        pruefen: function () { return ''; }
+      },
+      {
+        titel: 'Wie erreichen wir dich?',
+        unter: 'Wir melden uns persönlich — innerhalb von drei Werktagen.',
+        bauen: function (ziel, neuZeichnen) {
+          var reihe = el('div', 'wizard__row');
+          reihe.appendChild(textFeld('Vorname', antwort.vorname, function (v) { antwort.vorname = v; },
+            { autocomplete: 'given-name' }));
+          reihe.appendChild(textFeld('Nachname', antwort.nachname, function (v) { antwort.nachname = v; },
+            { optional: true, autocomplete: 'family-name' }));
+          ziel.appendChild(reihe);
+          ziel.appendChild(textFeld('E-Mail', antwort.email, function (v) { antwort.email = v; },
+            { type: 'email', autocomplete: 'email' }));
+
+          ziel.appendChild(el('p', 'wizard__legend', 'Am liebsten erreichbar über'));
+          ziel.appendChild(chipGruppe(W.kanal || [], false, antwort.kanal, function (v) {
+            antwort.kanal = v; neuZeichnen();
+          }));
+
+          var brauchtTelefon   = antwort.kanal === 'whatsapp' || antwort.kanal === 'phone' || antwort.kanal === 'sms';
+          var brauchtInstagram = antwort.kanal === 'instagram';
+          ziel.appendChild(textFeld('Telefon', antwort.telefon, function (v) { antwort.telefon = v; },
+            { optional: !brauchtTelefon, type: 'tel', autocomplete: 'tel', inputmode: 'tel' }));
+          if (brauchtInstagram) {
+            ziel.appendChild(textFeld('Instagram', antwort.instagram, function (v) { antwort.instagram = v; },
+              { platzhalter: '@deinname' }));
+          }
+
+          var check = el('label', 'field field--check');
+          var box = el('input', 'field__check');
+          box.type = 'checkbox';
+          box.checked = antwort.einwilligung;
+          box.addEventListener('change', function () { antwort.einwilligung = box.checked; });
+          check.appendChild(box);
+          check.appendChild(el('span', '', 'Ich bin damit einverstanden, zu meiner Anfrage kontaktiert zu werden. Die Angaben werden ausschließlich dafür verwendet.'));
+          ziel.appendChild(check);
+
+          /* Honigtopf — für Menschen unsichtbar, für Automaten verlockend. */
+          var falle = el('label', 'field field--hp');
+          falle.setAttribute('aria-hidden', 'true');
+          falle.appendChild(el('span', 'field__label', 'Firma'));
+          var fInput = el('input', 'field__input');
+          fInput.type = 'text'; fInput.tabIndex = -1; fInput.autocomplete = 'off';
+          fInput.addEventListener('input', function () { antwort.falle = fInput.value; });
+          falle.appendChild(fInput);
+          ziel.appendChild(falle);
+        },
+        pruefen: function () {
+          if (!antwort.vorname.trim()) return 'Bitte sag uns, wie du heißt.';
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(antwort.email.trim()))
+            return 'Bitte prüf die E-Mail-Adresse.';
+          var ziffern = antwort.telefon.replace(/[^0-9]/g, '');
+          if (antwort.telefon.trim() && (ziffern.length < 6 || ziffern.length > 15))
+            return 'Die Telefonnummer sieht nicht vollständig aus.';
+          if ((antwort.kanal === 'whatsapp' || antwort.kanal === 'phone') && !antwort.telefon.trim())
+            return 'Für diesen Weg brauchen wir deine Telefonnummer.';
+          if (antwort.kanal === 'instagram' && !antwort.instagram.trim())
+            return 'Für diesen Weg brauchen wir deinen Instagram-Namen.';
+          if (!antwort.einwilligung)
+            return 'Bitte bestätige, dass wir dich zu deiner Anfrage kontaktieren dürfen.';
+          return '';
+        }
       }
-      done.setAttribute('tabindex', '-1');
-      done.focus();
+    ];
+
+    var aktuell = 0;
+    var laeuft = false;
+
+    /* --- Zeichnen --------------------------------------------------- */
+
+    function zeichne() {
+      wizardRoot.textContent = '';
+
+      var kopf = el('div', 'wizard__head');
+      var marke = el('p', 'wizard__mark');
+      marke.appendChild(el('span', 'wizard__mark-dot'));
+      marke.appendChild(document.createTextNode('StudioLink Anfrage'));
+      kopf.appendChild(marke);
+      kopf.appendChild(el('p', 'wizard__count',
+        ('0' + (aktuell + 1)).slice(-2) + ' / ' + ('0' + schritte.length).slice(-2)));
+      wizardRoot.appendChild(kopf);
+
+      var bahn = el('div', 'wizard__progress');
+      bahn.setAttribute('role', 'progressbar');
+      bahn.setAttribute('aria-valuemin', '1');
+      bahn.setAttribute('aria-valuemax', String(schritte.length));
+      bahn.setAttribute('aria-valuenow', String(aktuell + 1));
+      var balken = el('span', 'wizard__progress-bar');
+      balken.style.width = ((aktuell + 1) / schritte.length * 100) + '%';
+      bahn.appendChild(balken);
+      wizardRoot.appendChild(bahn);
+
+      var s = schritte[aktuell];
+      var buehne = el('div', 'wizard__step');
+      buehne.appendChild(el('h3', 'wizard__title', s.titel));
+      if (s.unter) buehne.appendChild(el('p', 'wizard__sub', s.unter));
+      var koerper = el('div', 'wizard__body');
+      s.bauen(koerper, zeichne);
+      buehne.appendChild(koerper);
+      wizardRoot.appendChild(buehne);
+
+      var fehler = el('p', 'wizard__error');
+      fehler.setAttribute('role', 'alert');
+      fehler.hidden = true;
+      wizardRoot.appendChild(fehler);
+
+      var fuss = el('div', 'wizard__foot');
+      if (aktuell > 0) {
+        var zurueck = el('button', 'btn btn--text wizard__back', '↑ Zurück');
+        zurueck.type = 'button';
+        zurueck.addEventListener('click', function () { aktuell--; zeichne(); });
+        fuss.appendChild(zurueck);
+      }
+      var letzter = aktuell === schritte.length - 1;
+      var weiter = el('button', 'btn btn--primary wizard__next');
+      weiter.type = 'button';
+      weiter.appendChild(document.createTextNode(letzter ? 'Anfrage senden ' : 'Weiter '));
+      var pfeil = el('span', '', letzter ? '↗' : '→');
+      pfeil.setAttribute('aria-hidden', 'true');
+      weiter.appendChild(pfeil);
+      weiter.addEventListener('click', function () {
+        if (laeuft) return;
+        var meldung = s.pruefen();
+        if (meldung) {
+          fehler.textContent = meldung;
+          fehler.hidden = false;
+          var erstes = koerper.querySelector('input, textarea, .wizard__chip');
+          if (erstes) erstes.focus();
+          return;
+        }
+        fehler.hidden = true;
+        if (!letzter) { aktuell++; zeichne(); return; }
+        senden(weiter, fehler);
+      });
+      fuss.appendChild(weiter);
+      wizardRoot.appendChild(fuss);
+
+      /* Beim Schrittwechsel den neuen Titel ansagen, ohne zu springen. */
+      buehne.setAttribute('tabindex', '-1');
+      if (aktuell > 0 || laeuft) buehne.focus({ preventScroll: true });
     }
 
-    /* Vor- und Nachname trennen, wie StudioLink es erwartet. */
-    function splitName(full) {
-      var parts = full.split(/\s+/).filter(Boolean);
-      return { first: parts.shift() || '', last: parts.join(' ') };
+    /* --- Absenden --------------------------------------------------- */
+
+    function gewaehlterArtist() {
+      if (!antwort.artist || antwort.artist === 'egal') return null;
+      return artists.filter(function (a) { return a.id === antwort.artist; })[0] || null;
     }
 
-    function sendToStudioLink(payload) {
-      var cfg = CONFIG.studiolink || {};
-      return fetch(cfg.url.replace(/\/$/, '') + '/rest/v1/rpc/public_create_lead', {
+    function nachricht() {
+      /* Alles, wofür StudioLink kein eigenes Feld hat, landet lesbar im
+         Anfragetext — damit im Posteingang nichts fehlt. */
+      var zeilen = [];
+      if (antwort.motiv.trim()) zeilen.push(antwort.motiv.trim());
+      var a = gewaehlterArtist();
+      if (a && !a.slId) zeilen.push('Wunsch-Artist: ' + a.name);
+      if (antwort.artist === 'egal') zeilen.push('Artist: Empfehlung erwünscht');
+      if (antwort.instagram.trim()) zeilen.push('Instagram: ' + antwort.instagram.trim());
+      return zeilen.join('\n\n') || null;
+    }
+
+    function vollstaendigkeit() {
+      var felder = [antwort.art, antwort.motiv, antwort.stelle, antwort.groesse,
+                    antwort.farbe, antwort.budget, antwort.artist, antwort.telefon];
+      var gefuellt = felder.filter(function (f) { return String(f || '').trim(); }).length;
+      return Math.round(gefuellt / felder.length * 100);
+    }
+
+    function fehlendes() {
+      var fehlt = [];
+      if (!antwort.stelle.trim())  fehlt.push('body_part');
+      if (!antwort.groesse.trim()) fehlt.push('size_estimate');
+      if (!antwort.farbe)          fehlt.push('color_preference');
+      if (!antwort.budget)         fehlt.push('budget_range');
+      return fehlt.length ? fehlt : null;
+    }
+
+    function anStudioLink(payload) {
+      return fetch(SL.url.replace(/\/$/, '') + '/rest/v1/rpc/public_create_lead', {
         method: 'POST',
         headers: {
-          'apikey': cfg.key,
-          'Authorization': 'Bearer ' + cfg.key,
+          'apikey': SL.key,
+          'Authorization': 'Bearer ' + SL.key,
           'Content-Type': 'application/json',
-          'Content-Profile': cfg.schema,
-          'Accept-Profile': cfg.schema
+          'Content-Profile': SL.schema,
+          'Accept-Profile': SL.schema
         },
         body: JSON.stringify({ p_payload: payload })
-      }).then(function (response) {
-        if (!response.ok) {
-          return response.text().then(function (body) {
-            throw new Error('StudioLink ' + response.status + ': ' + body.slice(0, 200));
+      }).then(function (antw) {
+        if (!antw.ok) {
+          return antw.text().then(function (text) {
+            throw new Error('StudioLink ' + antw.status + ': ' + text.slice(0, 200));
           });
         }
-        return response.json();
+        return antw.json();
       });
     }
 
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
-      showError('');
-      var data = new FormData(form);
-      var name = String(data.get('name') || '').trim();
-      var email = String(data.get('email') || '').trim();
-      var phone = String(data.get('phone') || '').trim();
-      var idea = String(data.get('idea') || '').trim();
+    function senden(knopf, fehler) {
+      /* Automat: still quittieren, statt zu verraten, woran es lag. */
+      var zuSchnell = (Date.now() - geoeffnetUm) / 1000 < MIN_FILL_SECONDS;
+      if (antwort.falle.trim() !== '' || zuSchnell) { fertig(null); return; }
 
-      /* Erst prüfen, dann auf Automaten testen — sonst quittiert ein
-         schnell abgeschicktes leeres Formular mit „Angekommen“. */
-      if (!name || !email) { showError('Bitte gib Name und E-Mail-Adresse an.'); return; }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Bitte prüfe die E-Mail-Adresse.'); return; }
-      if (!data.get('consent')) { showError('Bitte bestätige, dass wir dich zu deiner Anfrage kontaktieren dürfen.'); return; }
-
-      /* Automat: still abbrechen, statt zu verraten, woran es lag. */
-      var tooFast = (Date.now() - openedAt) / 1000 < MIN_FILL_SECONDS;
-      if (String(data.get('company') || '').trim() !== '' || tooFast) { finish(null); return; }
-
-      var cfg = CONFIG.studiolink || {};
-      var submit = form.querySelector('.form__submit');
-      if (!cfg.url || !cfg.key || !cfg.studioId) {
-        showError('Das Anfrageformular ist noch nicht verbunden. Schreib uns direkt: ' + (CONFIG.contactEmail || ''));
+      if (!SL.url || !SL.key || !SL.studioId) {
+        fehler.textContent = 'Das Anfrageformular ist noch nicht verbunden. Schreib uns direkt: ' + (CONFIG.contactEmail || '');
+        fehler.hidden = false;
         return;
       }
 
-      var parts = splitName(name);
-      submit.disabled = true;
-      submit.setAttribute('aria-busy', 'true');
-      sendToStudioLink({
-        studio_id: cfg.studioId,
+      laeuft = true;
+      knopf.disabled = true;
+      knopf.setAttribute('aria-busy', 'true');
+
+      var a = gewaehlterArtist();
+      anStudioLink({
+        studio_id: SL.studioId,
         source: 'web',
-        source_detail: 'website_termin',
+        source_detail: 'website_wizard',
         source_page: 'website',
         source_section: 'termin',
-        first_name: parts.first,
-        last_name: parts.last || null,
-        contact_email: email,
-        contact_phone: phone || null,
-        preferred_contact_channel: 'email',
-        motif: idea || null,
-        message: idea || null,
+        form_type: 'detailed',
+
+        first_name: antwort.vorname.trim(),
+        last_name: antwort.nachname.trim() || null,
+        contact_email: antwort.email.trim(),
+        contact_phone: antwort.telefon.trim() || null,
+        instagram_handle: antwort.instagram.trim() || null,
+        preferred_contact_channel: antwort.kanal || 'email',
+
+        inquiry_type: antwort.art || null,
+        motif: antwort.motiv.trim() || null,
+        body_part: antwort.stelle.trim() || null,
+        size_estimate: antwort.groesse.trim() || null,
+        style_tags: antwort.stile,
+        color_preference: antwort.farbe || null,
+        budget_range: antwort.budget || null,
+        message: nachricht(),
+
+        /* Nur eine echte Profil-ID zählt; ohne sie steht der Wunsch im Text. */
+        preferred_artist_id: a && a.slId ? a.slId : null,
+        artist_preference_type: !antwort.artist ? null
+          : antwort.artist === 'egal' ? 'recommend' : 'specific',
+
+        completeness_score: vollstaendigkeit(),
+        missing_information: fehlendes(),
+
         consent_to_contact: true,
         consent_timestamp: new Date().toISOString(),
-        privacy_policy_version: cfg.privacyPolicyVersion || null,
-        form_type: 'quick'
+        privacy_policy_version: SL.privacyPolicyVersion || null
       }).then(function (token) {
-        finish(typeof token === 'string' ? token : null);
-      }).catch(function (error) {
-        if (window.console && console.error) console.error('[anfrage] StudioLink', error);
-        submit.disabled = false;
-        submit.removeAttribute('aria-busy');
-        showError('Die Anfrage kam nicht durch. Bitte versuch es gleich noch einmal — oder schreib uns direkt: ' + (CONFIG.contactEmail || ''));
+        fertig(typeof token === 'string' ? token : null);
+      }).catch(function (fehlerObj) {
+        if (window.console && console.error) console.error('[anfrage] StudioLink', fehlerObj);
+        laeuft = false;
+        knopf.disabled = false;
+        knopf.removeAttribute('aria-busy');
+        fehler.textContent = 'Die Anfrage kam nicht durch. Bitte versuch es gleich noch einmal — oder schreib uns direkt: ' + (CONFIG.contactEmail || '');
+        fehler.hidden = false;
       });
-    });
+    }
+
+    function fertig(token) {
+      wizardRoot.textContent = '';
+      var box = el('div', 'wizard__done');
+      var marke = el('p', 'wizard__mark');
+      marke.appendChild(el('span', 'wizard__mark-dot'));
+      marke.appendChild(document.createTextNode('StudioLink Anfrage'));
+      box.appendChild(marke);
+      box.appendChild(el('p', 'wizard__done-title', 'Angekommen.'));
+      box.appendChild(el('p', '', 'Danke dir. Deine Anfrage liegt jetzt im Posteingang von The Master of Ink — du hörst innerhalb von drei Werktagen persönlich von uns.'));
+      var basis = SL.leadLinkBase;
+      if (token && basis) {
+        var nach = el('p', 'wizard__done-more');
+        nach.appendChild(document.createTextNode('Du kannst in Ruhe ergänzen — Referenzen, Größe, Wunschtermin: '));
+        var link = el('a', '', 'Angaben ergänzen ↗');
+        link.href = basis.replace(/\/$/, '') + '/lead/' + token;
+        link.rel = 'noopener';
+        nach.appendChild(link);
+        box.appendChild(nach);
+      }
+      wizardRoot.appendChild(box);
+      box.setAttribute('tabindex', '-1');
+      box.focus({ preventScroll: true });
+    }
+
+    zeichne();
   }
 }());
