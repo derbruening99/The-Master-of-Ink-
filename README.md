@@ -121,11 +121,11 @@ Poster: `studio-poster.jpg` (1080 px), `studio-poster-720.jpg`,
 `studio-poster-portrait.jpg` (Hochformat für Telefone) sowie
 `needle-poster*.jpg`.
 
-Neu kodieren. Beide Aufnahmen tragen ein `@bruen.ink`-Wasserzeichen auf
-halber Höhe; die Zuschnitte umgehen es (delogo verschmiert die feinen
-Linien und ist keine Option).
+Neu kodieren.
 
-**Hero** — `crop=1080:915:0:0` nimmt alles oberhalb des Wasserzeichens:
+**Hero** — die Aufnahme trägt auf halber Höhe ein
+`@bruen.ink`-Wasserzeichen; `crop=1080:915:0:0` nimmt alles darüber.
+(delogo verschmiert die feinen Linien und ist keine Option.)
 
 ```bash
 SRC=original.MOV
@@ -139,27 +139,35 @@ ffmpeg -y -ss 11 -i "$SRC" -frames:v 1 -vf "crop=1080:915:0:0" -q:v 3 \
   assets/video/studio-poster.jpg
 ```
 
-**Nadel** — aus `backtattoo_bw_2.MOV` (2160x3840). Die ersten zwei
-Sekunden zeigen die Schablone, erst danach die Nadel über der Haut;
-deshalb der Beschnitt auf 2,1 s–6,2 s. Der Ausschnitt sitzt links unter
-der Bildmitte, damit die Haut das Bild füllt statt des Maschinenkörpers:
+**Nadel** — aus `brune_260711_backtattoojule.mov` (2160x3840, 3,25 s,
+ohne Wasserzeichen). Die Aufnahme besteht aus vier Einstellungen; genommen
+ist die dritte und vierte (1,80 s–3,25 s), in denen die Nadel über die Haut
+läuft. Der Ausschnitt liegt auf der Nadelspitze:
 
 ```bash
-SRC=backtattoo_bw_2.MOV
-VF="crop=1076:1345:330:500,hqdn3d=2:1.5:3:3"
-ffmpeg -y -ss 2.1 -t 4.1 -i "$SRC" -vf "$VF,scale=1080:1350" -an \
-  -c:v libvpx-vp9 -crf 36 -b:v 0 -row-mt 1 -deadline good -cpu-used 3 \
+SRC=brune_260711_backtattoojule.mov
+VF="crop=1500:1875:416:930,hqdn3d=1:0.8:2:2"
+ffmpeg -y -ss 1.80 -t 1.45 -i "$SRC" -map 0:v:0 -an \
+  -vf "$VF,scale=1080:1350:out_range=tv" \
+  -c:v libvpx-vp9 -crf 34 -b:v 0 -row-mt 1 -deadline good -cpu-used 3 \
   assets/video/needle-loop.webm
-ffmpeg -y -ss 2.1 -t 4.1 -i "$SRC" -vf "$VF,scale=1080:1350" -an \
-  -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 24 -preset slow \
+ffmpeg -y -ss 1.80 -t 1.45 -i "$SRC" -map 0:v:0 -an \
+  -vf "$VF,scale=1080:1350:out_range=tv" \
+  -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 23 -preset slow \
   -movflags +faststart assets/video/needle-loop.mp4
-ffmpeg -y -ss 4.2 -i "$SRC" -frames:v 1 -vf "crop=1076:1345:330:500,scale=1080:1350" \
-  -q:v 3 assets/video/needle-poster.jpg
+ffmpeg -y -ss 2.25 -i "$SRC" -map 0:v:0 -frames:v 1 \
+  -vf "crop=1500:1875:416:930,scale=1080:1350" -q:v 3 \
+  assets/video/needle-poster.jpg
 ```
 
-Das Ergebnis ist Hochformat (4:5). Am Telefon ist die Bühne Querformat,
-deshalb rückt CSS den Ausschnitt dort nach unten
-(`object-position:50% 100%`) — sonst stünde nur die Maschine im Bild.
+`-map 0:v:0` ist nötig: die Datei führt neben Bild und Ton noch eine
+Timecode-Spur. `out_range=tv` wandelt den vollen Wertebereich der Quelle
+(`yuvj420p`) sauber um, sonst kippen Schwarz und Weiß.
+
+Das Ergebnis ist Hochformat (4:5) mit der Nadelspitze in der Bildmitte. Am
+Telefon ist die Bühne Querformat, dort bleiben rund 64 % der Höhe sichtbar;
+`object-position:50% 68%` setzt die Spitze auf etwa 40 % — Nadel oben, Haut
+darunter.
 
 Die Hero-Aufnahme wird per CSS abgedunkelt
 (`filter: brightness(.76) contrast(1.08)`) und liegt unter einem doppelten
