@@ -456,3 +456,29 @@ h2 em{font-weight:400;color:var(--gold)}
 @media(prefers-reduced-motion:reduce) and (max-width:780px){
   .float-cta,.float-cta.is-visible{transform:translateX(-50%)}
 }
+
+/* ---------- Team: ruhiger, beide nebeneinander ----------
+   Zwei gleich gebaute Karten statt zwei Doppelseiten: Porträt, Rolle, Name,
+   Stile, kurzer Text, Links. Keine Zitate, kein Leerraum zwischen Name und
+   Text. Das Porträt bleibt das beobachtete Element, der clip-path liegt auf
+   dem direkten <picture> (siehe README, Bewegung). */
+.team__head{margin-bottom:clamp(40px,5vw,72px)}
+.team__head h2{font-size:clamp(38px,5.4vw,78px)}   /* wie „Arbeiten“ gleich danach */
+.artist-directory{grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(28px,4vw,64px);align-items:start}
+.artist-card{grid-template-columns:minmax(0,1fr);min-height:0;border-top:0;border-bottom:0}
+.artist-card__portrait,.artist-card+.artist-card .artist-card__portrait{order:1;aspect-ratio:5/4}
+.artist-card__content,.artist-card+.artist-card .artist-card__content{order:2;border:0;border-top:1px solid var(--line-light);margin-top:22px;padding:22px 0 0}
+.artist-card__name{font-size:clamp(40px,4.4vw,68px);line-height:.9;letter-spacing:-.02em;margin:22px 0 14px}
+.artist-card__bio{margin-top:22px;max-width:52ch}
+.artist-card__links{margin-top:24px}
+@media(max-width:780px){
+  .artist-directory{grid-template-columns:minmax(0,1fr);gap:56px}
+  .artist-card__portrait,.artist-card+.artist-card .artist-card__portrait{aspect-ratio:4/3}
+  .artist-card__name{font-size:clamp(40px,11vw,56px);margin:18px 0 12px}
+  .artist-card__bio{margin-top:18px}
+  .artist-card__links{column-gap:20px}   /* Portfolio und Instagram in einer Zeile */
+  .artist-card__links a{letter-spacing:.11em}
+}
+@media(max-width:380px){
+  .artist-card__links a{letter-spacing:.07em}   /* 360-px-Telefone: Bryans Links bleiben in einer Zeile */
+}

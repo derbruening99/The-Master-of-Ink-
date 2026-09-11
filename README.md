@@ -381,6 +381,14 @@ werden.** Sonst liefert der Browser die alte Datei zu neuem HTML — und genau
 das hat den Vorhang einmal dauerhaft stehen lassen: neues HTML mit Vorhang,
 alte `main.js` ohne die Logik zum Aufziehen.
 
+## Team-Ansicht
+
+Zwei gleich gebaute Karten nebeneinander (auf Telefonen untereinander):
+Porträt, Rolle, Name, Stile, kurzer Text, Portfolio- und Instagram-Link. Bewusst
+**ohne Zitate** — das Feld `quote` bleibt leer (der Code zeigt es nur, wenn es
+gesetzt ist). Ein dritter Artist bekommt automatisch eine neue Zeile.
+CSS: Block „Team: ruhiger, beide nebeneinander“ am Ende von `main.css`.
+
 ## Schwebender Anfrage-Knopf
 
 Unten rechts (auf Telefonen unten mittig) steht „Projekt anfragen ↗“ und

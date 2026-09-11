@@ -29,7 +29,7 @@ window.MOI_DATA = {
       number: "01",
       location: "Rheine",
       specialties: ["Fine Line", "Abstrakt", "Realismus"],
-      bio: "Sebastian hat The Master of Ink gegründet und das Tätowieren erst danach gelernt. Er arbeitet mit dem Flow des Körpers: Ein Motiv wird nicht auf eine Stelle gelegt, sondern an ihr entlang entwickelt und auf den Menschen angepasst, der es trägt — in feinen Linien, abstrakten Formen oder realistischen Elementen, je nachdem, was die Stelle verlangt.",
+      bio: "Sebastian hat The Master of Ink gegründet. Er arbeitet mit dem Flow des Körpers – ein Motiv wird an der Stelle entlang entwickelt, nicht auf sie gelegt.",
       quote: "",
       instagram: "https://www.instagram.com/bruen.ink/",
       instagramLabel: "@bruen.ink",
@@ -52,7 +52,7 @@ window.MOI_DATA = {
       location: "Rheine",
       specialties: ["Sketch-Realismus", "Fine Line", "Blackwork"],
       bio: "Bryan zeichnet jedes Motiv für genau einen Menschen — entwickelt aus dem Gespräch und aus der Geschichte, die dahinter steht. Sein Fokus liegt auf klarer Komposition und ruhiger Ausführung: Arbeiten, die auch nach Jahren noch selbstverständlich wirken.",
-      quote: "Haut ist die ehrlichste Leinwand, die es gibt. Sie verdient Geduld.",
+      quote: "",   /* Team zeigt bewusst keine Zitate (Sebastian, 11.09.2026) */
       instagram: "https://www.instagram.com/tattoobryaan/",
       instagramLabel: "@tattoobryaan",
       studiolinkId: "01c4142e-1893-4d4d-bca2-2e5eed828d41",

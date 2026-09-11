@@ -300,7 +300,6 @@
       var content = el('div', 'artist-card__content reveal reveal--soak');
       var top = el('div', 'artist-card__top');
       top.appendChild(el('p', '', artist.role));
-      top.appendChild(el('p', '', artist.location + ' / ' + artist.number));
       content.appendChild(top);
       var name = el('h3', 'artist-card__name', artist.name);
       name.id = 'artist-name-' + artist.id;
@@ -318,7 +317,8 @@
         links.appendChild(portfolio);
       }
       if (artist.instagram) {
-        var instagram = el('a', '', 'Instagram ' + artist.instagramLabel + ' ↗');
+        var instagram = el('a', '', artist.instagramLabel + ' ↗');
+        instagram.setAttribute('aria-label', 'Instagram ' + artist.instagramLabel);
         instagram.href = artist.instagram;
         instagram.rel = 'noopener';
         links.appendChild(instagram);
