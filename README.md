@@ -327,29 +327,46 @@ Nach Dringlichkeit, oben das Rechtliche:
 
 ## Vorhang beim Laden
 
-Schwarzer Bildschirm mit dem Signet, bis die Seite steht — dann hebt er sich.
+Dunkler Bildschirm mit dem animierten Signet, der **„Krönung“**: Ein Goldfunke
+entsteht an der Nadelspitze, das Licht steigt die Nadel hinauf, fließt durch
+das M und setzt die Krone zuletzt auf. Quelle und Videos dazu:
+`~/Kommandozentrale/03_Tattoostudio/master-of-ink-animation/` — die Datei
+`assets/js/master-of-ink-reveal.js` ist eine Kopie von deren `web/`-Ordner
+(ohne Abhängigkeiten, rund 100 KB komprimiert, lädt `async`).
+
 Markup und CSS stehen **inline im Dokument**, nicht im Stylesheet: sonst
 blitzt die Seite auf, bevor der Vorhang da ist.
 
-Vier Regeln halten ihn harmlos:
+Ablauf:
+
+- **Erster Besuch einer Sitzung** (`sessionStorage` `moi-kroenung`): die
+  Animation läuft mit Tempo 1,3; sobald Signet und Schrift stehen (Animations-
+  zeit 4,3 s ≈ 3,3 s echt) und `load` durch ist, hebt sich der Vorhang, während
+  der Goldpuls einsetzt.
+- **Jeder weitere Aufruf** in derselben Sitzung: das fertige Signet steht
+  sofort, der Vorhang hebt sich wie früher nach `load` (mindestens 620 ms).
+- **Überspringen:** Tippen, Klicken, Scrollen oder eine Taste heben ihn sofort.
+
+Regeln, die ihn harmlos halten:
 
 - Er wartet auf `load`, **nicht** auf das Hero-Video — das lädt bewusst erst
   danach und würde ihn sonst sekundenlang stehen lassen.
-- **Er öffnet sich per CSS-Animation nach 3,6 s von selbst**, ganz ohne
+- **Er öffnet sich per CSS-Animation nach 6,6 s von selbst**, ganz ohne
   JavaScript. Das ist die eigentliche Sicherung: eine veraltete oder
   fehlerhafte `main.js` reicht sonst, und die Seite bleibt für immer
   schwarz — genau das ist einmal passiert.
-- JavaScript hebt ihn im Normalfall früher (rund 1,3 s), Notaus bei 3 s.
+- JavaScript-Notaus bei 6 s. Fehlt das Animationsskript bei `load` noch, gilt
+  der alte Ablauf (heben nach `load`).
 - **Keine Scrollsperre.** Sie hing an JavaScript und wäre ein zweiter Riegel
   gewesen, den niemand mehr öffnen kann. Der Vorhang deckt den Bildschirm
   ohnehin ab.
 
-Sichtbar ist er damit höchstens 4,4 s — geprüft gegen veraltete, fehlende
-und syntaktisch kaputte `main.js`.
+Bei `prefers-reduced-motion` gibt es keine Animation: das fertige Signet
+steht, Ein- und Ausblendung entfallen.
 
-Eine Mindestdauer von 620 ms verhindert, dass er bei schnellem Cache nur
-kurz aufblitzt; das wirkt wie ein Fehler. Bei `prefers-reduced-motion`
-entfallen Ein- und Ausblendung.
+**Signet aktualisieren:** in `master-of-ink-animation` bauen
+(`python3 build/build.py`), `web/master-of-ink-reveal.js` hierher kopieren,
+`./bump-version.sh`.
 
 ### Beim Ändern von CSS oder JS: Version hochzählen
 

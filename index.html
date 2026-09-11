@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
   <link rel="preload" href="assets/fonts/cormorant-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="assets/css/main.css?v=20260806-0850">
+  <link rel="stylesheet" href="assets/css/main.css?v=20260911-1128">
 
   <script type="application/ld+json">
   {
@@ -39,31 +39,32 @@
   }
   </script>
   <style>
-    /* Vorhang — inline, damit er ohne Wartezeit auf das Stylesheet steht. */
+    /* Vorhang — inline, damit er ohne Wartezeit auf das Stylesheet steht.
+       Darin läuft beim ersten Besuch einer Sitzung die „Krönung“: das Signet
+       entsteht in Goldlicht von der Nadelspitze bis zur Krone
+       (assets/js/master-of-ink-reveal.js, Steuerung in main.js). */
     /* Der Vorhang öffnet sich AUCH OHNE JavaScript: die Animation blendet
-       ihn nach 3,6 s aus und nimmt ihn aus dem Weg. Ohne diese Rückfallebene
+       ihn nach 6,6 s aus und nimmt ihn aus dem Weg. Ohne diese Rückfallebene
        genügt eine veraltete, zwischengespeicherte main.js — und die Seite
        bleibt für immer schwarz. JavaScript hebt ihn im Normalfall früher. */
     .curtain{position:fixed;inset:0;z-index:400;display:grid;place-items:center;
-      background:#080808;transition:opacity .9s cubic-bezier(.22,1,.36,1);
-      animation:curtainAuto .7s ease 3.6s forwards}
+      background:radial-gradient(ellipse at 50% 46%,#13100c 0,#080706 45%,#030303 100%) #080808;
+      transition:opacity .9s cubic-bezier(.22,1,.36,1);
+      animation:curtainAuto .7s ease 6.6s forwards}
     @keyframes curtainAuto{to{opacity:0;visibility:hidden;pointer-events:none}}
-    .curtain__mark{width:clamp(124px,14vw,177px);height:auto;opacity:0;
-      filter:brightness(2.5) grayscale(1);
-      animation:curtainMark 1.1s cubic-bezier(.22,1,.36,1) .15s forwards}
-    @keyframes curtainMark{from{opacity:0;transform:scale(.97)}to{opacity:.95;transform:none}}
+    .curtain__reveal{display:block;width:min(80vw,62vh,640px);aspect-ratio:1/1}
     .curtain.is-lifting{opacity:0}
     .curtain.is-gone{display:none}
     @media (prefers-reduced-motion:reduce){
       .curtain{transition:none}
-      .curtain__mark{animation:none;opacity:.95}
     }
   </style>
   <noscript><style>.curtain{display:none}</style></noscript>
+  <script src="assets/js/master-of-ink-reveal.js?v=20260911-1128" async></script>
 </head>
 <body>
   <div class="curtain" id="curtain" aria-hidden="true">
-    <img class="curtain__mark" src="assets/img/logo-160.png" alt="" width="74" height="80" fetchpriority="high">
+    <moi-logo-reveal class="curtain__reveal" mode="once" background="transparent" speed="1.3" paused></moi-logo-reveal>
   </div>
   <a class="skip-link" href="#studio">Zum Inhalt springen</a>
   <div class="grain" aria-hidden="true"></div>
@@ -278,7 +279,7 @@
     <div class="colophon__base"><p>© 2026 The Master of Ink</p><p>Rheine · Nur nach Termin</p><nav class="colophon__legal" aria-label="Rechtliches"><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a></nav></div>
   </footer>
 
-  <script src="assets/js/gallery-data.js?v=20260806-0850" defer></script>
-  <script src="assets/js/main.js?v=20260806-0850" defer></script>
+  <script src="assets/js/gallery-data.js?v=20260911-1128" defer></script>
+  <script src="assets/js/main.js?v=20260911-1128" defer></script>
 </body>
 </html>

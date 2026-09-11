@@ -11,32 +11,69 @@
   doc.classList.add('js');
 
   /* ---------- Vorhang ----------
-     Schwarz mit Signet, bis die Seite steht. Zwei Regeln halten ihn
-     harmlos: er wartet nie auf das Hero-Video (das lädt bewusst erst
-     nach `load`), und er geht spätestens nach 4 Sekunden auf — eine
-     hängende Datei darf niemanden aussperren. */
+     Schwarz mit der „Krönung“ (animiertes Signet). Beim ersten Besuch einer
+     Sitzung läuft sie einmal durch, und der Vorhang hebt sich, sobald Signet
+     und Schrift stehen; bei jedem weiteren Aufruf steht das fertige Signet
+     sofort. Vier Regeln halten ihn harmlos: er wartet nie auf das Hero-Video
+     (das lädt bewusst erst nach `load`), Tippen, Klicken, Scrollen oder eine
+     Taste heben ihn sofort, ohne Animationsskript verhält er sich wie früher,
+     und er geht spätestens nach 6 Sekunden auf — eine hängende Datei darf
+     niemanden aussperren. */
   (function () {
     var curtain = document.getElementById('curtain');
     if (!curtain) return;
+    var reveal = curtain.querySelector('moi-logo-reveal');
     var MINDESTDAUER = 620;   /* kurzes Aufblitzen wirkt wie ein Fehler */
-    var NOTAUS = 3000;        /* vor der CSS-Rückfallebene bei 3,6 s */
+    var NOTAUS = 6000;        /* vor der CSS-Rückfallebene bei 6,6 s */
+    var AUFZUG = 4.3;         /* Animationszeit: Signet und Schrift stehen, der Puls setzt ein */
+    var SKIP = ['click', 'keydown', 'wheel', 'touchstart'];
     var start = Date.now();
-    var gehoben = false;
+    var gehoben = false, geladen = false, fertig = false, intro = false;
+    var ce = window.customElements;
+
+    try {
+      intro = !window.sessionStorage.getItem('moi-kroenung');
+      window.sessionStorage.setItem('moi-kroenung', '1');
+    } catch (e) { intro = false; }
+    if (mqReduced.matches || !reveal || !ce) intro = false;
 
     function hebe() {
       if (gehoben) return;
       gehoben = true;
-      var wartend = Math.max(0, MINDESTDAUER - (Date.now() - start));
+      SKIP.forEach(function (name) { window.removeEventListener(name, hebe, true); });
+      var wartend = intro ? 0 : Math.max(0, MINDESTDAUER - (Date.now() - start));
       window.setTimeout(function () {
         curtain.classList.add('is-lifting');
-        var weg = function () { curtain.classList.add('is-gone'); };
+        var weg = function () {
+          curtain.classList.add('is-gone');
+          if (reveal && reveal.pause) reveal.pause();
+        };
         curtain.addEventListener('transitionend', weg, { once: true });
         window.setTimeout(weg, 1200);      /* falls transitionend ausbleibt */
       }, wartend);
     }
 
-    if (document.readyState === 'complete') hebe();
-    else window.addEventListener('load', hebe, { once: true });
+    function pruefe() {
+      if (!geladen) return;
+      /* async-Skripte laufen vor `load` — fehlt das Signet dann noch, kommt es nicht mehr */
+      if (intro && ce && !ce.get('moi-logo-reveal')) intro = false;
+      if (!intro || fertig) hebe();
+    }
+
+    if (intro) {
+      ce.whenDefined('moi-logo-reveal').then(function () {
+        reveal.addEventListener('frame', function (e) {
+          if (!fertig && e.detail >= AUFZUG) { fertig = true; pruefe(); }
+        });
+        reveal.play();
+      });
+      SKIP.forEach(function (name) { window.addEventListener(name, hebe, { capture: true, passive: true }); });
+    } else if (reveal && ce) {
+      ce.whenDefined('moi-logo-reveal').then(function () { reveal.seek(5.1); });   /* fertiges Signet */
+    }
+
+    if (document.readyState === 'complete') { geladen = true; pruefe(); }
+    else window.addEventListener('load', function () { geladen = true; pruefe(); }, { once: true });
     window.setTimeout(hebe, NOTAUS);
   }());
 
