@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://masterofink.vercel.app/sitemap.xml
+Sitemap: https://themasterofink.vercel.app/sitemap.xml

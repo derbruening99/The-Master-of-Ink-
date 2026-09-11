@@ -40,14 +40,14 @@ steht dort in `docs/STAND_2026-08-06.md`.
 
 ## Veröffentlichung
 
-Die Seite liegt auf **Vercel** unter `https://masterofink.vercel.app/` und wird
+Die Seite liegt auf **Vercel** unter `https://themasterofink.vercel.app/` und wird
 bei jedem Push automatisch neu ausgeliefert. Es gibt keinen Build-Schritt — was
 im Repo liegt, ist die Seite.
 
 | | |
 | --- | --- |
 | Zweig | `claude/master-of-ink-production-bg11la` — der **einzige** Zweig, also zugleich der Produktionszweig |
-| Adresse | `https://masterofink.vercel.app/` (steht als canonical und `og:url` in allen drei Seiten) |
+| Adresse | `https://themasterofink.vercel.app/` (steht als canonical und `og:url` in allen drei Seiten) |
 | Kopfzeilen | `vercel.json` — Schriften/Bilder/Videos ein Jahr unveränderlich, CSS/JS eine Stunde |
 | Adresse ändern | `./set-domain.sh https://neue-adresse` stempelt canonical, `og:url`, JSON-LD, `sitemap.xml` und `robots.txt` in einem Zug um |
 

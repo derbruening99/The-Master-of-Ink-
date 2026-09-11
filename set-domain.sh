@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Stempelt die endgültige Adresse in die ganze Seite:
-#   ./set-domain.sh https://masterofink.vercel.app
+#   ./set-domain.sh https://themasterofink.vercel.app
 #
 # Setzt auf allen drei Seiten canonical + og:url, macht og:image absolut
 # (Pflicht für Instagram/WhatsApp-Vorschauen), trägt die url ins JSON-LD
@@ -34,15 +34,16 @@ for datei, pfad in SEITEN.items():
         '<link rel="canonical" href="%s">\n  %s\n  <meta property="og:url" content="%s">' % (url, anker, url))
 
     # Vorschaubild absolut — relative og:image-Pfade ignorieren die Crawler
-    s = s.replace('content="assets/img/og-image.jpg"', 'content="%s/assets/img/og-image.jpg"' % domain)
+    # (auch schon absolute Werte einer früheren Adresse werden ersetzt)
+    s = re.sub(r'content="(?:https?://[^"/]+)?/?assets/img/og-image\.jpg"', 'content="%s/assets/img/og-image.jpg"' % domain, s)
 
     # JSON-LD (nur index): url ergänzen, image/logo absolut
     if datei == "index.html":
         s = re.sub(r'"@type": "TattooParlor",\s*\n(\s*)"url": "[^"]*",', r'"@type": "TattooParlor",\n\1', s)
         s = s.replace('"@type": "TattooParlor",',
                       '"@type": "TattooParlor",\n    "url": "%s/",' % domain)
-        s = s.replace('"image": "assets/img/og-image.jpg"', '"image": "%s/assets/img/og-image.jpg"' % domain)
-        s = s.replace('"logo": "assets/img/logo-320.png"', '"logo": "%s/assets/img/logo-160.png"' % domain)
+        s = re.sub(r'"image": "(?:https?://[^"/]+)?/?assets/img/og-image\.jpg"', '"image": "%s/assets/img/og-image.jpg"' % domain, s)
+        s = re.sub(r'"logo": "(?:https?://[^"/]+)?/?assets/img/logo-(?:160|320)\.png"', '"logo": "%s/assets/img/logo-160.png"' % domain, s)
     open(datei, "w", encoding="utf-8").write(s)
     print("gestempelt:", datei, "→", url)
 
