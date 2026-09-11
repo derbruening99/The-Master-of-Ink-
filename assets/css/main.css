@@ -417,3 +417,42 @@ h2 em{font-weight:400;color:var(--gold)}
   .artist-card__name{margin:34px 0 22px}
   .colophon__top{margin-bottom:clamp(40px,8vw,70px)}
 }
+
+/* ---------- Manifest: Zitat mittig neben dem Bild ----------
+   Das Zitat steht in der Bildtafel und nutzt dasselbe Spaltenraster wie
+   .manifesto__grid — so sitzt es vertikal mittig neben dem Foto statt unten
+   an der Bildunterschrift. Die Tafel bleibt das beobachtete Element, der
+   clip-path bleibt auf dem direkten <picture> (siehe README, Bewegung). */
+.manifesto__image{grid-column:1/-1;display:grid;grid-template-columns:minmax(260px,.7fr) minmax(300px,.45fr);column-gap:clamp(45px,8vw,140px);width:auto;margin-left:0}
+.manifesto__image>picture{grid-column:1;grid-row:1;width:calc(100% + var(--pad));height:auto;margin-left:calc(-1 * var(--pad))}
+.manifesto__image figcaption{grid-column:1;grid-row:2;padding-left:0}
+.manifesto__quote{grid-column:2;grid-row:1;align-self:center;margin:0;padding-top:0}
+@media(max-width:780px){
+  .manifesto__image{grid-template-columns:minmax(0,1fr);width:calc(100% + 2 * var(--pad));margin-left:calc(-1 * var(--pad))}
+  .manifesto__image>picture{width:100%;margin-left:0}
+  .manifesto__image figcaption{padding-left:var(--pad);padding-right:var(--pad)}
+  .manifesto__quote{grid-column:1;grid-row:3;padding:40px var(--pad) 0}
+}
+
+/* ---------- Schwebender Anfrage-Knopf ----------
+   Dunkel mit heller Haarlinie, damit er auf Papier- wie auf Tintenflächen
+   trägt. Sichtbar erst, wenn der Hero aus dem Bild ist; zurückhaltend, solange
+   die Anfrage (#termin) oder der Fuß im Bild ist — Logik in main.js. */
+.float-cta{position:fixed;right:max(var(--pad),env(safe-area-inset-right));bottom:max(22px,calc(env(safe-area-inset-bottom) + 14px));z-index:150;display:none;align-items:center;gap:16px;min-height:48px;padding:0 22px;background:var(--ink);color:var(--paper);border:1px solid rgba(244,244,244,.34);box-shadow:0 14px 36px rgba(0,0,0,.3);font-size:10px;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .5s var(--ease),transform .5s var(--ease),background .25s,color .25s}
+.js .float-cta{display:inline-flex}
+.float-cta.is-visible{opacity:1;transform:none;pointer-events:auto}
+.float-cta:hover{background:var(--paper);color:var(--ink)}
+.float-cta.is-on-dark{background:var(--paper);color:var(--ink);border-color:rgba(8,8,8,.18)}
+.float-cta.is-on-dark:hover{background:var(--bone)}
+.float-cta:focus-visible{outline:2px solid #8a8a8a;outline-offset:3px}
+@media(max-width:780px){
+  .float-cta{right:auto;left:50%;transform:translate(-50%,16px)}
+  .float-cta.is-visible{transform:translate(-50%,0)}
+}
+@media(prefers-reduced-motion:reduce){
+  .float-cta{transition:opacity .2s linear;transform:none}
+  .float-cta.is-visible{transform:none}
+}
+@media(prefers-reduced-motion:reduce) and (max-width:780px){
+  .float-cta,.float-cta.is-visible{transform:translateX(-50%)}
+}

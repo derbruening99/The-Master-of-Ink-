@@ -11,30 +11,34 @@
   doc.classList.add('js');
 
   /* ---------- Vorhang ----------
-     Schwarz mit der „Krönung“ (animiertes Signet). Beim ersten Besuch einer
-     Sitzung läuft sie einmal durch, und der Vorhang hebt sich, sobald Signet
-     und Schrift stehen; bei jedem weiteren Aufruf steht das fertige Signet
-     sofort. Vier Regeln halten ihn harmlos: er wartet nie auf das Hero-Video
-     (das lädt bewusst erst nach `load`), Tippen, Klicken, Scrollen oder eine
-     Taste heben ihn sofort, ohne Animationsskript verhält er sich wie früher,
-     und er geht spätestens nach 6 Sekunden auf — eine hängende Datei darf
-     niemanden aussperren. */
+     Schwarz mit der „Krönung“ (animiertes Signet). Wer die Seite öffnet oder
+     neu lädt, sieht sie in voller Länge – erst wenn Signet, Schrift und
+     Goldpuls stehen, hebt sich der Vorhang langsam. Kommt man innerhalb der
+     Seite zurück (Impressum, Zurück-Taste), steht das fertige Signet sofort.
+     Regeln, die ihn harmlos halten: er wartet nie auf das Hero-Video (das lädt
+     bewusst erst nach `load`), Tippen, Klicken, Scrollen oder eine Taste heben
+     ihn sofort, ohne Animationsskript verhält er sich wie früher, und er geht
+     spätestens nach 9 Sekunden auf — eine hängende Datei darf niemanden
+     aussperren. */
   (function () {
     var curtain = document.getElementById('curtain');
     if (!curtain) return;
     var reveal = curtain.querySelector('moi-logo-reveal');
     var MINDESTDAUER = 620;   /* kurzes Aufblitzen wirkt wie ein Fehler */
-    var NOTAUS = 6000;        /* vor der CSS-Rückfallebene bei 6,6 s */
-    var AUFZUG = 4.3;         /* Animationszeit: Signet und Schrift stehen, der Puls setzt ein */
+    var NOTAUS = 9000;        /* vor der CSS-Rückfallebene bei 9,6 s */
     var SKIP = ['click', 'keydown', 'wheel', 'touchstart'];
     var start = Date.now();
-    var gehoben = false, geladen = false, fertig = false, intro = false;
+    var gehoben = false, geladen = false, fertig = false, intro = true;
     var ce = window.customElements;
 
+    /* innerhalb der Seite zurück: kein zweites Intro — neu laden zeigt es wieder */
+    var nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {};
+    var intern = false;
     try {
-      intro = !window.sessionStorage.getItem('moi-kroenung');
-      window.sessionStorage.setItem('moi-kroenung', '1');
-    } catch (e) { intro = false; }
+      intern = nav.type !== 'reload' && !!document.referrer &&
+        new URL(document.referrer).origin === window.location.origin;
+    } catch (e) { intern = false; }
+    if (nav.type === 'back_forward' || intern) intro = false;
     if (mqReduced.matches || !reveal || !ce) intro = false;
 
     function hebe() {
@@ -49,7 +53,7 @@
           if (reveal && reveal.pause) reveal.pause();
         };
         curtain.addEventListener('transitionend', weg, { once: true });
-        window.setTimeout(weg, 1200);      /* falls transitionend ausbleibt */
+        window.setTimeout(weg, 1600);      /* falls transitionend ausbleibt */
       }, wartend);
     }
 
@@ -60,12 +64,20 @@
       if (!intro || fertig) hebe();
     }
 
+    /* in einem Hintergrund-Tab geöffnet: erst loslegen, wenn man hinsieht */
+    function sichtbar(fn) {
+      if (!document.hidden) { fn(); return; }
+      document.addEventListener('visibilitychange', function warte() {
+        if (document.hidden) return;
+        document.removeEventListener('visibilitychange', warte);
+        fn();
+      });
+    }
+
     if (intro) {
       ce.whenDefined('moi-logo-reveal').then(function () {
-        reveal.addEventListener('frame', function (e) {
-          if (!fertig && e.detail >= AUFZUG) { fertig = true; pruefe(); }
-        });
-        reveal.play();
+        reveal.addEventListener('settled', function () { fertig = true; pruefe(); }, { once: true });
+        sichtbar(function () { reveal.play(); });
       });
       SKIP.forEach(function (name) { window.addEventListener(name, hebe, { capture: true, passive: true }); });
     } else if (reveal && ce) {
@@ -74,7 +86,64 @@
 
     if (document.readyState === 'complete') { geladen = true; pruefe(); }
     else window.addEventListener('load', function () { geladen = true; pruefe(); }, { once: true });
-    window.setTimeout(hebe, NOTAUS);
+    sichtbar(function () { window.setTimeout(hebe, NOTAUS); });
+  }());
+
+  /* ---------- Schwebender Anfrage-Knopf ----------
+     Erscheint, sobald der Hero aus dem Bild ist (dort gibt es eigene Knöpfe),
+     und tritt zurück, solange die Anfrage selbst (#termin) oder der Fuß im
+     Bild ist. Ohne IntersectionObserver steht er einfach da. */
+  (function () {
+    var cta = document.querySelector('.float-cta');
+    if (!cta) return;
+    var ziele = {
+      hero: document.getElementById('start'),
+      termin: document.getElementById('termin'),
+      fuss: document.querySelector('.colophon')
+    };
+    var imBild = { hero: true, termin: false, fuss: false };
+    /* Kontrast: über dunklen Flächen hell, über hellen dunkel — die Farbe
+       darunter wird beim Scrollen gelesen, höchstens einmal pro Bild. */
+    var raf = 0;
+    function ton() {
+      raf = 0;
+      if (!cta.classList.contains('is-visible') || !document.elementsFromPoint) return;
+      var r = cta.getBoundingClientRect();
+      var stapel = document.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      for (var i = 0; i < stapel.length; i++) {
+        if (stapel[i] === cta || cta.contains(stapel[i])) continue;
+        for (var el = stapel[i]; el && el !== document.documentElement; el = el.parentElement) {
+          var m = getComputedStyle(el).backgroundColor.match(/[\d.]+/g);
+          if (m && (m.length < 4 || +m[3] > 0.5)) {
+            var hell = (0.299 * m[0] + 0.587 * m[1] + 0.114 * m[2]) / 255 > 0.5;
+            cta.classList.toggle('is-on-dark', !hell);
+            return;
+          }
+        }
+        return;
+      }
+    }
+    function planeTon() { if (!raf) raf = requestAnimationFrame(ton); }
+    window.addEventListener('scroll', planeTon, { passive: true });
+    window.addEventListener('resize', planeTon);
+
+    function zeige(an) {
+      cta.classList.toggle('is-visible', an);
+      cta.setAttribute('aria-hidden', String(!an));
+      cta.tabIndex = an ? 0 : -1;
+      if (an) planeTon();
+    }
+    if (!('IntersectionObserver' in window)) { zeige(true); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        Object.keys(ziele).forEach(function (k) { if (ziele[k] === entry.target) imBild[k] = entry.isIntersecting; });
+      });
+      zeige(!imBild.hero && !imBild.termin && !imBild.fuss);
+    });
+    Object.keys(ziele).forEach(function (k) {
+      if (ziele[k]) io.observe(ziele[k]); else imBild[k] = false;
+    });
+    zeige(false);
   }());
 
   /* Mobile navigation */

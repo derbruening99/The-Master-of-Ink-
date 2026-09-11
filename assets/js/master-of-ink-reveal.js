@@ -145,8 +145,27 @@
       im.onload = function () {
         var c = canvas(fl.w, fl.h), g = c.getContext('2d');
         g.drawImage(im, 0, 0);
-        var d = g.getImageData(0, 0, fl.w, fl.h).data, a = new Float32Array(fl.w * fl.h), p = new Float32Array(fl.w * fl.h);
-        for (var k = 0; k < a.length; k++) { a[k] = (d[4 * k] * 256 + d[4 * k + 1]) / 65535; p[k] = d[4 * k + 2] / 255; }
+        var d = g.getImageData(0, 0, fl.w, fl.h).data;
+        // work at half the map resolution: a quarter of the per-frame work; the vector edges stay crisp
+        var w2 = Math.ceil(fl.w / 2), h2 = Math.ceil(fl.h / 2);
+        var a = new Float32Array(w2 * h2), p = new Float32Array(w2 * h2);
+        for (var y = 0; y < h2; y++) for (var x = 0; x < w2; x++) {
+          var lo = 1, hi = 0;
+          for (var dy = 0; dy < 2; dy++) for (var dx = 0; dx < 2; dx++) {
+            var sx = Math.min(fl.w - 1, 2 * x + dx), sy = Math.min(fl.h - 1, 2 * y + dy), k = 4 * (sy * fl.w + sx);
+            var v = (d[k] * 256 + d[k + 1]) / 65535, q = d[k + 2] / 255;
+            if (v < lo) lo = v;
+            if (q > hi) hi = q;
+          }
+          a[y * w2 + x] = lo; p[y * w2 + x] = hi;          // earliest arrival, strongest closeness
+        }
+        self.mw = w2; self.mh = h2; self.ms = fl.f * 2;
+        [self.mapM, self.mapB, self.bloomC].forEach(function (cv) { cv.width = w2; cv.height = h2; });
+        self.mImg = self.mapM.getContext('2d').createImageData(w2, h2);
+        self.bImg = self.mapB.getContext('2d').createImageData(w2, h2);
+        for (var n = 0; n < self.mImg.data.length; n += 4) {
+          self.mImg.data[n] = self.mImg.data[n + 1] = self.mImg.data[n + 2] = 255;
+        }
         self.arr = a; self.prox = p; self.flowKey = null;
         res();
       };
@@ -287,7 +306,7 @@
   Engine.prototype.drawMap = function (ctx, img) {
     var fl = this.fl;
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(img, fl.x0, fl.y0, fl.w * fl.f, fl.h * fl.f);
+    ctx.drawImage(img, fl.x0, fl.y0, this.mw * this.ms, this.mh * this.ms);
   };
 
   Engine.prototype.stamp = function (ctx, spr, x, y, r, a) {
@@ -310,8 +329,8 @@
     // 1 · bloom: the moving light spills softly beyond the gold
     if (L.I > 0.002 && this.arr) {
       var g = this.bloomC.getContext('2d');
-      g.clearRect(0, 0, this.fl.w, this.fl.h);
-      g.filter = 'blur(9px)'; g.drawImage(this.mapB, 0, 0); g.filter = 'none';
+      g.clearRect(0, 0, this.mw, this.mh);
+      g.filter = 'blur(5px)'; g.drawImage(this.mapB, 0, 0); g.filter = 'none';
       this.unit(c); c.globalCompositeOperation = P.op; c.globalAlpha = 0.9 * P.bloom;
       this.drawMap(c, this.bloomC);
     }
@@ -470,7 +489,8 @@
       function step(now) {
         // a pause or seek may land while a frame is already queued — never outlive it
         if (!self._playing || !self._visible) { self._raf = 0; return; }
-        var dt = Math.min(0.1, (now - last) / 1000); last = now;
+        // up to 0.2 s per frame: a slow device skips frames instead of stretching the timeline
+        var dt = Math.min(0.2, (now - last) / 1000); last = now;
         self._time += dt * speed;
         if (self._engine.o.mode === 'loop') self._time %= TL.total;
         else if (self._time >= TL.settled) {

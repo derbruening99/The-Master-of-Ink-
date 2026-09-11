@@ -339,23 +339,28 @@ blitzt die Seite auf, bevor der Vorhang da ist.
 
 Ablauf:
 
-- **Erster Besuch einer Sitzung** (`sessionStorage` `moi-kroenung`): die
-  Animation läuft mit Tempo 1,3; sobald Signet und Schrift stehen (Animations-
-  zeit 4,3 s ≈ 3,3 s echt) und `load` durch ist, hebt sich der Vorhang, während
-  der Goldpuls einsetzt.
-- **Jeder weitere Aufruf** in derselben Sitzung: das fertige Signet steht
-  sofort, der Vorhang hebt sich wie früher nach `load` (mindestens 620 ms).
+- **Beim Öffnen und bei jedem Neuladen** läuft die Animation in voller Länge
+  (5,1 s) — Funke, Lichtfluss, Krone, Schrift, Goldpuls. Erst wenn sie steht
+  (`settled`) und `load` durch ist, hebt sich der Vorhang in 1,2 s.
+- **Innerhalb der Seite zurück** (vom Impressum, Zurück-Taste): das fertige
+  Signet steht sofort, der Vorhang hebt sich wie früher nach `load`
+  (mindestens 620 ms).
 - **Überspringen:** Tippen, Klicken, Scrollen oder eine Taste heben ihn sofort.
+- In einem **Hintergrund-Tab** geöffnet, startet die Animation (und der Notaus)
+  erst, wenn der Tab sichtbar wird.
+- Ruckelt ein Gerät, überspringt die Animation Bilder statt länger zu werden;
+  das Licht rechnet auf halber Kartenauflösung (die Kanten kommen aus den
+  Vektoren und bleiben scharf).
 
 Regeln, die ihn harmlos halten:
 
 - Er wartet auf `load`, **nicht** auf das Hero-Video — das lädt bewusst erst
   danach und würde ihn sonst sekundenlang stehen lassen.
-- **Er öffnet sich per CSS-Animation nach 6,6 s von selbst**, ganz ohne
+- **Er öffnet sich per CSS-Animation nach 9,6 s von selbst**, ganz ohne
   JavaScript. Das ist die eigentliche Sicherung: eine veraltete oder
   fehlerhafte `main.js` reicht sonst, und die Seite bleibt für immer
   schwarz — genau das ist einmal passiert.
-- JavaScript-Notaus bei 6 s. Fehlt das Animationsskript bei `load` noch, gilt
+- JavaScript-Notaus bei 9 s. Fehlt das Animationsskript bei `load` noch, gilt
   der alte Ablauf (heben nach `load`).
 - **Keine Scrollsperre.** Sie hing an JavaScript und wäre ein zweiter Riegel
   gewesen, den niemand mehr öffnen kann. Der Vorhang deckt den Bildschirm
@@ -375,6 +380,23 @@ bei jeder Änderung an `main.css`, `main.js` oder `gallery-data.js` erhöht
 werden.** Sonst liefert der Browser die alte Datei zu neuem HTML — und genau
 das hat den Vorhang einmal dauerhaft stehen lassen: neues HTML mit Vorhang,
 alte `main.js` ohne die Logik zum Aufziehen.
+
+## Schwebender Anfrage-Knopf
+
+Unten rechts (auf Telefonen unten mittig) steht „Projekt anfragen ↗“ und
+springt zu `#termin`. Er erscheint erst, wenn der Hero aus dem Bild ist — dort
+gibt es eigene Knöpfe — und tritt zurück, solange die Anfrage selbst oder der
+Fuß im Bild ist. Er passt sich dem Untergrund an: über hellen Flächen dunkel mit
+heller Haarlinie, über dunklen hell (`.is-on-dark`). Ohne JavaScript entfällt er (die Kopfzeile hat
+denselben Link). CSS und Logik: letzter Block in `main.css`, Block nach dem
+Vorhang in `main.js`.
+
+## Manifest: Zitat neben dem Bild
+
+„Ein Tattoo wird nicht auf den Körper gesetzt …“ steht in der Bildtafel
+(`figure.manifesto__image`) und nutzt dasselbe Spaltenraster wie
+`.manifesto__grid`: auf breiten Schirmen vertikal mittig neben dem Foto, auf
+Telefonen darunter nach der Bildunterschrift.
 
 ## Arbeiten — geteilte Bühne (aktuell)
 
