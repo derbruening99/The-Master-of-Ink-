@@ -146,6 +146,29 @@
     zeige(false);
   }());
 
+  /* ---------- Studio-Bild: langsamer Zoom beim Scrollen ----------
+     Skaliert das Foto von 1,00 auf 1,10, während der Abschnitt durch das
+     Bild wandert — nur solange er sichtbar ist. Bei reduzierter Bewegung
+     steht das Foto still. */
+  (function () {
+    var frame = document.querySelector('.still__frame');
+    if (!frame || mqReduced.matches) return;
+    var raf = 0, aktiv = true;
+    function setze() {
+      raf = 0;
+      var r = frame.getBoundingClientRect(), h = window.innerHeight;
+      var p = Math.min(1, Math.max(0, (h - r.top) / (h + r.height)));
+      frame.style.setProperty('--still-zoom', (1 + 0.1 * p).toFixed(4));
+    }
+    function plane() { if (aktiv && !raf) raf = requestAnimationFrame(setze); }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (e) { aktiv = e[e.length - 1].isIntersecting; plane(); }).observe(frame);
+    }
+    window.addEventListener('scroll', plane, { passive: true });
+    window.addEventListener('resize', plane);
+    setze();
+  }());
+
   /* Mobile navigation */
   var menuButton = document.querySelector('.masthead__toggle');
   var menu = document.getElementById('main-menu');

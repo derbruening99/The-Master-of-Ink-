@@ -399,12 +399,16 @@ heller Haarlinie, über dunklen hell (`.is-on-dark`). Ohne JavaScript entfällt 
 denselben Link). CSS und Logik: letzter Block in `main.css`, Block nach dem
 Vorhang in `main.js`.
 
-## Manifest: Zitat neben dem Bild
+## Studio: ein Bild, ein Satz
 
-„Ein Tattoo wird nicht auf den Körper gesetzt …“ steht in der Bildtafel
-(`figure.manifesto__image`) und nutzt dasselbe Spaltenraster wie
-`.manifesto__grid`: auf breiten Schirmen vertikal mittig neben dem Foto, auf
-Telefonen darunter nach der Bildunterschrift.
+Direkt nach dem Hero steht nur das Studiofoto (Sebastian bei der Arbeit),
+randlos auf Tinte, darauf das Zitat „Ein Tattoo wird nicht auf den Körper
+gesetzt …“. Beim Scrollen zoomt das Foto langsam von 1,00 auf 1,10
+(`--still-zoom`, gesetzt in `main.js`); bei reduzierter Bewegung steht es.
+Die Abschnittsüberschrift „Das Studio“ ist nur für Screenreader da
+(`.sr-only`). Bildvarianten bis 3200 px, erzeugt aus dem Original
+`03_Tattoostudio/The master of Ink -Website Bilder/Tattoo Jule - 00000023.jpg`.
+CSS: Block „Studio: ein Bild, ein Satz“ am Ende von `main.css`.
 
 ## Arbeiten — geteilte Bühne (aktuell)
 
