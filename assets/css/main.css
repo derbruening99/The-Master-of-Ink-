@@ -239,7 +239,8 @@ h2 em{font-weight:400;color:var(--gold)}
 .booking__grid--embedded .booking__form{grid-column:1/-1;max-width:920px;width:100%}
 
 /* Rechtliches im Fuß + Rechtsseiten */
-.colophon__legal{display:flex;gap:22px}
+.colophon__legal{display:flex;flex-wrap:wrap;gap:8px 22px}
+.colophon__legal a{white-space:nowrap}
 .legal{max-width:74ch;margin:0 auto;padding:clamp(90px,13vh,150px) var(--pad-x) clamp(60px,9vh,110px)}
 .legal__back{display:inline-block;margin-bottom:clamp(32px,5vh,56px);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#6d6d6d}
 .legal h1{font:500 clamp(38px,5.5vw,74px)/1 var(--serif);letter-spacing:-.03em;margin-bottom:clamp(30px,4vh,48px)}

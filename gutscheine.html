@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Tattoo-Gutscheine — The Master of Ink</title>
+  <meta name="description" content="Tattoo-Gutscheine von The Master of Ink in Rheine — mit Bonus: 100 € für 80 €, 200 € für 160 €, 250 € für 200 €. Online bestellen, sicher bezahlen, als PDF oder Karte verschenken.">
+  <meta name="theme-color" content="#080808">
+  <link rel="canonical" href="https://themasterofink.vercel.app/gutscheine.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://themasterofink.vercel.app/gutscheine.html">
+  <meta property="og:title" content="Tattoo-Gutscheine — The Master of Ink">
+  <meta property="og:description" content="Das Geschenk, das bleibt: Tattoo-Gutscheine mit Bonus — 100 € für 80 €, 200 € für 160 €, 250 € für 200 €.">
+  <meta property="og:image" content="https://themasterofink.vercel.app/assets/img/og-image.jpg">
+  <meta property="og:locale" content="de_DE">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="preload" href="assets/fonts/cormorant-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/main.css?v=20261118-1330">
+  <style>
+    /* Gutschein-Seite: dunkel wie die Anfrage, ruhig, eine Entscheidung nach der anderen. */
+    .vpage{background:var(--ink);color:var(--paper)}
+    .voucher{max-width:1240px;margin:0 auto;padding:clamp(28px,5vw,64px) var(--pad) clamp(70px,10vw,140px)}
+    .voucher__back{display:inline-flex;align-items:center;gap:12px;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,244,244,.62);transition:color .25s}
+    .voucher__back img{width:30px;height:auto}
+    .voucher__back:hover{color:var(--paper)}
+    .voucher__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.92fr);gap:clamp(48px,7vw,120px);align-items:start;margin-top:clamp(48px,8vw,110px)}
+    .voucher__head h1{font:500 clamp(52px,7.4vw,112px)/.92 var(--serif);letter-spacing:-.035em;margin-top:22px}
+    .voucher__head h1 em{font-style:italic;color:var(--gold)}
+    .voucher__lead{margin-top:clamp(24px,3vw,38px);max-width:46ch;font-size:15px;line-height:1.7;color:rgba(244,244,244,.7)}
+
+    /* Die Karte zeigt live, was man gerade verschenkt. */
+    .vcard{position:relative;margin-top:clamp(40px,5vw,64px);aspect-ratio:1.586;max-width:460px;border-radius:22px;padding:clamp(22px,3vw,30px);
+      background:radial-gradient(120% 140% at 0% 0%,#232323 0%,#0d0d0d 55%,#050505 100%);
+      border:1px solid rgba(244,244,244,.14);box-shadow:0 30px 80px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.06);
+      display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
+    .vcard::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.06) 48%,transparent 62%);pointer-events:none}
+    .vcard__top{display:flex;align-items:center;justify-content:space-between}
+    .vcard__logo{width:44px;height:auto}
+    .vcard__label{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(244,244,244,.6)}
+    .vcard__value{align-self:center;font:500 clamp(54px,8vw,84px)/1 var(--serif);letter-spacing:-.03em;transition:opacity .25s}
+    .vcard__bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,244,244,.55)}
+    .vcard__for{font:italic 400 19px/1.1 var(--serif);letter-spacing:0;text-transform:none;color:var(--paper)}
+
+    /* Formular */
+    .vform{display:grid;gap:clamp(30px,4vw,44px)}
+    .vform fieldset{border:0;display:grid;gap:16px;min-width:0}
+    .vform legend{font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:rgba(244,244,244,.55);margin-bottom:16px}
+    .tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .tier{position:relative;display:grid;gap:6px;padding:18px 16px 16px;border:1px solid var(--line-dark);border-radius:16px;cursor:pointer;
+      background:rgba(244,244,244,.025);transition:border-color .25s,background .25s,transform .15s var(--ease)}
+    .tier:hover{border-color:rgba(244,244,244,.4)}
+    .tier:active{transform:scale(.98)}
+    .tier input{position:absolute;opacity:0;pointer-events:none}
+    .tier__value{font:500 clamp(30px,3.2vw,40px)/1 var(--serif);letter-spacing:-.02em}
+    .tier__price{font-size:13px;color:rgba(244,244,244,.78)}
+    .tier__bonus{justify-self:start;margin-top:6px;font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:5px 8px;border-radius:999px;background:rgba(52,199,89,.14);color:#7ee09a}
+    .tier__tick{position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;border:1px solid rgba(244,244,244,.3);display:grid;place-items:center;transition:background .25s,border-color .25s}
+    .tier__tick svg{width:11px;height:11px;opacity:0;transition:opacity .2s}
+    .tier.is-selected{border-color:var(--paper);background:rgba(244,244,244,.07)}
+    .tier.is-selected .tier__tick{background:var(--paper);border-color:var(--paper)}
+    .tier.is-selected .tier__tick svg{opacity:1}
+    .tier.has-focus{outline:2px solid var(--gold);outline-offset:3px}
+    .vrow{display:grid;grid-template-columns:1fr 1fr;gap:16px 22px}
+    .vfield{display:grid;gap:8px;min-width:0}
+    .vfield>label:not(.vcheck){font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,244,244,.55)}
+    .vfield input:not([type=checkbox]),.vfield select{width:100%;border:1px solid var(--line-dark);border-radius:12px;background:rgba(244,244,244,.035);color:var(--paper);
+      padding:14px 14px;font-size:16px;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none}
+    .vfield select{background-image:linear-gradient(45deg,transparent 50%,rgba(244,244,244,.6) 50%),linear-gradient(135deg,rgba(244,244,244,.6) 50%,transparent 50%);
+      background-position:calc(100% - 20px) 52%,calc(100% - 15px) 52%;background-size:5px 5px;background-repeat:no-repeat}
+    .vfield select option{color:#080808}
+    .vfield input::placeholder{color:rgba(244,244,244,.3)}
+    .vfield input:not([type=checkbox]):focus,.vfield select:focus{border-color:rgba(244,244,244,.7);background:rgba(244,244,244,.06)}
+    .vfield.is-invalid input{border-color:#ff6b62}
+    .vfield__error{font-size:12px;color:#ff8a82;min-height:0}
+    .vcheck{display:grid;grid-template-columns:22px 1fr;gap:12px;align-items:start;font-size:13px;line-height:1.55;letter-spacing:0;text-transform:none;color:rgba(244,244,244,.78);cursor:pointer}
+    .vcheck input{-webkit-appearance:none;appearance:none;width:22px;height:22px;margin:0;padding:0;border:1.5px solid rgba(244,244,244,.45);border-radius:7px;
+      background:transparent center/13px 13px no-repeat;cursor:pointer;transition:background-color .2s,border-color .2s,transform .12s var(--ease)}
+    .vcheck input:active{transform:scale(.9)}
+    .vcheck input:checked{background-color:#34c759;border-color:#34c759;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.4l2.3 2.3 4.7-5' fill='none' stroke='white' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+    .vcheck input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+    .vcheck a,.vnote a,.vterms a{border-bottom:1px solid rgba(244,244,244,.35)}
+    .vsum{display:flex;justify-content:space-between;align-items:baseline;gap:18px;padding:18px 0;border-top:1px solid var(--line-dark);border-bottom:1px solid var(--line-dark)}
+    .vsum__what{font-size:13px;color:rgba(244,244,244,.75)}
+    .vsum__total{font:500 30px/1 var(--serif);white-space:nowrap}
+    .vnote{font-size:11.5px;line-height:1.6;color:rgba(244,244,244,.5)}
+    .vsubmit{width:100%;border:0;border-radius:14px;padding:19px 22px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;
+      background:var(--paper);color:var(--ink);transition:background .25s,color .25s,transform .12s var(--ease),opacity .25s}
+    .vsubmit[aria-disabled="false"]:hover{background:#fff}
+    .vsubmit:active{transform:scale(.985)}
+    .vsubmit[aria-disabled="true"]{background:rgba(244,244,244,.1);color:rgba(244,244,244,.38)}
+    .vsubmit[aria-busy="true"]{opacity:.7}
+    .verror{font-size:13px;color:#ff8a82}
+
+    /* Danach: grüner Haken, dann der eine nächste Schritt. */
+    .vdone{display:grid;gap:18px;justify-items:start;animation:vdoneIn .5s var(--ease) both}
+    .vdone:focus{outline:none}
+    .vdone h2{font:500 clamp(40px,5vw,64px)/.95 var(--serif);letter-spacing:-.03em}
+    .vdone p{font-size:14.5px;line-height:1.7;color:rgba(244,244,244,.75);max-width:48ch}
+    .vdone strong{color:var(--paper);font-weight:600}
+    .vdone__nr{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,244,244,.55)}
+    .vpay{display:inline-flex;align-items:center;justify-content:center;gap:14px;width:100%;max-width:420px;border-radius:14px;padding:19px 22px;
+      background:var(--paper);color:var(--ink);font-size:11px;letter-spacing:.2em;text-transform:uppercase;transition:transform .12s var(--ease),background .25s}
+    .vpay:hover{background:#fff}
+    .vpay:active{transform:scale(.985)}
+    .okmark{width:68px;height:68px}
+    .okmark circle{fill:none;stroke:#34c759;stroke-width:2.5;stroke-dasharray:166;stroke-dashoffset:166;animation:okCircle .65s var(--ease) forwards}
+    .okmark path{fill:none;stroke:#34c759;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:48;stroke-dashoffset:48;animation:okTick .4s .5s var(--ease) forwards}
+    @keyframes okCircle{to{stroke-dashoffset:0}}
+    @keyframes okTick{to{stroke-dashoffset:0}}
+    @keyframes vdoneIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+    /* Bedingungen */
+    .vterms{margin-top:clamp(80px,11vw,150px);padding-top:clamp(40px,5vw,60px);border-top:1px solid var(--line-dark);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(40px,6vw,90px)}
+    .vterms h2{font:500 clamp(28px,3vw,40px)/1 var(--serif);letter-spacing:-.02em;margin-bottom:20px}
+    .vterms li{font-size:14px;line-height:1.7;color:rgba(244,244,244,.72);margin:0 0 10px 18px}
+    .vsteps{list-style:none;counter-reset:s}
+    .vsteps li{counter-increment:s;margin-left:0;padding-left:44px;position:relative}
+    .vsteps li::before{content:counter(s);position:absolute;left:0;top:1px;width:28px;height:28px;border-radius:50%;border:1px solid rgba(244,244,244,.35);
+      display:grid;place-items:center;font-size:12px;color:var(--paper)}
+    .vpage .colophon{border-top:1px solid var(--line-dark)}
+
+    @media (max-width:900px){
+      .voucher__grid{grid-template-columns:1fr}
+      .vterms{grid-template-columns:1fr}
+    }
+    @media (max-width:560px){
+      .tiers{grid-template-columns:1fr}
+      .tier{grid-template-columns:auto 1fr;align-items:baseline;column-gap:14px}
+      .tier__bonus{grid-column:1/-1}
+      .vrow{grid-template-columns:1fr}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .okmark circle,.okmark path{animation:none;stroke-dashoffset:0}
+      .vdone{animation:none}
+    }
+  </style>
+</head>
+<body class="vpage">
+  <main class="voucher">
+    <a class="voucher__back" href="index.html"><img src="assets/img/logo-160.png" alt="" width="74" height="80">The Master of Ink</a>
+
+    <div class="voucher__grid">
+      <div class="voucher__head">
+        <p class="eyebrow">Tattoo-Gutscheine · Rheine</p>
+        <h1>Das Geschenk,<br><em>das bleibt.</em></h1>
+        <p class="voucher__lead">
+          Ein Gutschein für ein Tattoo von Sebastian – mit Bonus obendrauf.
+          Für jedes Motiv und jede Größe, auch als Anzahlung einlösbar.
+          Als PDF per E-Mail und auf Wunsch als gedruckte Karte im Studio.
+        </p>
+
+        <div class="vcard" aria-hidden="true">
+          <div class="vcard__top">
+            <img class="vcard__logo" src="assets/img/logo-160.png" alt="" width="74" height="80">
+            <span class="vcard__label">Tattoo-Gutschein</span>
+          </div>
+          <div class="vcard__value" data-vcard-wert>200 €</div>
+          <div class="vcard__bottom">
+            <span class="vcard__for" data-vcard-fuer>für dich</span>
+            <span>The Master of Ink</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="voucher__panel">
+        <form class="vform" id="gutschein-form" novalidate>
+          <fieldset>
+            <legend>1 · Gutschein wählen</legend>
+            <div class="tiers" id="gutschein-stufen" role="radiogroup" aria-label="Gutschein wählen"></div>
+          </fieldset>
+
+          <fieldset>
+            <legend>2 · Deine Angaben</legend>
+            <div class="vrow">
+              <div class="vfield" data-field="vorname">
+                <label for="g-vorname">Vorname</label>
+                <input id="g-vorname" name="vorname" type="text" autocomplete="given-name" maxlength="100" required aria-describedby="g-vorname-err">
+                <p class="vfield__error" id="g-vorname-err" aria-live="polite"></p>
+              </div>
+              <div class="vfield" data-field="nachname">
+                <label for="g-nachname">Nachname</label>
+                <input id="g-nachname" name="nachname" type="text" autocomplete="family-name" maxlength="100" required aria-describedby="g-nachname-err">
+                <p class="vfield__error" id="g-nachname-err" aria-live="polite"></p>
+              </div>
+            </div>
+            <div class="vfield" data-field="email">
+              <label for="g-email">E-Mail – hierhin schicken wir den Gutschein</label>
+              <input id="g-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="200" required aria-describedby="g-email-err">
+              <p class="vfield__error" id="g-email-err" aria-live="polite"></p>
+            </div>
+            <div class="vrow">
+              <div class="vfield" data-field="fuer">
+                <label for="g-fuer">Für wen? (optional)</label>
+                <input id="g-fuer" name="fuer" type="text" maxlength="80" placeholder="z. B. Lisa">
+              </div>
+              <div class="vfield" data-field="anzahl">
+                <label for="g-anzahl">Anzahl</label>
+                <select id="g-anzahl" name="anzahl"></select>
+              </div>
+            </div>
+            <label class="vcheck">
+              <input type="checkbox" name="karte" id="g-karte">
+              <span>Zusätzlich als gedruckte Karte – liegt nach Zahlungseingang im Studio zum Abholen bereit (kostenlos).</span>
+            </label>
+            <div class="field--hp" aria-hidden="true">
+              <label for="g-website">Website</label>
+              <input id="g-website" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+          </fieldset>
+
+          <div class="vsum" aria-live="polite">
+            <span class="vsum__what" data-sum-was>1 × Gutschein über 200 €</span>
+            <span class="vsum__total" data-sum-total>160 €</span>
+          </div>
+
+          <div class="vfield" data-field="zustimmung">
+            <label class="vcheck">
+              <input type="checkbox" name="zustimmung" id="g-zustimmung" required aria-describedby="g-zustimmung-err">
+              <span>Ich habe die <a href="#bedingungen">Gutscheinbedingungen</a> und die <a href="widerruf.html">Widerrufsbelehrung</a> gelesen.</span>
+            </label>
+            <p class="vfield__error" id="g-zustimmung-err" aria-live="polite"></p>
+          </div>
+
+          <button class="vsubmit" type="submit" aria-disabled="true" data-submit>Zahlungspflichtig bestellen</button>
+          <p class="verror" role="alert" hidden data-fehler></p>
+          <p class="vnote">
+            Endpreis. Als Kleinunternehmer gemäß § 19 UStG weisen wir keine Umsatzsteuer aus.
+            Bezahlt wird sicher über Revolut mit Apple Pay, Karte oder Bankzahlung.
+            Deine Angaben nutzen wir nur für diese Bestellung – mehr dazu in der
+            <a href="datenschutz.html">Datenschutzerklärung</a>.
+          </p>
+          <noscript><p class="verror">Für die Bestellung braucht dein Browser JavaScript. Schreib uns gern direkt: masterofinkger@gmail.com</p></noscript>
+        </form>
+
+        <section class="vdone" id="gutschein-fertig" hidden tabindex="-1" aria-labelledby="gutschein-fertig-titel">
+          <svg class="okmark" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="26"/><path d="M16.5 28.5l7.5 7.5 15.5-16"/></svg>
+          <p class="vdone__nr">Bestellnummer <span data-fertig-nr></span></p>
+          <h2 id="gutschein-fertig-titel">Bestellung ist da.</h2>
+
+          <div data-fertig-link hidden>
+            <p>Jetzt nur noch bezahlen: <strong data-fertig-betrag></strong> – sicher über Revolut mit Apple Pay, Karte oder Bankzahlung.</p>
+            <p style="margin-top:22px"><a class="vpay" href="#" target="_blank" rel="noopener" data-fertig-pay>Jetzt bezahlen ↗</a></p>
+            <p style="margin-top:18px">Sobald die Zahlung da ist, bekommst du deinen Gutschein als PDF an <strong data-fertig-mail></strong> – meist noch am selben Tag.</p>
+          </div>
+
+          <div data-fertig-mail-block hidden>
+            <p>Wir schicken dir deinen persönlichen Zahlungslink über <strong data-fertig-betrag2></strong> innerhalb von 24 Stunden an <strong data-fertig-mail2></strong>. Sobald die Zahlung da ist, kommt dein Gutschein als PDF.</p>
+          </div>
+
+          <p data-fertig-karte hidden>Deine gedruckte Karte liegt nach Zahlungseingang im Studio in Rheine für dich bereit.</p>
+          <p class="vnote">Fragen? Schreib uns an <a href="mailto:masterofinkger@gmail.com">masterofinkger@gmail.com</a> oder auf <a href="https://www.instagram.com/masterofinkger/" rel="noopener">Instagram</a>.</p>
+        </section>
+      </div>
+    </div>
+
+    <section class="vterms" id="bedingungen" aria-label="Gutscheinbedingungen und Ablauf">
+      <div>
+        <h2>Gutscheinbedingungen</h2>
+        <ul>
+          <li>Der Gutschein gilt für Tattoos von Sebastian bei The Master of Ink in Rheine – auch für Anzahlungen.</li>
+          <li>Er ist drei Jahre gültig, bis zum Ende des dritten Jahres nach dem Kauf (Kauf 2026: gültig bis 31.12.2029).</li>
+          <li>Du kannst ihn in Teilen einlösen; ein Restwert bleibt dir erhalten.</li>
+          <li>Eine Barauszahlung ist nicht möglich.</li>
+          <li>Der Gutschein ist übertragbar – ideal zum Verschenken.</li>
+          <li>Für Termine gelten unsere Regeln zu <a href="termine.html">Termin &amp; Anzahlung</a>.</li>
+        </ul>
+      </div>
+      <div>
+        <h2>So läuft’s</h2>
+        <ol class="vsteps">
+          <li>Gutschein wählen und bestellen.</li>
+          <li>Sicher über Revolut bezahlen – mit Apple Pay, Karte oder Bankzahlung.</li>
+          <li>Du bekommst den Gutschein als PDF per E-Mail, auf Wunsch zusätzlich als gedruckte Karte im Studio.</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="colophon">
+    <div class="colophon__top">
+      <div class="colophon__brand"><img src="assets/img/logo-160.png" alt="The Master of Ink" width="74" height="80"><p>Tattoostudio<br>Rheine</p></div>
+      <nav class="colophon__nav" aria-label="Fußnavigation"><a href="index.html#studio">Studio</a><a href="index.html#prozess">Prozess</a><a href="index.html#team">Team</a><a href="index.html#arbeiten">Arbeiten</a><a href="gutscheine.html">Gutscheine</a></nav>
+      <div class="colophon__contact"><p>Kontakt</p><a href="mailto:masterofinkger@gmail.com">masterofinkger@gmail.com</a><a href="https://www.instagram.com/masterofinkger/" rel="noopener">Instagram @masterofinkger ↗</a></div>
+    </div>
+    <div class="colophon__base"><p>© 2026 The Master of Ink</p><p>Rheine · Nur nach Termin</p><nav class="colophon__legal" aria-label="Rechtliches"><a href="termine.html">Termine &amp; Anzahlung</a><a href="widerruf.html">Widerruf</a><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a></nav></div>
+  </footer>
+
+  <script src="assets/js/gallery-data.js?v=20261118-1330" defer></script>
+  <script src="assets/js/gutscheine.js?v=20261118-1330" defer></script>
+</body>
+</html>

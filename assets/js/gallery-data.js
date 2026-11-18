@@ -392,6 +392,29 @@ window.MOI_CONFIG = {
     ]
   },
 
+  /* -----------------------------------------------------------------
+     Gutscheine (Seite gutscheine.html).
+
+     wert  : Gutscheinwert in Euro
+     preis : was der Kunde zahlt
+     link  : wiederverwendbarer Revolut-Pro-Zahlungslink über genau
+             `preis` Euro (Pro → Neuer Verkauf → Zahlungslink).
+             Leer lassen → der Kunde bekommt nach der Bestellung den
+             Hinweis, dass der Zahlungslink per E-Mail kommt.
+     Bestellungen landen als Anfrage im StudioLink-Posteingang
+     (inkcore.public_create_lead, source_detail = website_gutschein).
+     ----------------------------------------------------------------- */
+  gutscheine: {
+    gilt: "Tattoos von Sebastian",
+    stufen: [
+      { wert: 100, preis: 80,  link: "" },
+      { wert: 200, preis: 160, link: "" },
+      { wert: 250, preis: 200, link: "" }
+    ],
+    vorauswahl: 200,
+    maxAnzahl: 5
+  },
+
   /* Rückfallebene, falls StudioLink nicht erreichbar ist */
   contactEmail: "masterofinkger@gmail.com"
 };
