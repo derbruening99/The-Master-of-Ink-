@@ -410,7 +410,7 @@ window.MOI_CONFIG = {
       { wert: 100, preis: 80,  link: "https://checkout.revolut.com/pay/c972bb79-8158-47b4-8f3e-d2d83dcc9b20" },
       { wert: 150, preis: 120, link: "https://checkout.revolut.com/pay/59c8bc22-5b5c-4d02-8dd2-b5a06d3065fa" },
       { wert: 200, preis: 160, link: "https://checkout.revolut.com/pay/51a7bb8a-aa1f-4879-875d-979a30200597" },
-      { wert: 250, preis: 200, link: "" }
+      { wert: 250, preis: 200, link: "https://checkout.revolut.com/pay/70bf4e78-1b1f-4000-8a7c-09e44afa5f0e" }
     ],
     vorauswahl: 150,
     maxAnzahl: 5
