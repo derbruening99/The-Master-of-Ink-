@@ -407,7 +407,7 @@ window.MOI_CONFIG = {
   gutscheine: {
     gilt: "Tattoos von Sebastian",
     stufen: [
-      { wert: 100, preis: 80,  link: "" },
+      { wert: 100, preis: 80,  link: "https://checkout.revolut.com/pay/c972bb79-8158-47b4-8f3e-d2d83dcc9b20" },
       { wert: 200, preis: 160, link: "" },
       { wert: 250, preis: 200, link: "" }
     ],
