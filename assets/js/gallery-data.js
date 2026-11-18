@@ -408,10 +408,11 @@ window.MOI_CONFIG = {
     gilt: "Tattoos von Sebastian",
     stufen: [
       { wert: 100, preis: 80,  link: "https://checkout.revolut.com/pay/c972bb79-8158-47b4-8f3e-d2d83dcc9b20" },
+      { wert: 150, preis: 120, link: "https://checkout.revolut.com/pay/59c8bc22-5b5c-4d02-8dd2-b5a06d3065fa" },
       { wert: 200, preis: 160, link: "" },
       { wert: 250, preis: 200, link: "" }
     ],
-    vorauswahl: 200,
+    vorauswahl: 150,
     maxAnzahl: 5
   },
 
